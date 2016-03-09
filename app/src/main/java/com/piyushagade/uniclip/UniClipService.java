@@ -24,6 +24,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.github.tbouron.shakedetector.library.ShakeDetector;
 
 import java.util.Calendar;
 
@@ -31,6 +32,12 @@ public class UniClipService extends Service {
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     private Firebase fb;
     private ClipboardManager myClipboard;
+    private float sensitivity;
+    private boolean dataAccepted;
+    private boolean sp_prompt, sp_autostart;
+    SharedPreferences sp;
+    private SharedPreferences.Editor ed;
+    private int sp_shakes, sp_sensitivity;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -44,44 +51,73 @@ public class UniClipService extends Service {
         SharedPreferences pref = getSharedPreferences(PREF_FILE, 0);
         Firebase.setAndroidContext(this);
 
+        sp = getSharedPreferences(PREF_FILE, 0);
+        ed = sp.edit();
+
+        sp_autostart = sp.getBoolean("autostart", true);
+        sp_prompt = sp.getBoolean("prompt", true);
+        sp_sensitivity = sp.getInt("sensitivity", 2);
+        sp_shakes = sp.getInt("shakes", 2);
+
+//        makeToast(String.valueOf(sp_shakes));
+
+        boolean isAutorun = Boolean.valueOf(intent.getStringExtra("isAutorun"));
+        if(!sp_autostart && isAutorun) {
+            makeToast("UniClip: Service not running!");
+            this.stopSelf();
+        }
 
 
         fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/");
         myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
-        if(isNetworkAvailable()) {
-            mainLogic();
-            //Listen for changes in cloudboard
-            fb.child("data").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (!String.valueOf(snapshot.getValue()).equals(getCBData())) {
-                        vibrate(1);
-                        ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
-                        myClipboard.setPrimaryClip(myClip);
-                    }
+        //Listen for changes in cloudboard
+        fb.child("data").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                dataAccepted = false;
+                if (!String.valueOf(snapshot.getValue()).equals(getCBData())) {
+                    vibrate(200);
+                    shakeDetection(snapshot);
                 }
+            }
 
-                @Override
-                public void onCancelled(FirebaseError error) {
-                }
-            });
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
 
-            //Listen for local clipboard changes
-            //Add listener to listen clipboard changes
-            myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
-                @Override
-                public void onPrimaryClipChanged() {
-                   fb.child("data").setValue(getCBData());
-                }
-            });
-        }
-
-        else{
-            Toast.makeText(UniClipService.this, "Waiting for network.", Toast.LENGTH_SHORT).show();
-        }
+        //Listen for local clipboard changes
+        //Add listener to listen clipboard changes
+        myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+            @Override
+            public void onPrimaryClipChanged() {
+                fb.child("data").setValue(getCBData());
+            }
+        });
 
         return START_STICKY;
+    }
+
+    private void shakeDetection(final DataSnapshot snapshot) {
+        if(sp_shakes!=0) {
+            ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
+                @Override
+                public void OnShake() {
+                    dataAccepted = true;
+                    ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
+                    myClipboard.setPrimaryClip(myClip);
+                }
+            });
+            ShakeDetector.updateConfiguration((sp_sensitivity + 1) / 2, sp_shakes);
+            waitAndRemoveListener(4000);
+        }
+        else{
+            dataAccepted = true;
+            ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
+            myClipboard.setPrimaryClip(myClip);
+        }
+
     }
 
     private String getCBData(){
@@ -89,38 +125,22 @@ public class UniClipService extends Service {
         ClipData.Item item = clipdata.getItemAt(0);                //Get 0th item from clipboard
         return item.getText().toString();
     }
-    private void mainLogic() {
 
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        ShakeDetector.destroy();
     }
 
-    public void vibrate(int i) {
-        SharedPreferences alarm_pref = getSharedPreferences(PREF_FILE, 0);
 
-        switch (i) {
-            case 1: // Clipboard Received
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(10);
-                wait(1000);
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(10);
-
-            case 2:// Clipboard Sent
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(10);
-                wait(1500);
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(10);
-        }
-
-
-    }
-
-    public void wait(int time){
+    public void waitAndRemoveListener(int time){
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                mainLogic();
+                ShakeDetector.updateConfiguration(1000, 99999999);
+                ShakeDetector.stop();
+                if(!dataAccepted)vibrate(320);
             }
         }, time);
     }
@@ -134,6 +154,10 @@ public class UniClipService extends Service {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void vibrate(int time){
+        if(sp_prompt)((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
     }
 
 }
