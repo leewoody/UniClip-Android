@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:fitsSystemWindows="false"
+    android:layout_centerVertical="true"
+    android:gravity="center"
+    android:background="#009688"
+    android:padding="@dimen/baseline">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="#AAFFFFFF"
+        android:id="@+id/fragment_title"
+        android:textSize="28sp"
+        android:layout_marginTop="24sp"
+        android:text="You got Marshmellow?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+    <TextView
+        android:layout_width="400sp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="#88FFFFFF"
+        android:textSize="20sp"
+        android:text="Android M requires users to explicitly grant permission to applications.\n\nUniClip requires your email address to work flawlessly. So, click the button below to grant 'Contacts' permission to UniClip in the 'App Permissions' in the next screen."
+        android:id="@+id/fragment_desc"
+        android:layout_marginTop="40sp"
+        android:layout_below="@id/fragment_title" />
+
+    <Button
+        android:id="@+id/b_grant_permission"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#CCFFFFFF"
+        android:background="@drawable/card_background_layout"
+        android:layout_marginTop="50sp"
+        android:layout_below="@id/fragment_desc"
+        android:text="Grant permission"/>
+
+    <Button
+        android:id="@+id/b_permission_proceed"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:textColor="#CCFFFFFF"
+        android:background="@drawable/card_background_layout"
+        android:layout_marginTop="50sp"
+        android:layout_below="@id/fragment_desc"
+        android:text="Proceed"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="When done, click on the 'Proceed' button to proceed."
+        android:visibility="invisible"
+        android:textColor="#AAFFFFFF"
+        android:id="@+id/when_done"
+        android:layout_marginTop="40sp"
+        android:layout_below="@id/b_grant_permission" />
+
+
+</RelativeLayout>

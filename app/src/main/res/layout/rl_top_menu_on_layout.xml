@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/rl_menu_on"
+    android:padding="10dp"
+    android:background="#009688"
+    android:visibility="invisible"
+    android:paddingBottom="0dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10sp"
+        android:id="@+id/b_back"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/back"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/b_back"
+        android:paddingBottom="10sp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="28sp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10sp"
+                android:id="@+id/b_history"
+                android:layout_marginLeft="2sp"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/history"/>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10sp"
+                android:layout_marginLeft="30sp"
+                android:id="@+id/b_help"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/b_history"
+                android:src="@drawable/help"/>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10sp"
+                android:layout_marginLeft="30sp"
+                android:id="@+id/b_user"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/b_help"
+                android:src="@drawable/user"/>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10sp"
+                android:layout_marginLeft="30sp"
+                android:id="@+id/b_info"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/b_user"
+                android:src="@drawable/info"/>
+
+        </RelativeLayout>
+    </HorizontalScrollView>
+
+
+</RelativeLayout>

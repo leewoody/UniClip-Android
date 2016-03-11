@@ -22,6 +22,12 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
+    allprojects {
+        repositories {
+            jcenter()
+            maven { url "https://jitpack.io" }
+        }
+    }
 }
 
 dependencies {
@@ -33,4 +39,6 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.5.2+'
     compile 'com.github.bluejamesbond:textjustify-android:2.1.1'
     compile 'com.github.tbouron.shakedetector:library:1.0.0@aar'
+    compile 'com.github.deano2390:MaterialShowcaseView:1.0.6'
+    compile 'com.heinrichreimersoftware:material-intro:1.1'
 }

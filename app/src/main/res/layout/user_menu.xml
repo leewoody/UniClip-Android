@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_user"
+    android:visibility="visible"
+    android:paddingLeft="30sp"
+    android:paddingRight="30sp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Info"
+        android:textSize="30sp"
+        android:id="@+id/user_title"
+        android:layout_marginTop="40sp"
+        android:textColor="#009688"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_title"
+        android:layout_marginTop="20sp"
+        android:paddingRight="16sp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username: "
+                android:textSize="18sp"
+                android:id="@+id/user_username_title"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user@gmail.com"
+                android:textSize="16sp"
+                android:id="@+id/user_username"
+                android:layout_marginTop="8sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/user_username_title"
+                android:textColor="#009688"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="2sp"
+                android:background="#33FFFFFF"
+                android:layout_below="@id/user_username"
+                android:layout_marginTop="8sp"
+                android:id="@+id/hl3"/>
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device name: "
+                android:textSize="18sp"
+                android:id="@+id/user_device_title"
+                android:layout_marginTop="18sp"
+                android:layout_below="@id/hl3"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LG H118B"
+                android:textSize="16sp"
+                android:id="@+id/user_device"
+                android:layout_marginTop="8sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/user_device_title"
+                android:textColor="#009688"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="2sp"
+                android:background="#33FFFFFF"
+                android:id="@+id/hl4"
+                android:layout_below="@id/user_device"
+                android:layout_marginTop="8sp"/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registered devices: "
+                android:textSize="18sp"
+                android:id="@+id/user_other_devices_title"
+                android:layout_marginTop="18sp"
+                android:layout_below="@id/hl4"
+                android:textColor="#88FFFFFF"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ll_other_devices_feed"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8sp"
+                    android:layout_marginLeft="8sp"
+                    android:layout_below="@id/user_other_devices_title">
+                </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="2sp"
+                android:background="#33FFFFFF"
+                android:id="@+id/hl5"
+                android:layout_below="@id/ll_other_devices_feed"
+                android:layout_marginTop="8sp"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -11,7 +11,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -26,7 +26,8 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.github.tbouron.shakedetector.library.ShakeDetector;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class UniClipService extends Service {
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
@@ -34,10 +35,14 @@ public class UniClipService extends Service {
     private ClipboardManager myClipboard;
     private float sensitivity;
     private boolean dataAccepted;
-    private boolean sp_prompt, sp_autostart;
+    private boolean sp_notification, sp_autostart, sp_vibrate;
     SharedPreferences sp;
     private SharedPreferences.Editor ed;
+    boolean destroyed = false;
     private int sp_shakes, sp_sensitivity;
+    private String sp_user_email, sp_device_name;
+
+    public static ArrayList<String> history_list_service;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -46,73 +51,135 @@ public class UniClipService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Get Data from Shared Preferences
-        Context ctx = getApplicationContext();
-        SharedPreferences pref = getSharedPreferences(PREF_FILE, 0);
-        Firebase.setAndroidContext(this);
+        if(!destroyed) {
+            // Get Data from Shared Preferences
+            Context ctx = getApplicationContext();
+            SharedPreferences pref = getSharedPreferences(PREF_FILE, 0);
+            Firebase.setAndroidContext(this);
 
-        sp = getSharedPreferences(PREF_FILE, 0);
-        ed = sp.edit();
 
-        sp_autostart = sp.getBoolean("autostart", true);
-        sp_prompt = sp.getBoolean("prompt", true);
-        sp_sensitivity = sp.getInt("sensitivity", 2);
-        sp_shakes = sp.getInt("shakes", 2);
+            sp = getSharedPreferences(PREF_FILE, 0);
+            ed = sp.edit();
 
-//        makeToast(String.valueOf(sp_shakes));
+            sp_autostart = sp.getBoolean("autostart", true);
+            sp_notification = sp.getBoolean("notification", true);
+            sp_vibrate = sp.getBoolean("vibrate", true);
+            sp_sensitivity = sp.getInt("sensitivity", 2);
+            sp_shakes = sp.getInt("shakes", 2);
+            sp_user_email = sp.getString("user_email", "unknown");
+            sp_device_name = sp.getString("device_name", "unknown");
 
-        boolean isAutorun = Boolean.valueOf(intent.getStringExtra("isAutorun"));
-        if(!sp_autostart && isAutorun) {
-            makeToast("UniClip: Service not running!");
-            this.stopSelf();
+            history_list_service = new ArrayList<String>();
+
+
+            try {
+                boolean isAutorun = Boolean.valueOf(intent.getStringExtra("isAutorun"));
+                if (!sp_autostart && isAutorun) {
+                    makeToast("UniClip: Service not running!");
+                    this.stopSelf();
+                }
+            }catch (NullPointerException w){
+                makeToast("Service will continue running in the background.");
+            }
+
+
+            String user_node = sp_user_email.replaceAll("\\.", "");
+            fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+
+            //Register this device
+            fb.child("devices").child(sp_device_name).setValue("1");
+
+            myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
+            //Listen for changes in cloudboard
+            if(!destroyed)
+                fb.child("data").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.getValue() == null){
+                            fb.child("data").setValue("");
+                        }
+                        else {
+                            history_list_service.add(snapshot.getValue().toString());
+
+                            dataAccepted = false;
+                            if (!String.valueOf(snapshot.getValue()).equals(getCBData())) {
+                                vibrate(200);
+                                shakeDetection(snapshot);
+                                displayNotification();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError error) {
+                    }
+                });
+
+            //Listen for local clipboard changes
+            //Add listener to listen clipboard changes
+            myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+                @Override
+                public void onPrimaryClipChanged() {
+                    fb.child("data").setValue(getCBData());
+                }
+            });
         }
 
-
-        fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/");
-        myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-
-        //Listen for changes in cloudboard
-        fb.child("data").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                dataAccepted = false;
-                if (!String.valueOf(snapshot.getValue()).equals(getCBData())) {
-                    vibrate(200);
-                    shakeDetection(snapshot);
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError error) {
-            }
-        });
-
-        //Listen for local clipboard changes
-        //Add listener to listen clipboard changes
-        myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
-            @Override
-            public void onPrimaryClipChanged() {
-                fb.child("data").setValue(getCBData());
-            }
-        });
-
         return START_STICKY;
+
+    }
+
+
+    protected void displayNotification(){
+        if(sp_notification) {
+            Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(""));
+            PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+            String notification_text = "";
+            if(sp_shakes == 0) notification_text = "Shake your device " + sp_shakes + " times to copy the incoming data to your clipboard.";
+            else notification_text = "Clipboard updated.";
+
+            Notification myNotification = new Notification.Builder(this)
+                    .setContentTitle("UniClip!")
+                    .setContentText(notification_text)
+                    .setTicker("Incoming Data!")
+                    .setStyle(new Notification.BigTextStyle().bigText(notification_text))
+                    .setLights(Color.WHITE, 200, 100)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentIntent(pIntent)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setAutoCancel(true)
+                    .setSmallIcon(R.drawable.close_x)
+                    .build();
+
+            final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(1, myNotification);
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notificationManager.cancel(1);
+                }
+            }, 10000);
+        }
     }
 
     private void shakeDetection(final DataSnapshot snapshot) {
-        if(sp_shakes!=0) {
+        if(sp_shakes!=0&&!destroyed) {
             ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
                 @Override
                 public void OnShake() {
                     dataAccepted = true;
                     ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
-                    myClipboard.setPrimaryClip(myClip);
+                    if(!destroyed) myClipboard.setPrimaryClip(myClip);
                 }
             });
             ShakeDetector.updateConfiguration((sp_sensitivity + 1) / 2, sp_shakes);
             waitAndRemoveListener(4000);
         }
-        else{
+        else if(sp_shakes == 0 && !destroyed){
             dataAccepted = true;
             ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
             myClipboard.setPrimaryClip(myClip);
@@ -122,8 +189,12 @@ public class UniClipService extends Service {
 
     private String getCBData(){
         ClipData clipdata = myClipboard.getPrimaryClip();        //Get primary clip
-        ClipData.Item item = clipdata.getItemAt(0);                //Get 0th item from clipboard
-        return item.getText().toString();
+        ClipData.Item item = null;
+        if(clipdata != null){
+            item = clipdata.getItemAt(0);                //Get 0th item from clipboard
+            return item.getText().toString();
+        }
+        return "";
     }
 
 
@@ -131,6 +202,10 @@ public class UniClipService extends Service {
     public void onDestroy() {
         super.onDestroy();
         ShakeDetector.destroy();
+        destroyed = true;
+
+        //Deregister Device
+        fb.child("devices").child(sp_device_name).setValue("0");
     }
 
 
@@ -138,8 +213,10 @@ public class UniClipService extends Service {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                ShakeDetector.updateConfiguration(1000, 99999999);
-                ShakeDetector.stop();
+                if(!destroyed) {
+                    ShakeDetector.updateConfiguration(1000, 99999999);
+                    ShakeDetector.stop();
+                }
                 if(!dataAccepted)vibrate(320);
             }
         }, time);
@@ -157,7 +234,7 @@ public class UniClipService extends Service {
     }
 
     private void vibrate(int time){
-        if(sp_prompt)((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
+        if(sp_vibrate&&!destroyed)((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
     }
 
 }
