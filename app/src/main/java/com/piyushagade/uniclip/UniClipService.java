@@ -30,6 +30,7 @@ import com.github.tbouron.shakedetector.library.ShakeDetector;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,12 +40,13 @@ public class UniClipService extends Service {
     private ClipboardManager myClipboard;
     private float sensitivity;
     private boolean dataAccepted;
-    private boolean sp_notification, sp_autostart, sp_vibrate, sp_open_url;
+    private boolean sp_notification, sp_autostart, sp_vibrate, sp_open_url, sp_are_creator, sp_authenticated;
     SharedPreferences sp;
     private SharedPreferences.Editor ed;
     boolean destroyed = false;
     private int sp_shakes, sp_sensitivity;
     private String sp_user_email, sp_device_name;
+    Boolean usernode_created_now = false, authenticated = false;
 
     public static ArrayList<String> history_list_service;
 
@@ -72,7 +74,9 @@ public class UniClipService extends Service {
             sp_shakes = sp.getInt("shakes", 2);
             sp_user_email = sp.getString("user_email", "unknown");
             sp_device_name = sp.getString("device_name", "unknown");
-            sp_open_url = sp.getBoolean("open_url", true);
+            sp_open_url = sp.getBoolean("open_url", true);;
+            sp_are_creator = sp.getBoolean("creator", false);
+            sp_authenticated = sp.getBoolean("authenticated", false);
 
             //ArrayList for storing History
             history_list_service = new ArrayList<String>();
@@ -84,9 +88,12 @@ public class UniClipService extends Service {
                     makeToast("UniClip: Service not running!");
                     this.stopSelf();
                 }
-            }catch (NullPointerException w){
+            } catch (NullPointerException w) {
                 makeToast("Service will continue running in the background.");
             }
+
+            //Auto authenticate Creator
+            if(sp_are_creator) sp_authenticated = true;
 
             //Format email address (remove the .)
             String user_node = sp_user_email.replaceAll("\\.", "");
@@ -94,23 +101,67 @@ public class UniClipService extends Service {
             //Firebase
             fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
 
+            //Check if user node exists
+            if (!usernode_created_now)
+                fb.child("key").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (!snapshot.exists() && !destroyed) {
+
+                            //Set 4 digit access key
+                            usernode_created_now = true;
+                            int key = (int) new Random().nextInt(9999);
+                            fb.child("key").setValue(String.valueOf(key));
+
+                            //Set this device as creator
+                            fb.child("creator").setValue(sp_device_name);
+
+                            //Persist the key
+                            ed.putInt("access_pin", key).commit();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError error) {
+                    }
+                });
+
+            //Check if this device is creator
+            fb.child("creator").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+
+                        if(sp_device_name.equals(snapshot.getValue().toString())){
+                            ed.putBoolean("creator", true).commit();
+                        }
+                        else ed.putBoolean("creator", false).commit();
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError error) {
+                }
+            });
+
+
             //Register this device
-            fb.child("devices").child(sp_device_name).setValue("1");
+            if(sp_authenticated )
+                fb.child("devices").child(sp_device_name).setValue("1");
 
             //Clipboard Manager
             myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
             //Listen for changes in cloudboard
-            if(!destroyed)
+            if (!destroyed && sp_authenticated)
                 fb.child("data").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
-                        if (snapshot.getValue() == null){
-//                            fb.child("data").setValue("");
-                        }
-                        else {
+                        if (snapshot.getValue() == null) {
+                        } else {
                             //Add current incoming clip if not available in history.
-                            if(!history_list_service.contains(snapshot.getValue().toString()))
+                            if (!history_list_service.contains(snapshot.getValue().toString()) &&
+                                    !snapshot.getValue().toString().equals(""))
                                 history_list_service.add(snapshot.getValue().toString());
 
                             //Set data accepted as false
@@ -131,16 +182,18 @@ public class UniClipService extends Service {
                 });
 
             //Listen for local clipboard changes
-            //Add listener to listen clipboard changes
-            myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
-                @Override
-                public void onPrimaryClipChanged() {
-                    fb.child("data").setValue(getCBData());
-                }
-            });
+
+            if(sp_authenticated)
+                myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+                    @Override
+                    public void onPrimaryClipChanged() {
+                        fb.child("data").setValue(getCBData());
+                    }
+                });
         }
 
         return START_STICKY;
+
 
     }
 
@@ -151,7 +204,7 @@ public class UniClipService extends Service {
             PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
             String notification_text = "";
-            if(sp_shakes == 0) notification_text = "Shake your device " + sp_shakes + " times to copy the incoming data to your clipboard.";
+            if(sp_shakes != 0) notification_text = "Shake your device " + sp_shakes + " times to copy the incoming data to your clipboard.";
             else notification_text = "Clipboard updated.";
 
             Notification myNotification = new Notification.Builder(this)

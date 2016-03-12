@@ -86,9 +86,9 @@ public class ActivityPermission extends Activity{
                 if(!k){
                     makeToast("Permission granted!");
                     k = true;
+                    startActivity(new Intent(ActivityPermission.this, MainActivity.class));
                 }
 
-                startActivity(new Intent(ActivityPermission.this, MainActivity.class));
                 finish();
             }
             handler_permission.postDelayed(this, 2000);

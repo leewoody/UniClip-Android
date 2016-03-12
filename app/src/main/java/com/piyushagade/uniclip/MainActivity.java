@@ -29,6 +29,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -42,6 +43,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
@@ -49,24 +51,26 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class MainActivity extends Activity{
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
-    Button b_start_stop, b_clear_history;
+    Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin;
     CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme, cb_open_url;
+    EditText input_access_pin;
     SharedPreferences sp;
     SharedPreferences.Editor ed;
-    private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run, sp_open_url;
+    private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run, sp_open_url, sp_are_creator;
     private String sp_user_email, sp_device_name;
     ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_shake;
     SeekBar sb_sensitivity, sb_numberShakes;
-    TextView sensitivity_indicator, shakes_indicator, history, welcome_text;
+    TextView sensitivity_indicator, shakes_indicator, access_pin_desc, welcome_text;
     private int sensitivity, numberShakes;
     private int sp_sensitivity, sp_shakes;
-    Animation fade_in, fade_out, rotate, blink, slide_in_top, slide_out_top, fade_in_rl_top, fade_out_rl_top;
-    private RelativeLayout rl_settings, rl_main, rl_top, rl_menu_on, rl_menu_content, rl_history, rl_info, rl_user, rl_help;
+    Animation fade_in, fade_out, rotate, blink, slide_in_top, slide_out_top, fade_in_rl_top, fade_out_rl_top, bob, fade_out_rl_settings;
+    private RelativeLayout rl_settings, rl_running, rl_main, rl_top, rl_menu_on, rl_menu_content, rl_history, rl_info, rl_user, rl_help;
     private String user_email;
     private View.OnClickListener  mOnClickListener;
     private ClipboardManager myClipboard;
     private ArrayList<String> history_list_activity;
     private Handler handler_history, handler_devices;
+    private TextView user_access_pin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,8 @@ public class MainActivity extends Activity{
         //UI Components
         b_start_stop = (Button) findViewById(R.id.b_start_stop);
         b_clear_history = (Button) findViewById(R.id.b_clear_history);
+        b_view_access_pin = (Button) findViewById(R.id.b_view_access_pin);
+        b_set_access_pin = (Button) findViewById(R.id.b_set_access_pin);
         cb_autostart = (CheckBox) findViewById(R.id.cb_autostart);
         cb_notification = (CheckBox) findViewById(R.id.cb_notification);
         cb_vibrate = (CheckBox) findViewById(R.id.cb_vibrate);
@@ -104,15 +110,20 @@ public class MainActivity extends Activity{
         sensitivity_indicator = (TextView) findViewById(R.id.sensitivity_indicator);
         shakes_indicator = (TextView) findViewById(R.id.shakes_indicator);
         welcome_text = (TextView) findViewById(R.id.welcome_text);
+        access_pin_desc = (TextView) findViewById(R.id.access_pin_desc);
+        user_access_pin = (TextView) findViewById(R.id.user_access_pin);
         fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_in_rl_top = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         fade_out_rl_top = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        fade_out_rl_settings = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        bob = AnimationUtils.loadAnimation(this, R.anim.bob);
         blink = AnimationUtils.loadAnimation(this, R.anim.blink);
         rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
         slide_in_top = AnimationUtils.loadAnimation(this, R.anim.slide_in_top);
         slide_out_top = AnimationUtils.loadAnimation(this, R.anim.slide_out_top);
         rl_settings = (RelativeLayout) findViewById(R.id.rl_settings);
+        rl_running = (RelativeLayout) findViewById(R.id.rl_running);
         rl_main = (RelativeLayout) findViewById(R.id.rl_main);
         rl_top = (RelativeLayout) findViewById(R.id.rl_top);
         rl_menu_on = (RelativeLayout) findViewById(R.id.rl_menu_on);
@@ -121,6 +132,7 @@ public class MainActivity extends Activity{
         rl_info = (RelativeLayout) findViewById(R.id.rl_info);
         rl_help = (RelativeLayout) findViewById(R.id.rl_help);
         rl_menu_content = (RelativeLayout) findViewById(R.id.rl_menu_content);
+        input_access_pin = (EditText) findViewById(R.id.input_access_pin);
 
         sp = getSharedPreferences(PREF_FILE, 0);
         ed = sp.edit();
@@ -148,14 +160,20 @@ public class MainActivity extends Activity{
                     intent.putExtra("isAutorun", "false");
                     startService(intent);
 
+
+                    //Reinitialize
+                    reinitialize();
+
                     rl_menu_content.setVisibility(View.GONE);
 
                     b_start_stop.setText("Stop UniClip!");
                     vibrate(50);
-                    rl_settings.startAnimation(fade_out);
+                    rl_settings.startAnimation(fade_out_rl_settings);
 
 
-                    fade_out.setAnimationListener(new Animation.AnimationListener() {
+
+
+                    fade_out_rl_settings.setAnimationListener(new Animation.AnimationListener() {
 
                         @Override
                         public void onAnimationStart(Animation animation) {
@@ -171,17 +189,34 @@ public class MainActivity extends Activity{
                             welcome_text.setText("You can close this app. The background service will make " +
                                     "sure clipboards on all your devices stay unified.");
 
+
+
+                            rl_running.setVisibility(View.VISIBLE);
+                            rl_running.startAnimation(fade_in);
+                            b_set_access_pin.setEnabled(true);
+                            b_set_access_pin.setText("Validate");
+
                             sync_anim.setVisibility(View.VISIBLE);
                             sync_anim.setAlpha(0.10f);
+
+
+                            clip_icon.startAnimation(bob);
 
                         }
                     });
 
                 } else {
                     stopService(new Intent(getBaseContext(), UniClipService.class));
+                    ed.putBoolean("authenticated", false);
+
                     b_start_stop.setText("Start UniClip!");
                     rl_settings.startAnimation(fade_in);
                     rl_settings.setVisibility(View.VISIBLE);
+
+                    rl_running.startAnimation(fade_out);
+                    rl_running.setVisibility(View.GONE);
+
+
                     sync_anim.setAlpha(0.00f);
                     welcome_text.setText("UniClip is a multi-device clipboard synchronization " +
                             "application, which makes sharing texts, links, etc easy.");
@@ -194,6 +229,24 @@ public class MainActivity extends Activity{
             }
 
         });
+
+        //Access Pin Button listener
+        b_view_access_pin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                int key = sp.getInt("access_pin", 0);
+                if(key != 0){
+                    b_view_access_pin.setText("Your Access PIN: " + String.valueOf(key));
+                }
+                else {
+                    b_view_access_pin.setText("No PIN set yet");
+                }
+
+            }
+
+        });
+
+
+
 
         //Menu button listener
         b_menu.setOnClickListener(new View.OnClickListener() {
@@ -298,6 +351,59 @@ public class MainActivity extends Activity{
             public void onClick(View v) {
                 vibrate(27);
                 makeToast("Help pressed.");
+            }
+        });
+
+        //Validate access pin button listener
+        b_set_access_pin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(27);
+                final String input_pin = input_access_pin.getText().toString();
+
+                //Format email address (remove the .)
+                String user_node = sp_user_email.replaceAll("\\.", "");
+
+                //Firebase
+                Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+
+                fb.child("key").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+
+                            //Correct Access Pin
+                            if (input_pin.equals(snapshot.getValue().toString())) {
+                                input_access_pin.setVisibility(View.GONE);
+                                b_set_access_pin.setText("Verified");
+                                b_set_access_pin.setEnabled(false);
+                                user_access_pin.setText(snapshot.getValue().toString());
+
+                                sync_anim.startAnimation(rotate);
+                                ed.putBoolean("authenticated", true).commit();
+
+                                //Restart Service
+                                stopService(new Intent(getBaseContext(), UniClipService.class));
+                                Intent intent = new Intent(MainActivity.this, UniClipService.class);
+                                intent.putExtra("isAutorun", "false");
+                                startService(intent);
+
+                            }
+                            else {
+                                makeToast("Wrong Access Pin. Try Again");
+                                ed.putBoolean("authenticated", false).commit();
+
+                                //Stop Service
+                                stopService(new Intent(getBaseContext(), UniClipService.class));
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError error) {
+                    }
+                });
+
             }
         });
 
@@ -454,6 +560,91 @@ public class MainActivity extends Activity{
                 );
 
     }
+
+    private void reinitialize() {
+
+        //Get Values SP
+        sp_are_creator = sp.getBoolean("creator", false);
+
+
+        //Make snack if network unavailable
+        if(!isNetworkAvailable())makeSnack("Network unavailable.");
+
+
+
+        //Get user email
+        if(hasPermission()) {
+            AccountManager accountManager = AccountManager.get(MainActivity.this);
+            Account account = getAccount(accountManager);
+
+            if (account != null) {
+                ed.putString("user_email", account.name);
+                ed.commit();
+            } else
+                makeSnackForPermissions("Grant 'Contacts' permission to UniClip!");
+        }
+
+
+        //Set content if this device is/is not the creator
+
+
+        final Handler creatorHandler = new Handler();
+        creatorHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sp_are_creator = sp.getBoolean("creator", false);
+                if(!sp_are_creator){
+                    access_pin_desc.setText("In order to start listening to the cloudboard, you need to input the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
+
+                    b_view_access_pin.setVisibility(View.GONE);
+
+                    sync_anim.clearAnimation();
+                    b_set_access_pin.setVisibility(View.VISIBLE);
+                    input_access_pin.setVisibility(View.VISIBLE);
+                }
+                else {
+                    //Reset Access Pin Button text
+                    b_view_access_pin.setText("View Access Pin");
+                    b_view_access_pin.setVisibility(View.VISIBLE);
+
+                    sync_anim.startAnimation(rotate);
+                    b_set_access_pin.setVisibility(View.INVISIBLE); //Let this be invilsible
+                    input_access_pin.setVisibility(View.GONE);
+                }
+            }
+        }, 600);
+
+
+
+
+
+        //Format email address (remove the .)
+        String user_node = sp_user_email.replaceAll("\\.", "");
+
+        //Firebase
+        Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+
+        //Check if this device is creator
+        fb.child("creator").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                    if(sp_device_name.equals(snapshot.getValue().toString())){
+                        ed.putBoolean("creator", true).commit();
+                    }
+                    else ed.putBoolean("creator", false).commit();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+    }
+
+
 
     //History refresh with 4 sec delay
     private Runnable refreshHistory = new Runnable() {
@@ -620,6 +811,9 @@ public class MainActivity extends Activity{
         //Showcase UI
         presentShowcaseSequence();
 
+        //Set Authenticated as false
+        ed.putBoolean("authenticated", false).commit();
+
         //Get Values SP
         sp_autostart = sp.getBoolean("autostart", true);
         sp_notification = sp.getBoolean("notification", true);
@@ -629,6 +823,7 @@ public class MainActivity extends Activity{
         sp_device_name = sp.getString("device_name", "unknown");
         sp_first_run = sp.getBoolean("first_run", true);
         sp_open_url = sp.getBoolean("open_url", true);
+        sp_are_creator = sp.getBoolean("creator", false);
 
         //Intro Screen
         if(sp_first_run){
@@ -648,6 +843,16 @@ public class MainActivity extends Activity{
             sb_numberShakes.setEnabled(false);
             sb_sensitivity.setProgress(0);
 
+        }
+
+        //Set content if this device is not the creator
+        if(!sp_are_creator){
+            access_pin_desc.setText("In order to start listening to the cloudboard, you need to input the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
+            b_view_access_pin.setVisibility(View.GONE);
+
+            sync_anim.clearAnimation();
+            b_set_access_pin.setVisibility(View.VISIBLE);
+            input_access_pin.setVisibility(View.VISIBLE);
         }
 
         //Detect Vibrator
@@ -692,13 +897,59 @@ public class MainActivity extends Activity{
         rl_menu_content.setVisibility(View.INVISIBLE);
 
 
+        //Format email address (remove the .)
+        String user_node = sp_user_email.replaceAll("\\.", "");
 
+        //Firebase
+        Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
 
+        //Get user pin from firebase
+        fb.child("key").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    //Set user access pin
+                    if(sp_are_creator) user_access_pin.setText(snapshot.getValue().toString());
 
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        //Check if this device is creator
+        fb.child("creator").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                    if(sp_device_name.equals(snapshot.getValue().toString())){
+                        ed.putBoolean("creator", true).commit();
+                    }
+                    else ed.putBoolean("creator", false).commit();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        //Set up content if service is running
         if (isServiceRunning(UniClipService.class)) {
+
             b_start_stop.setText("Stop UniClip!");
+
             rl_settings.setVisibility(View.GONE);
+            rl_running.setVisibility(View.VISIBLE);
+            if(sp_are_creator){
+
+            }
+
             sync_anim.setAlpha(0.2f);
+
             welcome_text.setText("You can close this app. The background service will make " +
                     "sure clipboards on all your devices stay unified.");
 

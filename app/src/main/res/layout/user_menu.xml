@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/user_title"
         android:layout_marginTop="20sp"
-        android:paddingRight="16sp">
+        android:paddingRight="16sp"
+        android:paddingBottom="10sp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -94,7 +95,7 @@
                 android:textSize="18sp"
                 android:id="@+id/user_other_devices_title"
                 android:layout_marginTop="18sp"
-                android:layout_below="@id/hl4"
+                android:layout_below="@id/hl5"
                 android:textColor="#88FFFFFF"/>
 
                 <LinearLayout
@@ -112,7 +113,38 @@
                 android:layout_height="2sp"
                 android:background="#33FFFFFF"
                 android:id="@+id/hl5"
-                android:layout_below="@id/ll_other_devices_feed"
+                android:layout_below="@+id/user_access_pin"
+                android:layout_marginTop="8sp"/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your access pin: "
+                android:textSize="18sp"
+                android:id="@+id/user_access_pin_title"
+                android:layout_marginTop="18sp"
+                android:layout_below="@id/hl4"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="None set yet. If this is your first time using UniClip, use the 'Start Uniclip!' button at the bottom of the main screen; An access pin will be generated automatically."
+                android:textSize="16sp"
+                android:id="@+id/user_access_pin"
+                android:layout_marginTop="8sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/user_access_pin_title"
+                android:textColor="#009688"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="2sp"
+                android:background="#33FFFFFF"
+                android:id="@+id/hl7"
+                android:layout_below="@id/user_access_pin"
                 android:layout_marginTop="8sp"/>
 
 
