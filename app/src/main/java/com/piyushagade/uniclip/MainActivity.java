@@ -50,12 +50,12 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 public class MainActivity extends Activity{
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     Button b_start_stop, b_clear_history;
-    CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme;
+    CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme, cb_open_url;
     SharedPreferences sp;
     SharedPreferences.Editor ed;
-    private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run;
+    private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run, sp_open_url;
     private String sp_user_email, sp_device_name;
-    ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help;
+    ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_shake;
     SeekBar sb_sensitivity, sb_numberShakes;
     TextView sensitivity_indicator, shakes_indicator, history, welcome_text;
     private int sensitivity, numberShakes;
@@ -81,13 +81,14 @@ public class MainActivity extends Activity{
 
         setContentView(R.layout.activity_main);
 
-        //Elements
+        //UI Components
         b_start_stop = (Button) findViewById(R.id.b_start_stop);
         b_clear_history = (Button) findViewById(R.id.b_clear_history);
         cb_autostart = (CheckBox) findViewById(R.id.cb_autostart);
         cb_notification = (CheckBox) findViewById(R.id.cb_notification);
         cb_vibrate = (CheckBox) findViewById(R.id.cb_vibrate);
         cb_theme = (CheckBox) findViewById(R.id.cb_theme);
+        cb_open_url = (CheckBox) findViewById(R.id.cb_open_url);
         clip_icon = (ImageView) findViewById(R.id.clip_icon);
         sync_anim = (ImageView) findViewById(R.id.sync_anim);
         b_close = (ImageView) findViewById(R.id.b_close);
@@ -97,11 +98,11 @@ public class MainActivity extends Activity{
         b_history = (ImageView) findViewById(R.id.b_history);
         b_help = (ImageView) findViewById(R.id.b_help);
         b_info = (ImageView) findViewById(R.id.b_info);
+        b_help_shake = (ImageView) findViewById(R.id.b_help_shake);
         sb_sensitivity = (SeekBar) findViewById(R.id.sb_sensitivity);
         sb_numberShakes = (SeekBar) findViewById(R.id.sb_shakes);
         sensitivity_indicator = (TextView) findViewById(R.id.sensitivity_indicator);
         shakes_indicator = (TextView) findViewById(R.id.shakes_indicator);
-        history = (TextView) findViewById(R.id.history);
         welcome_text = (TextView) findViewById(R.id.welcome_text);
         fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_in_rl_top = AnimationUtils.loadAnimation(this, R.anim.fade_in);
@@ -127,6 +128,8 @@ public class MainActivity extends Activity{
         //Initialize App
         initialize();
 
+
+        //Close Button listener
         b_close.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
@@ -137,6 +140,7 @@ public class MainActivity extends Activity{
 
         });
 
+        //Service start stop listener
         b_start_stop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (!isServiceRunning(UniClipService.class)) {
@@ -168,7 +172,7 @@ public class MainActivity extends Activity{
                                     "sure clipboards on all your devices stay unified.");
 
                             sync_anim.setVisibility(View.VISIBLE);
-                            sync_anim.setAlpha(0.2f);
+                            sync_anim.setAlpha(0.10f);
 
                         }
                     });
@@ -191,6 +195,7 @@ public class MainActivity extends Activity{
 
         });
 
+        //Menu button listener
         b_menu.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(26);
@@ -228,6 +233,7 @@ public class MainActivity extends Activity{
 
         });
 
+        //Back button listener
         b_back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
@@ -273,6 +279,7 @@ public class MainActivity extends Activity{
             }
         });
 
+        //History button listener
         b_history.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
@@ -286,6 +293,15 @@ public class MainActivity extends Activity{
             }
         });
 
+        //Help for shakes button listener
+        b_help_shake.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(27);
+                makeToast("Help pressed.");
+            }
+        });
+
+        //User button listener
         b_user.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
@@ -306,6 +322,7 @@ public class MainActivity extends Activity{
             }
         });
 
+        //Info button listener
         b_info.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
@@ -317,6 +334,7 @@ public class MainActivity extends Activity{
         });
 
 
+        //Help button listener
         b_help.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
@@ -327,6 +345,7 @@ public class MainActivity extends Activity{
             }
         });
 
+        //Clear history listener
         b_clear_history.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
@@ -337,12 +356,13 @@ public class MainActivity extends Activity{
         });
 
 
+        //Autostart checkbox listener
         cb_autostart.setOnCheckedChangeListener
                 (new CompoundButton.OnCheckedChangeListener()
 
                  {
                      @Override
-                     public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
+                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                          if (isChecked) {
                              ed.putBoolean("autostart", true);
                          } else {
@@ -355,6 +375,7 @@ public class MainActivity extends Activity{
 
                 );
 
+        //Notiication checkbox listener
         cb_notification.setOnCheckedChangeListener
                 (new CompoundButton.OnCheckedChangeListener()
 
@@ -373,6 +394,26 @@ public class MainActivity extends Activity{
 
                 );
 
+        //Open_URL checkbox listener
+        cb_open_url.setOnCheckedChangeListener
+                (new CompoundButton.OnCheckedChangeListener()
+
+                 {
+                     @Override
+                     public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
+                         if (isChecked) {
+                             ed.putBoolean("open_url", true);
+                         } else {
+                             ed.putBoolean("open_url", false);
+                         }
+                         ed.commit();
+
+                     }
+                 }
+
+                );
+
+        //Vibrate checkbox listener
         cb_vibrate.setOnCheckedChangeListener
                 (new CompoundButton.OnCheckedChangeListener()
 
@@ -391,6 +432,7 @@ public class MainActivity extends Activity{
 
                 );
 
+        //Theme checkbox listener
         cb_theme.setOnCheckedChangeListener
                 (new CompoundButton.OnCheckedChangeListener()
 
@@ -413,6 +455,7 @@ public class MainActivity extends Activity{
 
     }
 
+    //History refresh with 4 sec delay
     private Runnable refreshHistory = new Runnable() {
         public void run() {
             setHistoryListItems();
@@ -421,6 +464,7 @@ public class MainActivity extends Activity{
         }
     };
 
+    //Set history feed
     private void setHistoryListItems() {
         syncHistoryLists();
 
@@ -489,11 +533,13 @@ public class MainActivity extends Activity{
             }
     }
 
+    //Check if a number is even
     private boolean isEven(int i) {
         if(i % 2 == 0) return true;
         return false;
     }
 
+    //Refresh device list runnable with 4 sec delay
     private Runnable refreshDevicesList = new Runnable() {
         public void run() {
             setOtherDevicesListItems();
@@ -502,6 +548,7 @@ public class MainActivity extends Activity{
         }
     };
 
+    //Set devices in feed
     private void setOtherDevicesListItems() {
         int i = 1;
         final LinearLayout ll_other_devices_feed = (LinearLayout) findViewById(R.id.ll_other_devices_feed);
@@ -568,6 +615,7 @@ public class MainActivity extends Activity{
 
     }
 
+    //Initialize application
     private void initialize() {
         //Showcase UI
         presentShowcaseSequence();
@@ -580,6 +628,7 @@ public class MainActivity extends Activity{
         sp_user_email = sp.getString("user_email", "unknown");
         sp_device_name = sp.getString("device_name", "unknown");
         sp_first_run = sp.getBoolean("first_run", true);
+        sp_open_url = sp.getBoolean("open_url", true);
 
         //Intro Screen
         if(sp_first_run){
@@ -587,6 +636,7 @@ public class MainActivity extends Activity{
             finish();
         }
 
+        //Make snack if network unava
         if(!isNetworkAvailable())makeSnack("Network unavailable.");
 
         //Detect accelerometer
@@ -600,6 +650,18 @@ public class MainActivity extends Activity{
 
         }
 
+        //Detect Vibrator
+        String vs = Context.VIBRATOR_SERVICE;
+        Vibrator mVibrator = (Vibrator)getSystemService(vs);
+
+        boolean hasVibrator = mVibrator.hasVibrator();
+
+        if(!hasVibrator){
+            cb_vibrate.setChecked(false);
+            cb_vibrate.setEnabled(false);
+            sp_vibrate = false;
+            ed.putBoolean("vibrate", false).commit();
+        }
 
 
         //Get user email
@@ -668,6 +730,9 @@ public class MainActivity extends Activity{
 
         if(sp_vibrate)cb_vibrate.setChecked(true);
         else cb_vibrate.setChecked(false);
+
+        if(sp_open_url)cb_open_url.setChecked(true);
+        else cb_open_url.setChecked(false);
 
         if(sp_theme){
             cb_theme.setChecked(true);
@@ -861,7 +926,7 @@ public class MainActivity extends Activity{
                 new MaterialShowcaseView.Builder(this)
                         .setTarget(b_close)
                         .setDismissText("Awesome, let's begin. >")
-                        .setContentText("This thing here, turns down the awesome.'")
+                        .setContentText("This thing here, turns down the awesome.")
                         .withCircleShape()
                         .build()
         );

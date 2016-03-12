@@ -75,4 +75,8 @@
     <string name="intro5_title">Setting up UniClip!</string>
     <string name="intro5_desc">Please wait while we initiate the UI.</string>
 
+    <string name="intro6_title">Clipboard History!</string>
+    <string name="intro6_desc">UniClip maintains a clipboard history of the session. So, if you miss something, don\'t worry, just go to the Menu and click on history icon.</string>
+
+
 </resources>

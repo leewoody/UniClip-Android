@@ -45,11 +45,11 @@ public class MainIntroActivity extends IntroActivity {
                 .build());
 
         addSlide(new SimpleSlide.Builder()
-                .title(R.string.intro2_title)
-                .description(R.string.intro2_desc)
-                .image(R.drawable.shake_intro)
-                .background(R.color.intro2)
-                .backgroundDark(R.color.introDark2)
+                .title(R.string.intro6_title)
+                .description(R.string.intro6_desc)
+                .image(R.drawable.history_intro)
+                .background(R.color.intro6)
+                .backgroundDark(R.color.introDark6)
                 .scrollable(true)
                 .build());
 
@@ -74,8 +74,8 @@ public class MainIntroActivity extends IntroActivity {
                     .title(R.string.intro5_title)
                     .description(R.string.intro5_desc)
                     .image(R.drawable.wait_intro)
-                    .background(R.color.intro4)
-                    .backgroundDark(R.color.introDark4)
+                    .background(R.color.intro5)
+                    .backgroundDark(R.color.introDark5)
                     .scrollable(true)
                     .build());
         }
@@ -84,8 +84,8 @@ public class MainIntroActivity extends IntroActivity {
                     .title(R.string.intro5_title)
                     .description(R.string.intro5_desc)
                     .image(R.drawable.wait_intro)
-                    .background(R.color.intro4)
-                    .backgroundDark(R.color.introDark4)
+                    .background(R.color.intro5)
+                    .backgroundDark(R.color.introDark5)
                     .scrollable(true)
                     .build());
         }

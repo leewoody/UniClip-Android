@@ -1,4 +1,6 @@
-package com.piyushagade.uniclip; /**
+package com.piyushagade.uniclip;
+
+/**
  * Created by Piyush Agade on 02-07-2016.
  */
 
@@ -28,6 +30,8 @@ import com.github.tbouron.shakedetector.library.ShakeDetector;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UniClipService extends Service {
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
@@ -35,7 +39,7 @@ public class UniClipService extends Service {
     private ClipboardManager myClipboard;
     private float sensitivity;
     private boolean dataAccepted;
-    private boolean sp_notification, sp_autostart, sp_vibrate;
+    private boolean sp_notification, sp_autostart, sp_vibrate, sp_open_url;
     SharedPreferences sp;
     private SharedPreferences.Editor ed;
     boolean destroyed = false;
@@ -57,7 +61,7 @@ public class UniClipService extends Service {
             SharedPreferences pref = getSharedPreferences(PREF_FILE, 0);
             Firebase.setAndroidContext(this);
 
-
+            //Read SharedPreferences
             sp = getSharedPreferences(PREF_FILE, 0);
             ed = sp.edit();
 
@@ -68,10 +72,12 @@ public class UniClipService extends Service {
             sp_shakes = sp.getInt("shakes", 2);
             sp_user_email = sp.getString("user_email", "unknown");
             sp_device_name = sp.getString("device_name", "unknown");
+            sp_open_url = sp.getBoolean("open_url", true);
 
+            //ArrayList for storing History
             history_list_service = new ArrayList<String>();
 
-
+            //Get Extras from Intent
             try {
                 boolean isAutorun = Boolean.valueOf(intent.getStringExtra("isAutorun"));
                 if (!sp_autostart && isAutorun) {
@@ -82,13 +88,16 @@ public class UniClipService extends Service {
                 makeToast("Service will continue running in the background.");
             }
 
-
+            //Format email address (remove the .)
             String user_node = sp_user_email.replaceAll("\\.", "");
+
+            //Firebase
             fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
 
             //Register this device
             fb.child("devices").child(sp_device_name).setValue("1");
 
+            //Clipboard Manager
             myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
             //Listen for changes in cloudboard
@@ -97,12 +106,17 @@ public class UniClipService extends Service {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         if (snapshot.getValue() == null){
-                            fb.child("data").setValue("");
+//                            fb.child("data").setValue("");
                         }
                         else {
-                            history_list_service.add(snapshot.getValue().toString());
+                            //Add current incoming clip if not available in history.
+                            if(!history_list_service.contains(snapshot.getValue().toString()))
+                                history_list_service.add(snapshot.getValue().toString());
 
+                            //Set data accepted as false
                             dataAccepted = false;
+
+                            //Set the clipboard with incoming text if both are not same
                             if (!String.valueOf(snapshot.getValue()).equals(getCBData())) {
                                 vibrate(200);
                                 shakeDetection(snapshot);
@@ -130,7 +144,7 @@ public class UniClipService extends Service {
 
     }
 
-
+    //Display Notification
     protected void displayNotification(){
         if(sp_notification) {
             Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(""));
@@ -167,13 +181,22 @@ public class UniClipService extends Service {
     }
 
     private void shakeDetection(final DataSnapshot snapshot) {
+        //Check if string is a URL or not and launch the browse
+
         if(sp_shakes!=0&&!destroyed) {
             ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
                 @Override
                 public void OnShake() {
+                    //Set data accepted as true
                     dataAccepted = true;
+
+                    //Update local clipboard
                     ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
                     if(!destroyed) myClipboard.setPrimaryClip(myClip);
+
+                    //Start browser
+                    if(isURL(snapshot.getValue().toString()))startBrowser(snapshot.getValue().toString());
+
                 }
             });
             ShakeDetector.updateConfiguration((sp_sensitivity + 1) / 2, sp_shakes);
@@ -183,21 +206,52 @@ public class UniClipService extends Service {
             dataAccepted = true;
             ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
             myClipboard.setPrimaryClip(myClip);
+
+            //Start browser
+            if(isURL(snapshot.getValue().toString()))startBrowser(snapshot.getValue().toString());
         }
+
+
 
     }
 
+    //Start Browser method
+    private void startBrowser(String url){
+        if(sp_open_url) {
+            if (!url.startsWith("http://") && !url.startsWith("https://"))
+                url = "http://" + url;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
+
+    //Check if URL
+    private boolean isURL(String url) {
+        final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+
+        Pattern p = Pattern.compile(URL_REGEX);
+        Matcher m = p.matcher(url);
+        if(m.find()) {
+            return true;
+        }
+        return false;
+    }
+
+    //Het Clipboard data method
     private String getCBData(){
         ClipData clipdata = myClipboard.getPrimaryClip();        //Get primary clip
         ClipData.Item item = null;
         if(clipdata != null){
             item = clipdata.getItemAt(0);                //Get 0th item from clipboard
-            return item.getText().toString();
+
+            if(item.getText() != null) return item.getText().toString();
+            else return "";
         }
         return "";
     }
 
-
+    //On Destroy
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -208,7 +262,7 @@ public class UniClipService extends Service {
         fb.child("devices").child(sp_device_name).setValue("0");
     }
 
-
+    //Remove Listener after a time delay
     public void waitAndRemoveListener(int time){
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -222,10 +276,12 @@ public class UniClipService extends Service {
         }, time);
     }
 
+    //Make toast method
     private void makeToast(Object data) {
         Toast.makeText(getApplicationContext(),String.valueOf(data),Toast.LENGTH_LONG).show();
     }
 
+    //Network Detector method
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -233,6 +289,7 @@ public class UniClipService extends Service {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    //Vibrate device method
     private void vibrate(int time){
         if(sp_vibrate&&!destroyed)((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
     }
