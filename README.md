@@ -17,9 +17,13 @@ Screenshots
 What It Does
 -----
 
-**1:** UnClip syncs clipboards on all devices registered that are currently listening.
+**1:** UniClip syncs clipboards on all registered devices that are currently listening the cloudboard.
 
 **2:** That's about it.
+
+Cloudboard
+-------
+The cloudboard is the clipboard on cloud. Each username has its own cloudboard through which the user's devices could unify their clipboards. The cloudboard is implemeted on the Firebase.
 
 Changes
 -------
@@ -36,7 +40,7 @@ Changes
 Open source libraries
 -------
 
-*material-intro* uses the following open source files:
+*UniClip!* uses the following open source files:
 
 * [Material Intro][5] by [@HeinrichReimer][6]
 
