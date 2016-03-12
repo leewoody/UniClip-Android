@@ -52,7 +52,7 @@ Open source libraries
 [5]: https://github.com/piyushagade/material-intro
 [6]: https://github.com/HeinrichReimer
 
-[12]: http://i.imgur.com/1lne2ys.png
-[13]: http://i.imgur.com/J2iymrL.png
-[14]: http://i.imgur.com/Xyok5qh.png
-[15]: http://i.imgur.com/ft1wz2N.png
+[12]: http://imgur.com/JaTbpka
+[13]: http://imgur.com/Zm04vKH
+[14]: http://imgur.com/62BYx6M
+[15]: http://imgur.com/62BYx6M
