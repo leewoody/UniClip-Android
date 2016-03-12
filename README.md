@@ -7,7 +7,7 @@ UniClip is an cross-device clipboard synchronization application.
 
 Play Store
 ----
-A demo app is available on Google Play:
+A app is available on Google Play:
 
 <a href="#">
 	<img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60" />
@@ -16,10 +16,10 @@ A demo app is available on Google Play:
 Screenshots
 -----------
 
-| Simple slide | Custom slide | Fade effect | Fullscreen |
+| IntroActivity | UniClip Main Screen | User Info | Running Screen |
 |:-:|:-:|:-:|:-:|
-| ![Simple slide][12] | ![Custom slide][13] | ![Fade effect][14] | ![Fullscreen][15] |
-| [IntoActivity_][1] | [_Main UI_][2] | [_Menu: User Info_][3] | [_Menu: Clipboard History_][3] |
+| ![IntroActivity][12] | ![UniClip Main Screen][13] | ![User Info][14] | ![Running Screen][15] |
+| [_IntroActivity_] | [_Main UI_] | [_User Info_] | [_Running Screen_] |
 
 
 What It Does
