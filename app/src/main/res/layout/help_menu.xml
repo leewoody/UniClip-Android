@@ -15,7 +15,7 @@
         android:textSize="30sp"
         android:id="@+id/help_title"
         android:layout_marginTop="40sp"
-        android:textColor="#009688"/>
+        android:textColor="@color/colorPrimary"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/help_helpname_title"
-                android:textColor="#009688"/>
+                android:textColor="@color/colorPrimary"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -75,7 +75,7 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/help_device_title"
-                android:textColor="#009688"/>
+                android:textColor="@color/colorPrimary"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -106,7 +106,7 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/help_other_devices_title"
-                android:textColor="#009688"/>
+                android:textColor="@color/colorPrimary"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"

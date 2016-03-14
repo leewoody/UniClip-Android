@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/rl_menu_on"
     android:padding="10dp"
-    android:background="#009688"
+    android:background="@color/colorPrimary"
     android:visibility="invisible"
     android:paddingBottom="0dp"
     xmlns:android="http://schemas.android.com/apk/res/android">

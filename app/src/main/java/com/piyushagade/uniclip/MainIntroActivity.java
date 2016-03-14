@@ -101,12 +101,13 @@ public class MainIntroActivity extends IntroActivity {
                             @Override
                             public void run() {
                                 //Wait
+                                startActivity(new Intent(MainIntroActivity.this, MainActivity.class));
+                                finish();
                             }
-                        }, 2800);
+                        }, 3000);
 
 
-                            startActivity(new Intent(MainIntroActivity.this, MainActivity.class));
-                            finish();
+
                     }
                 if(hasPermission())
                     if(position == 4){
@@ -115,11 +116,11 @@ public class MainIntroActivity extends IntroActivity {
                             @Override
                             public void run() {
                                 //Wait
+                                startActivity(new Intent(MainIntroActivity.this, MainActivity.class));
+                                finish();
                             }
-                        }, 2800);
+                        }, 3000);
 
-                        startActivity(new Intent(MainIntroActivity.this, MainActivity.class));
-                        finish();
                     }
             }
             @Override

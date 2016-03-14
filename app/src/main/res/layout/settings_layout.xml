@@ -18,50 +18,72 @@
         android:button="@null"
         android:layout_marginTop="4dp"/>
 
-
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Notifications"
-        android:id="@+id/cb_notification"
-        android:textSize="14sp"
-        android:paddingLeft="16sp"
-        android:textColor="#AAFFFFFF"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-        android:button="@null"
-        android:layout_alignTop="@+id/cb_autostart"
-        android:layout_marginTop="50dp"/>
-
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Open URL in browser?"
-        android:id="@+id/cb_open_url"
-        android:textSize="14sp"
-        android:paddingLeft="16sp"
-        android:textColor="#AAFFFFFF"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-        android:button="@null"
-        android:layout_alignTop="@+id/cb_notification"
-        android:layout_marginTop="50dp"/>
-
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Vibrations"
-        android:id="@+id/cb_vibrate"
-        android:textSize="14sp"
-        android:paddingLeft="16sp"
-        android:textColor="#AAFFFFFF"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-        android:button="@null"
-        android:layout_alignTop="@+id/cb_open_url"
-        android:layout_marginTop="50dp"/>
-
+    <!-- RL on data arrive-->
     <RelativeLayout
         android:layout_width="400sp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cb_vibrate"
+        android:layout_below="@id/cb_autostart"
+        android:layout_marginTop="25dp"
+        android:paddingBottom="12sp"
+        android:id="@+id/rl_on_data_arrive"
+        android:paddingTop="12sp"
+        android:background="#11FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="When new clipboard data arrives:"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:paddingLeft="16sp"
+            android:id="@+id/rl_on_data_arrive_title"/>
+
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Notifications"
+            android:id="@+id/cb_notification"
+            android:textSize="14sp"
+            android:paddingLeft="16sp"
+            android:textColor="#88FFFFFF"
+            android:layout_marginTop="18sp"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            android:layout_below="@id/rl_on_data_arrive_title"
+            android:button="@null"/>
+
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Open URL in browser?"
+            android:id="@+id/cb_open_url"
+            android:textSize="14sp"
+            android:paddingLeft="16sp"
+            android:textColor="#88FFFFFF"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            android:button="@null"
+            android:layout_alignTop="@+id/cb_notification"
+            android:layout_marginTop="46dp"/>
+
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Vibrations"
+            android:id="@+id/cb_vibrate"
+            android:textSize="14sp"
+            android:paddingLeft="16sp"
+            android:textColor="#88FFFFFF"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            android:button="@null"
+            android:layout_alignTop="@+id/cb_open_url"
+            android:layout_marginTop="46dp"/>
+    </RelativeLayout>
+
+
+    <!-- RL Shake-->
+    <RelativeLayout
+        android:layout_width="400sp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_on_data_arrive"
         android:layout_marginTop="24sp"
         android:paddingBottom="12sp"
         android:id="@+id/rl_shake"
@@ -72,8 +94,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Accept incoming data by shaking:"
-            android:textSize="15sp"
-            android:textColor="#AAFFFFFF"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
             android:paddingLeft="16sp"
             android:id="@+id/rl_shakes_title"/>
 

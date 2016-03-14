@@ -15,7 +15,7 @@
         android:textSize="30sp"
         android:id="@+id/history_title"
         android:layout_marginTop="40sp"
-        android:textColor="#009688"/>
+        android:textColor="@color/colorPrimary"/>
 
     <ScrollView
         android:layout_width="match_parent"

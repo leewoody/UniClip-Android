@@ -61,22 +61,20 @@
     <string name="title_activity_main">UniClip!</string>
 
     <string name="intro1_title">Welcome to UniClip!</string>
-    <string name="intro1_desc">UniClip is a cross-device clipboard synchronization app.\n\nEver wanted to quickly copy a link, an email or a text from your mobile to your tablet or your PC?
-    UniClip does just that. You can sync clipboards of all your devices in a blink of an eye. Its easy, intuitive, convinient, and of course, lightning fast!</string>
-
+    <string name="intro1_desc">UniClip is a cross-device clipboard synchronization app.\n\nEver wanted to quickly copy a link, or an email from your mobile to your tablet or your PC or the other way around?
+    UniClip does just that. Its easy, intuitive, and of course, lightning fast!</string>
 
     <string name="intro3_title">Multitude of settings!</string>
-    <string name="intro3_desc">You can change app theme, whether or not you need device to vibrate or send notifications when new data arrives. You can also change the number of shakes required and shake sensitivity to accept incoming cloudboard data.</string>
-
+    <string name="intro3_desc">You can change app theme, and whether or not you need device to vibrate or send notifications when new data arrives. You can also change the number of shakes required and shake sensitivity to accept incoming cloudboard data.</string>
 
     <string name="intro2_title">Shake it, if you want it!</string>
     <string name="intro2_desc">When new data arrives to your device, you get a brief window of 5 seconds (marked by vibrations) within which you need to shake your device a few number of times (this can be changed in the settings) to copy the incoming data to your device\'s clipboard.</string>
 
     <string name="intro5_title">Setting up UniClip!</string>
-    <string name="intro5_desc">Please wait while we initiate the UI.</string>
+    <string name="intro5_desc">Please wait while we set up the UI, check for connection, and permissions.\n\n\n</string>
 
     <string name="intro6_title">Clipboard History!</string>
-    <string name="intro6_desc">UniClip maintains a clipboard history of the session. So, if you miss something, don\'t worry, just go to the Menu and click on history icon.</string>
+    <string name="intro6_desc">UniClip maintains a clipboard history of the session. So, if you miss something, don\'t worry, just go to the Menu and click on the history icon.\n\n</string>
 
 
 </resources>

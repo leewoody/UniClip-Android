@@ -49,6 +49,7 @@ public class UniClipService extends Service {
     Boolean usernode_created_now = false, authenticated = false;
 
     public static ArrayList<String> history_list_service;
+    private Handler cloudListenerHandler, clipListenerHandler;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -92,8 +93,6 @@ public class UniClipService extends Service {
                 makeToast("Service will continue running in the background.");
             }
 
-            //Auto authenticate Creator
-            if(sp_are_creator) sp_authenticated = true;
 
             //Format email address (remove the .)
             String user_node = sp_user_email.replaceAll("\\.", "");
@@ -115,6 +114,7 @@ public class UniClipService extends Service {
 
                             //Set this device as creator
                             fb.child("creator").setValue(sp_device_name);
+                            sp_are_creator = true;
 
                             //Persist the key
                             ed.putInt("access_pin", key).commit();
@@ -135,7 +135,9 @@ public class UniClipService extends Service {
                         if(sp_device_name.equals(snapshot.getValue().toString())){
                             ed.putBoolean("creator", true).commit();
                         }
-                        else ed.putBoolean("creator", false).commit();
+                        else{
+                            ed.putBoolean("creator", false).commit();
+                        }
                     }
                 }
 
@@ -144,34 +146,46 @@ public class UniClipService extends Service {
                 }
             });
 
+            //Auto authenticate Creator
+            if(sp_are_creator) {
+                sp_authenticated = true;
+                ed.putBoolean("authenticated", true).commit();
+            }
+
 
             //Register this device
-            if(sp_authenticated )
+            if(sp_authenticated)
                 fb.child("devices").child(sp_device_name).setValue("1");
 
             //Clipboard Manager
             myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
             //Listen for changes in cloudboard
-            if (!destroyed && sp_authenticated)
+            if (!destroyed)
                 fb.child("data").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
-                        if (snapshot.getValue() == null) {
-                        } else {
-                            //Add current incoming clip if not available in history.
-                            if (!history_list_service.contains(snapshot.getValue().toString()) &&
-                                    !snapshot.getValue().toString().equals(""))
-                                history_list_service.add(snapshot.getValue().toString());
 
-                            //Set data accepted as false
-                            dataAccepted = false;
+                        sp_authenticated = sp.getBoolean("authenticated", false);
 
-                            //Set the clipboard with incoming text if both are not same
-                            if (!String.valueOf(snapshot.getValue()).equals(getCBData())) {
-                                vibrate(200);
-                                shakeDetection(snapshot);
-                                displayNotification();
+                        if(sp_authenticated) {
+
+                            if (snapshot.getValue() != null) {
+                                //Add current incoming clip if not available in history.
+                                if (!history_list_service.contains(snapshot.getValue().toString()) &&
+                                        !snapshot.getValue().toString().equals(""))
+                                    history_list_service.add(snapshot.getValue().toString());
+
+                                //Set data accepted as false
+                                dataAccepted = false;
+
+                                //Set the clipboard with incoming text if both are not same
+                                if (!String.valueOf(snapshot.getValue()).equals(getCBData()) &&
+                                        !snapshot.getValue().toString().equals("")) {
+                                    vibrate(200);
+                                    shakeDetection(snapshot);
+                                    displayNotification();
+                                }
                             }
                         }
                     }
@@ -182,12 +196,10 @@ public class UniClipService extends Service {
                 });
 
             //Listen for local clipboard changes
-
-            if(sp_authenticated)
                 myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
                     @Override
                     public void onPrimaryClipChanged() {
-                        fb.child("data").setValue(getCBData());
+                        if(!getCBData().equals("") && sp_authenticated)fb.child("data").setValue(getCBData());
                     }
                 });
         }
@@ -196,6 +208,7 @@ public class UniClipService extends Service {
 
 
     }
+
 
     //Display Notification
     protected void displayNotification(){
@@ -263,8 +276,6 @@ public class UniClipService extends Service {
             //Start browser
             if(isURL(snapshot.getValue().toString()))startBrowser(snapshot.getValue().toString());
         }
-
-
 
     }
 

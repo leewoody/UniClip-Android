@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#009688"
+    android:background="@color/colorPrimary"
     android:id="@+id/rl_main">
 
 
@@ -37,6 +37,7 @@
         android:textColor="#CCFFFFFF"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20sp"
+        android:padding="6sp"
         android:layout_below="@+id/rl_top"
         android:textAlignment="center"
         android:id="@+id/welcome_text"/>
@@ -45,6 +46,7 @@
         android:layout_width="400sp"
         android:layout_height="1sp"
         android:id="@+id/hl1"
+        android:padding="6sp"
         android:background="#88FFFFFF"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="6dp"
@@ -84,7 +86,6 @@
     <include layout="@layout/rl_top_layout"/>
     <include layout="@layout/rl_top_menu_on_layout"/>
 
-
     <RelativeLayout
         android:layout_width="400sp"
         android:layout_height="60sp"
@@ -97,6 +98,17 @@
             android:text="Start UniClip!"
             android:id="@+id/b_start_stop"
             android:textColor="#CCFFFFFF"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/card_background_layout"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Go Back"
+            android:id="@+id/b_go_back_to_main"
+            android:textColor="#CCFFFFFF"
+            android:visibility="invisible"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/card_background_layout"/>

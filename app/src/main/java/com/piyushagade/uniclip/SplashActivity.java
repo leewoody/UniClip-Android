@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,23 +20,17 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 
-public class ActivityPermission extends Activity{
+public class SplashActivity extends Activity{
 
-
-    private Handler handler_permission;
-    private Button b_permission_proceed, b_grant_permission;
-    boolean k =false;
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
+    private ImageView iv_logo, iv_slogan;
+    private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
+    boolean sp_first_run;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,60 +40,40 @@ public class ActivityPermission extends Activity{
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        setContentView(R.layout.activity_splash);
 
-        Firebase.setAndroidContext(this);
+        //Get SharedPreferences
+        SharedPreferences sp = getSharedPreferences(PREF_FILE, 0);
 
-        setContentView(R.layout.activity_permission);
+        //UI Components
+        iv_logo = (ImageView) findViewById(R.id.iv_logo);
 
-        b_grant_permission = (Button) findViewById(R.id.b_grant_permission);
-        b_permission_proceed = (Button) findViewById(R.id.b_permission_proceed);
+        animate(iv_logo, 1800, 0);
 
-        b_grant_permission.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", getPackageName(), null));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-
-            }
-        });
-
-        b_permission_proceed.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(hasPermission()){
-                    startActivity(new Intent(ActivityPermission.this, MainActivity.class));
-                    finish();
-                }
-                else
-                    ((TextView) findViewById(R.id.when_done)).setText("Something went wrong. Try again!");
-
-
-            }
-        });
-
-        handler_permission = new Handler();
-        handler_permission.postDelayed(checkPermissionRunnable, 0);
-
-    }
-
-    private Runnable checkPermissionRunnable = new Runnable() {
-        public void run() {
-            if(hasPermission()){
-                b_grant_permission.setVisibility(View.INVISIBLE);
-                b_permission_proceed.setVisibility(View.VISIBLE);
-                (findViewById(R.id.when_done)).setVisibility(View.VISIBLE);
-
-                if(!k){
-                    makeToast("Permission granted!");
-                    k = true;
-//                    startActivity(new Intent(ActivityPermission.this, MainActivity.class));
-                }
-
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 finish();
             }
-            handler_permission.postDelayed(this, 1000);
-        }
-    };
+        }, 2800);
+    }
+
+    //Swing animate view
+    private void animate(final View v, final int duration, final int delay){
+        //App title animation
+        Handler app_title_anim_handler = new Handler();
+        app_title_anim_handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                YoYo.with(Techniques.FadeIn)
+                        .duration(duration)
+                        .playOn(v);
+            }
+        }, delay);
+    }
 
     private boolean isServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -170,7 +145,8 @@ public class ActivityPermission extends Activity{
         return account;
     }
 
-    private boolean hasPermission(){
+    private boolean hasPermission()
+    {
 
         String permission = "android.permission.GET_ACCOUNTS";
         int res = getApplicationContext().checkCallingOrSelfPermission(permission);

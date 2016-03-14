@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textColor="#88FFFFFF"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:text="Android M requires users to explicitly grant permission to applications.\n\nUniClip requires your email address to work flawlessly. So, click the button below to grant 'Contacts' permission to UniClip in the 'App Permissions' in the next screen."
         android:id="@+id/fragment_desc"
         android:layout_marginTop="40sp"

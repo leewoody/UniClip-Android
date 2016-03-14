@@ -37,6 +37,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -45,18 +48,19 @@ import com.firebase.client.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Random;
 
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
-import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 
 public class MainActivity extends Activity{
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
-    Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin;
+    Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin, b_diagnose, b_go_back_to_main;
     CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme, cb_open_url;
     EditText input_access_pin;
     SharedPreferences sp;
     SharedPreferences.Editor ed;
-    private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run, sp_open_url, sp_are_creator;
+    private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run, sp_open_url, sp_are_creator, sp_authenticated;
     private String sp_user_email, sp_device_name;
     ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_shake;
     SeekBar sb_sensitivity, sb_numberShakes;
@@ -69,8 +73,11 @@ public class MainActivity extends Activity{
     private View.OnClickListener  mOnClickListener;
     private ClipboardManager myClipboard;
     private ArrayList<String> history_list_activity;
-    private Handler handler_history, handler_devices;
-    private TextView user_access_pin;
+    private Handler handler_history, handler_devices, handler_status, handler_connection;
+    private TextView user_access_pin, status_service, status_connection;
+    public int colorPrimary, colorAccent;
+    private int page = 1; //Main screen
+    private boolean usernode_created_now = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +97,8 @@ public class MainActivity extends Activity{
         b_clear_history = (Button) findViewById(R.id.b_clear_history);
         b_view_access_pin = (Button) findViewById(R.id.b_view_access_pin);
         b_set_access_pin = (Button) findViewById(R.id.b_set_access_pin);
+        b_diagnose = (Button) findViewById(R.id.b_diagnose);
+        b_go_back_to_main = (Button) findViewById(R.id.b_go_back_to_main);
         cb_autostart = (CheckBox) findViewById(R.id.cb_autostart);
         cb_notification = (CheckBox) findViewById(R.id.cb_notification);
         cb_vibrate = (CheckBox) findViewById(R.id.cb_vibrate);
@@ -112,6 +121,8 @@ public class MainActivity extends Activity{
         welcome_text = (TextView) findViewById(R.id.welcome_text);
         access_pin_desc = (TextView) findViewById(R.id.access_pin_desc);
         user_access_pin = (TextView) findViewById(R.id.user_access_pin);
+        status_connection = (TextView) findViewById(R.id.status_connection);
+        status_service = (TextView) findViewById(R.id.status_service);
         fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_in_rl_top = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -152,27 +163,60 @@ public class MainActivity extends Activity{
 
         });
 
+        //Close Button listener
+        b_go_back_to_main.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                b_start_stop.setVisibility(View.VISIBLE);
+                ed.putBoolean("authenticated", false).commit();
+
+                b_start_stop.setText("Start UniClip!");
+                rl_settings.startAnimation(fade_in);
+                rl_settings.setVisibility(View.VISIBLE);
+
+                rl_running.startAnimation(fade_out);
+                rl_running.setVisibility(View.GONE);
+
+
+                //Animate app title
+                swingAnimate(findViewById(R.id.app_title), 700, 1000);
+
+                sync_anim.setAlpha(0.00f);
+                welcome_text.setText("UniClip is a multi-device clipboard synchronization " +
+                        "application, which makes sharing texts, links, etc easy.");
+
+                rl_menu_content.setVisibility(View.GONE);
+
+                b_go_back_to_main.setVisibility(View.GONE);
+            }
+        });
+
         //Service start stop listener
         b_start_stop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
                 if (!isServiceRunning(UniClipService.class)) {
+                    page = 2; //Running Screen
+
                     Intent intent = new Intent(MainActivity.this, UniClipService.class);
                     intent.putExtra("isAutorun", "false");
                     startService(intent);
 
+                    //Reset Button text for main screen
+                    b_start_stop.setText("Start UniClip!");
 
                     //Reinitialize
                     reinitialize();
+
+                    //Animate app title
+                    swingAnimate(findViewById(R.id.app_title), 700, 1000);
 
                     rl_menu_content.setVisibility(View.GONE);
 
                     b_start_stop.setText("Stop UniClip!");
                     vibrate(50);
+
+                    //Animations
                     rl_settings.startAnimation(fade_out_rl_settings);
-
-
-
-
                     fade_out_rl_settings.setAnimationListener(new Animation.AnimationListener() {
 
                         @Override
@@ -189,7 +233,66 @@ public class MainActivity extends Activity{
                             welcome_text.setText("You can close this app. The background service will make " +
                                     "sure clipboards on all your devices stay unified.");
 
+                            rl_running.setVisibility(View.VISIBLE);
+                            rl_running.startAnimation(fade_in);
+                            b_set_access_pin.setEnabled(true);
+                            b_set_access_pin.setText("Validate");
 
+                            sync_anim.setVisibility(View.VISIBLE);
+                            sync_anim.setAlpha(0.10f);
+
+
+                            clip_icon.startAnimation(bob);
+
+                        }
+                    });
+
+
+                    //Set Status in Running Screen
+                    handler_status = new Handler();
+                    refreshServiceStatus.run();
+
+                    handler_connection = new Handler();
+                    refreshConnectionStatus.run();
+
+                }
+
+                else if (!isServiceRunning(UniClipService.class) && !sp_are_creator) {
+
+                    makeToast("Here 2");
+
+                    page = 3; //Authentication Screen
+
+                    //Reinitialize
+                    reinitialize();
+
+                    //Animate app title
+                    swingAnimate(findViewById(R.id.app_title), 700, 1000);
+
+                    rl_menu_content.setVisibility(View.GONE);
+                    b_go_back_to_main.setVisibility(View.VISIBLE);
+
+                    b_start_stop.setText("Stop UniClip!");
+                    b_start_stop.setVisibility(View.GONE);
+                    vibrate(50);
+
+                    //Animations
+                    rl_settings.startAnimation(fade_out_rl_settings);
+                    fade_out_rl_settings.setAnimationListener(new Animation.AnimationListener() {
+
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            rl_settings.setVisibility(View.GONE);
+                            welcome_text.setText("You can close this app. The background service will make " +
+                                    "sure clipboards on all your devices stay unified.");
 
                             rl_running.setVisibility(View.VISIBLE);
                             rl_running.startAnimation(fade_in);
@@ -205,9 +308,21 @@ public class MainActivity extends Activity{
                         }
                     });
 
-                } else {
+
+                    //Set Status in Authentication Screen
+                    handler_status = new Handler();
+                    refreshServiceStatus.run();
+
+                    handler_connection = new Handler();
+                    refreshConnectionStatus.run();
+
+                }
+
+                //Service was running
+                else {
                     stopService(new Intent(getBaseContext(), UniClipService.class));
-                    ed.putBoolean("authenticated", false);
+                    b_start_stop.setVisibility(View.VISIBLE);
+                    ed.putBoolean("authenticated", false).commit();
 
                     b_start_stop.setText("Start UniClip!");
                     rl_settings.startAnimation(fade_in);
@@ -217,6 +332,9 @@ public class MainActivity extends Activity{
                     rl_running.setVisibility(View.GONE);
 
 
+                    //Animate app title
+                    swingAnimate(findViewById(R.id.app_title), 700, 1000);
+
                     sync_anim.setAlpha(0.00f);
                     welcome_text.setText("UniClip is a multi-device clipboard synchronization " +
                             "application, which makes sharing texts, links, etc easy.");
@@ -225,7 +343,6 @@ public class MainActivity extends Activity{
 
                 }
 
-
             }
 
         });
@@ -233,12 +350,14 @@ public class MainActivity extends Activity{
         //Access Pin Button listener
         b_view_access_pin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+                getAccessPin();
                 int key = sp.getInt("access_pin", 0);
                 if(key != 0){
-                    b_view_access_pin.setText("Your Access PIN: " + String.valueOf(key));
+                    b_view_access_pin.setText("Access PIN: " + String.valueOf(key));
                 }
                 else {
-                    b_view_access_pin.setText("No PIN set yet");
+                    b_view_access_pin.setText("Error");
                 }
 
             }
@@ -252,6 +371,9 @@ public class MainActivity extends Activity{
         b_menu.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(26);
+
+                //MenuIntroActivity
+                menuShowcaseInitiate();
 
                 rl_user.setVisibility(View.INVISIBLE);
                 rl_info.setVisibility(View.INVISIBLE);
@@ -290,6 +412,10 @@ public class MainActivity extends Activity{
         b_back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+                //Animate app title
+                swingAnimate(findViewById(R.id.app_title), 700, 1500);
+
                 rl_menu_on.startAnimation(fade_out_rl_top);
                 rl_top.setVisibility(View.VISIBLE);
                 rl_top.startAnimation(fade_in_rl_top);
@@ -358,6 +484,14 @@ public class MainActivity extends Activity{
         b_set_access_pin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+                if(!isNetworkAvailable()){
+                    makeSnack("Network unavailable");
+                }
+                else {
+                    b_set_access_pin.setText("Checking");
+                }
+
                 final String input_pin = input_access_pin.getText().toString();
 
                 //Format email address (remove the .)
@@ -376,7 +510,10 @@ public class MainActivity extends Activity{
                                 input_access_pin.setVisibility(View.GONE);
                                 b_set_access_pin.setText("Verified");
                                 b_set_access_pin.setEnabled(false);
-                                user_access_pin.setText(snapshot.getValue().toString());
+
+                                b_start_stop.setVisibility(View.VISIBLE);
+
+                                b_go_back_to_main.setVisibility(View.GONE);
 
                                 sync_anim.startAnimation(rotate);
                                 ed.putBoolean("authenticated", true).commit();
@@ -390,10 +527,13 @@ public class MainActivity extends Activity{
                             }
                             else {
                                 makeToast("Wrong Access Pin. Try Again");
-                                ed.putBoolean("authenticated", false).commit();
 
-                                //Stop Service
-                                stopService(new Intent(getBaseContext(), UniClipService.class));
+                                //Animate input on wrong password
+                                swingAnimate(findViewById(R.id.input_access_pin), 600, 300);
+
+                                ed.putBoolean("authenticated", false).commit();
+                                b_set_access_pin.setText("Validate");
+
                             }
 
                         }
@@ -422,6 +562,9 @@ public class MainActivity extends Activity{
                 tv_username.setText(sp_user_email);
                 tv_device.setText(sp_device_name);
 
+                getAccessPin();
+                int key = sp.getInt("access_pin", 0);
+                if(sp_are_creator)user_access_pin.setText(String.valueOf(key));
 
                 handler_history = new Handler();
                 handler_history.postDelayed(refreshDevicesList, 0);
@@ -547,7 +690,7 @@ public class MainActivity extends Activity{
                      public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
                          if (isChecked) {
                              ed.putBoolean("theme", true);
-                             rl_main.setBackgroundColor(Color.parseColor("#009688"));
+                             rl_main.setBackgroundColor(colorPrimary);
                          } else {
                              ed.putBoolean("theme", false);
                              rl_main.setBackgroundColor(Color.parseColor("#DE111111"));
@@ -561,16 +704,90 @@ public class MainActivity extends Activity{
 
     }
 
+
+    private Runnable refreshServiceStatus = new Runnable() {
+        @Override
+        public void run() {
+            sp_authenticated = sp.getBoolean("authenticated", false);
+
+            if(isServiceRunning(UniClipService.class) && sp_authenticated){
+
+                if(isNetworkAvailable())status_service.setText("Service:\n  Running. Listening to the cloudboard.");
+                else status_service.setText("Service:\n  Running. Waiting for network.");
+            }
+
+            else if(isServiceRunning(UniClipService.class) && !sp_authenticated){
+                //Waiting for authentication
+
+                if(isNetworkAvailable())status_service.setText("Service:\n  Waiting for authentication.");
+                else {
+                    status_service.setText("Service:\n  Not running. Waiting for network.");
+                }
+            }
+            //If service not running
+            else{
+                status_service.setText("Service:\n  Error. Restart the application.");
+            }
+
+            handler_status.postDelayed(this, 6000);
+        }
+    };
+
+    private Runnable refreshConnectionStatus = new Runnable() {
+        @Override
+        public void run() {
+            if(isNetworkAvailable()){
+                status_connection.setText("Connection:\n  Connected to server.");
+                b_diagnose.setVisibility(View.GONE);
+            }
+            else {
+                status_connection.setText("Connection:\n  Internet unavailable.");
+                b_diagnose.setVisibility(View.VISIBLE);
+            }
+
+            handler_connection.postDelayed(this, 6000);
+        }
+    };
+
+    private void getAccessPin() {
+
+
+        //Format email address (remove the .)
+        String user_node = sp.getString("user_email", "").replaceAll("\\.", "");
+
+        //Firebase
+        Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+
+        //Get access pin from firebase
+        fb.child("key").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    //Set user access pin
+                    ed.putInt("access_pin", Integer.valueOf(snapshot.getValue().toString())).commit();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        fb = null;
+    }
+
+
     private void reinitialize() {
 
         //Get Values SP
         sp_are_creator = sp.getBoolean("creator", false);
 
+        //Go back button set Gone
+        b_go_back_to_main.setVisibility(View.GONE);
 
-        //Make snack if network unavailable
-        if(!isNetworkAvailable())makeSnack("Network unavailable.");
-
-
+        //Reset authentication
+        ed.putBoolean("authenticated", false).commit();
+        sp_authenticated = sp.getBoolean("authenticated", false);
 
         //Get user email
         if(hasPermission()) {
@@ -586,7 +803,6 @@ public class MainActivity extends Activity{
 
 
         //Set content if this device is/is not the creator
-
 
         final Handler creatorHandler = new Handler();
         creatorHandler.postDelayed(new Runnable() {
@@ -714,7 +930,7 @@ public class MainActivity extends Activity{
                 row1.setPadding(20, 12, 20, 12);
                 row1.setText("Clipboard history is empty!");
 
-                row1.setTextColor(Color.parseColor("#009688"));
+                row1.setTextColor(colorPrimary);
                 row1.setTypeface(Typeface.MONOSPACE);
                 row1.setTextSize(16);
 
@@ -765,7 +981,7 @@ public class MainActivity extends Activity{
                         row1.setText(i + ". " + postSnapshot.getKey().toString());
                         i++;
 
-                        if(postSnapshot.getValue().toString().equals("1"))row1.setTextColor(Color.parseColor("#009688"));
+                        if(postSnapshot.getValue().toString().equals("1"))row1.setTextColor(colorPrimary);
                         else if(postSnapshot.getValue().toString().equals("0"))row1.setTextColor(Color.parseColor("#AC2358"));
                         row1.setTypeface(Typeface.MONOSPACE);
                         row1.setTextSize(16);
@@ -809,10 +1025,16 @@ public class MainActivity extends Activity{
     //Initialize application
     private void initialize() {
         //Showcase UI
-        presentShowcaseSequence();
+        mainShowcaseInitiate();
 
-        //Set Authenticated as false
+
+        //Reset authentication
         ed.putBoolean("authenticated", false).commit();
+        sp_authenticated = sp.getBoolean("authenticated", false);
+
+        //Get Color
+        colorPrimary = getResources().getColor(R.color.colorPrimary);
+        colorAccent = getResources().getColor(R.color.colorAccent);
 
         //Get Values SP
         sp_autostart = sp.getBoolean("autostart", true);
@@ -824,6 +1046,7 @@ public class MainActivity extends Activity{
         sp_first_run = sp.getBoolean("first_run", true);
         sp_open_url = sp.getBoolean("open_url", true);
         sp_are_creator = sp.getBoolean("creator", false);
+        sp_authenticated = sp.getBoolean("authenticated", false);
 
         //Intro Screen
         if(sp_first_run){
@@ -831,7 +1054,7 @@ public class MainActivity extends Activity{
             finish();
         }
 
-        //Make snack if network unava
+        //Make snack if network unavailable
         if(!isNetworkAvailable())makeSnack("Network unavailable.");
 
         //Detect accelerometer
@@ -851,8 +1074,17 @@ public class MainActivity extends Activity{
             b_view_access_pin.setVisibility(View.GONE);
 
             sync_anim.clearAnimation();
-            b_set_access_pin.setVisibility(View.VISIBLE);
-            input_access_pin.setVisibility(View.VISIBLE);
+
+            if(!sp_authenticated) {
+                b_set_access_pin.setVisibility(View.VISIBLE);
+                input_access_pin.setVisibility(View.VISIBLE);
+            }
+            else{
+                b_set_access_pin.setText("Verified");
+                b_set_access_pin.setVisibility(View.VISIBLE);
+                b_set_access_pin.setEnabled(false);
+                input_access_pin.setVisibility(View.GONE);
+            }
         }
 
         //Detect Vibrator
@@ -903,21 +1135,8 @@ public class MainActivity extends Activity{
         //Firebase
         Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
 
-        //Get user pin from firebase
-        fb.child("key").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    //Set user access pin
-                    if(sp_are_creator) user_access_pin.setText(snapshot.getValue().toString());
-
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError error) {
-            }
-        });
+        //Get access pin
+        getAccessPin();
 
         //Check if this device is creator
         fb.child("creator").addValueEventListener(new ValueEventListener() {
@@ -962,6 +1181,24 @@ public class MainActivity extends Activity{
                     "application, which makes sharing texts, links, etc easy.");
         }
 
+        //Set content if authenticated and not a creator
+        if(sp_authenticated && sp_are_creator){
+
+            if(isNetworkAvailable())status_service.setText("Service:\n  Running. Listening to the cloudboard.");
+            else status_service.setText("Service:\n  Running. Waiting for network.");
+        }
+
+        else if(isServiceRunning(UniClipService.class) && !sp_authenticated){
+            //Waiting for authentication
+
+            if(isNetworkAvailable())status_service.setText("Service:\n  Waiting for authentication.");
+            else {
+                status_service.setText("Service:\n  Not running. Waiting for network.");
+            }
+        }
+
+
+
         sync_anim.startAnimation(rotate);
 
 
@@ -987,7 +1224,7 @@ public class MainActivity extends Activity{
 
         if(sp_theme){
             cb_theme.setChecked(true);
-            rl_main.setBackgroundColor(Color.parseColor("#009688"));
+            rl_main.setBackgroundColor(colorPrimary);
         }
         else{
             cb_theme.setChecked(false);
@@ -1050,6 +1287,204 @@ public class MainActivity extends Activity{
         if(sb_numberShakes.getProgress() == 0)sb_sensitivity.setEnabled(false);
 
         ed.putBoolean("first_run", false).commit();
+
+    }
+
+
+    //Check if user exists, if not set this as creator
+    private void checkIfCreator(){
+        //Format email address (remove the .)
+        String user_node = sp_user_email.replaceAll("\\.", "");
+
+        //Firebase
+        final Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+
+        //Check if user node exists
+        if (!usernode_created_now && fb != null)
+            fb.child("key").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (!snapshot.exists()) {
+
+                        //Set 4 digit access key
+                        usernode_created_now = true;
+                        int key = (int) new Random().nextInt(9999);
+                        fb.child("key").setValue(String.valueOf(key));
+
+                        //Set this device as creator
+                        fb.child("creator").setValue(sp_device_name);
+
+                        //Persist the key
+                        ed.putInt("access_pin", key).commit();
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError error) {
+                }
+            });
+
+        //Check if this device is creator
+        if(fb != null)
+        fb.child("creator").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                    if(sp_device_name.equals(snapshot.getValue().toString())){
+                        ed.putBoolean("creator", true).commit();
+                    }
+                    else{
+                        ed.putBoolean("creator", false).commit();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        if(sp.getBoolean("creator", false))
+            sp_authenticated = true;
+
+
+        //Register this device
+        if(sp_authenticated )
+            fb.child("devices").child(sp_device_name).setValue("1");
+
+
+
+    }
+
+
+    //Swing animate view
+    private void swingAnimate(final View v, final int duration, final int delay){
+        //App title animation
+        Handler app_title_anim_handler = new Handler();
+        app_title_anim_handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                YoYo.with(Techniques.Swing)
+                        .duration(duration)
+                        .playOn(v);
+            }
+        }, delay);
+    }
+    //Menu showcase
+    private void menuShowcaseInitiate() {
+        //Menu Button
+        new MaterialIntroView.Builder(this)
+                .enableDotAnimation(true)
+                .setMaskColor(Color.parseColor("#00ffc107"))
+                .setFocusGravity(FocusGravity.CENTER)
+                .setFocusType(Focus.NORMAL)
+                .setDelayMillis(100)
+                .enableFadeAnimation(true)
+                .performClick(true)
+                .dismissOnTouch(false)
+                .setInfoText("Clipboard History: This section shows the clipboard history. Clicking on an item will copy it to the clipboard." +
+                        "\n\nClick on the history icon to continue.")
+                .setTarget(b_history)
+                .setUsageId("card_history")
+                .setListener(new MaterialIntroListener() {
+                    @Override
+                    public void onUserClicked(String materialIntroViewId) {
+                        //User page
+                        new MaterialIntroView.Builder(MainActivity.this)
+                                .enableDotAnimation(true)
+                                .setMaskColor(Color.parseColor("#00ffc107"))
+                                .setFocusGravity(FocusGravity.CENTER)
+                                .setFocusType(Focus.NORMAL)
+                                .setDelayMillis(100)
+                                .enableFadeAnimation(true)
+                                .performClick(true)
+                                .dismissOnTouch(false)
+                                .setInfoText("User Info: This section has your username. device name, access pin, and list of registered devices.")
+                                .setTarget(b_user)
+                                .setUsageId("card_user")
+                                .setListener(new MaterialIntroListener() {
+                                    @Override
+                                    public void onUserClicked(String materialIntroViewId) {
+                                        //Back Button
+                                        new MaterialIntroView.Builder(MainActivity.this)
+                                                .enableDotAnimation(true)
+                                                .setMaskColor(Color.parseColor("#00ffc107"))
+                                                .setFocusGravity(FocusGravity.CENTER)
+                                                .setFocusType(Focus.MINIMUM)
+                                                .setDelayMillis(100)
+                                                .enableFadeAnimation(true)
+                                                .performClick(true)
+                                                .dismissOnTouch(false)
+                                                .setInfoText("Click here to close the menu.")
+                                                .setTarget(b_back)
+                                                .setUsageId("card_back")
+                                                .show();
+                                    }
+                                })
+                                .show();
+                    }
+                })
+                .show();
+
+
+    }
+
+    //Mainscreen showcase
+    private void mainShowcaseInitiate() {
+        //Menu Button
+        new MaterialIntroView.Builder(this)
+                .enableDotAnimation(false)
+                .setMaskColor(Color.parseColor("#66000000"))
+                .setFocusGravity(FocusGravity.CENTER)
+                .setFocusType(Focus.MINIMUM)
+                .setDelayMillis(200)
+                .enableFadeAnimation(true)
+                .performClick(false)
+                .dismissOnTouch(true)
+                .setInfoText("This is Menu button. It has user info, access pin, and clipboard history.")
+                .setTarget(b_menu)
+                .setUsageId("card_1")
+                .setListener(new MaterialIntroListener() {
+                    @Override
+                    public void onUserClicked(String materialIntroViewId) {
+                        //Start/Stop button
+                        new MaterialIntroView.Builder(MainActivity.this)
+                                .enableDotAnimation(false)
+                                .setMaskColor(Color.parseColor("#66000000"))
+                                .setFocusGravity(FocusGravity.CENTER)
+                                .setFocusType(Focus.NORMAL)
+                                .setDelayMillis(200)
+                                .enableFadeAnimation(true)
+                                .performClick(false)
+                                .dismissOnTouch(true)
+                                .setInfoText("This button turns on the awesome.")
+                                .setTarget(b_start_stop)
+                                .setUsageId("card_2")
+                                .setListener(new MaterialIntroListener() {
+                                    @Override
+                                    public void onUserClicked(String materialIntroViewId) {
+                                        //Settings
+                                        new MaterialIntroView.Builder(MainActivity.this)
+                                                .enableDotAnimation(false)
+                                                .setMaskColor(Color.parseColor("#66000000"))
+                                                .setFocusGravity(FocusGravity.CENTER)
+                                                .setFocusType(Focus.ALL)
+                                                .setDelayMillis(200)
+                                                .enableFadeAnimation(true)
+                                                .performClick(false)
+                                                .dismissOnTouch(true)
+                                                .setInfoText("These are all the settings and preferences.")
+                                                .setTarget(rl_settings)
+                                                .setUsageId("card_3")
+                                                .show();
+                                    }
+                                })
+                                .show();
+                    }
+                })
+                .show();
 
 
     }
@@ -1128,62 +1563,6 @@ public class MainActivity extends Activity{
             account = null;
         }
         return account;
-    }
-
-    private void presentShowcaseSequence() {
-
-        ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(500); // half second between each showcase view
-
-        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "sequence example");
-
-        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
-            @Override
-            public void onShow(MaterialShowcaseView itemView, int position) {
-//                Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        sequence.setConfig(config);
-
-        sequence.addSequenceItem(
-                new MaterialShowcaseView.Builder(this)
-                        .setTarget(b_menu)
-                        .setDismissText("Proceed >")
-                        .setContentText("This is the menu button. It has user information, clipboard history, and much more.")
-                        .withCircleShape()
-                        .build()
-        );
-
-        sequence.addSequenceItem(
-                new MaterialShowcaseView.Builder(this)
-                        .setTarget(b_start_stop)
-                        .setDismissText("Proceed >")
-                        .setContentText("This is 'Start UniClip' button. This turns on the awesome.")
-                        .withCircleShape()
-                        .build()
-        );
-
-        sequence.addSequenceItem(
-                new MaterialShowcaseView.Builder(this)
-                        .setTarget(rl_settings)
-                        .setDismissText("Got it >")
-                        .setContentText("And these are your settings.")
-                        .withCircleShape()
-                        .build()
-        );
-
-        sequence.addSequenceItem(
-                new MaterialShowcaseView.Builder(this)
-                        .setTarget(b_close)
-                        .setDismissText("Awesome, let's begin. >")
-                        .setContentText("This thing here, turns down the awesome.")
-                        .withCircleShape()
-                        .build()
-        );
-
-        sequence.start();
-
     }
 
     private boolean hasPermission()
