@@ -14,12 +14,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -44,12 +53,15 @@ public class UniClipService extends Service {
     SharedPreferences sp;
     private SharedPreferences.Editor ed;
     boolean destroyed = false;
-    private int sp_shakes, sp_sensitivity;
+    private int sp_get_shakes, sp_get_sensitivity, sp_share_shakes, sp_share_sensitivity;
     private String sp_user_email, sp_device_name;
     Boolean usernode_created_now = false, authenticated = false;
 
     public static ArrayList<String> history_list_service;
     private Handler cloudListenerHandler, clipListenerHandler;
+    private WindowManager windowManager;
+    private boolean k;
+    private boolean shareOff;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -71,13 +83,16 @@ public class UniClipService extends Service {
             sp_autostart = sp.getBoolean("autostart", true);
             sp_notification = sp.getBoolean("notification", true);
             sp_vibrate = sp.getBoolean("vibrate", true);
-            sp_sensitivity = sp.getInt("sensitivity", 2);
-            sp_shakes = sp.getInt("shakes", 2);
+            sp_get_sensitivity = sp.getInt("get_sensitivity", 2);
+            sp_get_shakes = sp.getInt("get_shakes", 2);
+            sp_share_sensitivity = sp.getInt("share_sensitivity", 2);
+            sp_share_shakes = sp.getInt("share_shakes", 2);
             sp_user_email = sp.getString("user_email", "unknown");
             sp_device_name = sp.getString("device_name", "unknown");
             sp_open_url = sp.getBoolean("open_url", true);;
             sp_are_creator = sp.getBoolean("creator", false);
             sp_authenticated = sp.getBoolean("authenticated", false);
+
 
             //ArrayList for storing History
             history_list_service = new ArrayList<String>();
@@ -182,9 +197,18 @@ public class UniClipService extends Service {
                                 //Set the clipboard with incoming text if both are not same
                                 if (!String.valueOf(snapshot.getValue()).equals(getCBData()) &&
                                         !snapshot.getValue().toString().equals("")) {
-                                    vibrate(200);
-                                    shakeDetection(snapshot);
+                                    //Send notification
                                     displayNotification();
+
+                                    //Vibrate
+                                    vibrate(140);
+
+                                    //Listening to save data to clipboard
+                                    shareOff = true;
+
+                                    //Begin shake detection
+                                    shakeDetection(snapshot);
+
                                 }
                             }
                         }
@@ -196,12 +220,22 @@ public class UniClipService extends Service {
                 });
 
             //Listen for local clipboard changes
-                myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
-                    @Override
-                    public void onPrimaryClipChanged() {
-                        if(!getCBData().equals("") && sp_authenticated)fb.child("data").setValue(getCBData());
-                    }
-                });
+            myClipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+                @Override
+                public void onPrimaryClipChanged() {
+                    //Set data to firebase
+                    if(!getCBData().equals("") && sp_authenticated)
+                        fb.child("data").setValue(getCBData());
+
+                    //Send notification
+                    displayNotification();
+
+                    //Begin shake detection
+                    if(!shareOff)
+                    shakeDetection(null);
+
+                }
+            });
         }
 
         return START_STICKY;
@@ -210,14 +244,92 @@ public class UniClipService extends Service {
     }
 
 
+    private void shakeDetection(final DataSnapshot snapshot) {
+
+        k = true;
+
+        ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
+            @Override
+            public void OnShake() {
+
+                //If shake was for getting data into clipboard
+                if (shareOff && snapshot != null) {
+                    //If shakes required to copy data into clipboard
+                    if (sp_get_shakes != 0 && !destroyed) {
+
+                        //Set parameters
+                        ShakeDetector.updateConfiguration((sp_get_sensitivity) / 2, sp_get_shakes);
+
+                        //Set data accepted as true
+                        dataAccepted = true;
+
+                        //Update local clipboard
+                        ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
+                        if (!destroyed) myClipboard.setPrimaryClip(myClip);
+
+                        //Start browser
+                        if (isURL(snapshot.getValue().toString()))
+                            startBrowser(snapshot.getValue().toString());
+
+                    }
+
+                }
+
+                //If shake was for sharing
+                else if (!shareOff && snapshot == null){
+
+                    //Set parameters
+                    ShakeDetector.updateConfiguration((sp_share_sensitivity) / 2, sp_share_shakes);
+
+                    //Format email address (remove the .)
+                    String user_node = sp_user_email.replaceAll("\\.", "");
+
+                    //Start get friend_node activity and send clipboard data
+                    if(k && !shareOff){
+                        startActivity(new Intent(UniClipService.this, GetFriendNodeActivity.class)
+                                .putExtra("data_shared", getCBData())
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        k = false;
+                    }
+
+                    //To disable vibrate in waitAndRemoveListener
+                    dataAccepted = true;
+                }
+
+            }
+        });
+
+
+        //Turn off Listener in 4000 ms
+        waitAndRemoveListener(4000);
+
+
+        //If shakes not required to copy data into clipboard
+        if (sp_get_shakes == 0 && !destroyed && shareOff && snapshot != null) {
+            //Set data accepted as true
+            dataAccepted = true;
+
+            //Update local clipboard
+            ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
+            myClipboard.setPrimaryClip(myClip);
+
+            //Start browser
+            if (isURL(snapshot.getValue().toString()))
+                startBrowser(snapshot.getValue().toString());
+
+        }
+
+    }
+
+
     //Display Notification
     protected void displayNotification(){
-        if(sp_notification) {
+        if(sp_notification && shareOff) {
             Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(""));
             PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
             String notification_text = "";
-            if(sp_shakes != 0) notification_text = "Shake your device " + sp_shakes + " times to copy the incoming data to your clipboard.";
+            if(sp_get_shakes != 0) notification_text = "Shake your device " + sp_get_shakes + " times to copy the incoming data to your clipboard.";
             else notification_text = "Clipboard updated.";
 
             Notification myNotification = new Notification.Builder(this)
@@ -244,39 +356,89 @@ public class UniClipService extends Service {
                 }
             }, 10000);
         }
+        else if(sp_notification && !shareOff) {
+            Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(""));
+            PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+            String notification_text = "";
+            if(sp_get_shakes != 0) notification_text = "Shake your device " + sp_share_shakes + " times to open share Clipboard dialog.";
+
+
+            Notification myNotification = new Notification.Builder(this)
+                    .setContentTitle("UniClip!")
+                    .setContentText(notification_text)
+                    .setTicker("Share Clipboard!")
+                    .setStyle(new Notification.BigTextStyle().bigText(notification_text))
+                    .setLights(Color.WHITE, 200, 100)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentIntent(pIntent)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setAutoCancel(true)
+                    .setSmallIcon(R.drawable.close_x)
+                    .build();
+
+            final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(1, myNotification);
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notificationManager.cancel(1);
+                }
+            }, 10000);
+        }
     }
 
-    private void shakeDetection(final DataSnapshot snapshot) {
-        //Check if string is a URL or not and launch the browse
 
-        if(sp_shakes!=0&&!destroyed) {
-            ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
-                @Override
-                public void OnShake() {
-                    //Set data accepted as true
-                    dataAccepted = true;
 
-                    //Update local clipboard
-                    ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
-                    if(!destroyed) myClipboard.setPrimaryClip(myClip);
+    private void setChatHead() {
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
-                    //Start browser
-                    if(isURL(snapshot.getValue().toString()))startBrowser(snapshot.getValue().toString());
+        final ImageView chatHead = new ImageView(this);
+        chatHead.setImageResource(R.drawable.close_x);
 
+        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
+
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.x = 0;
+        params.y = 100;
+
+        //this code is for dragging the chat head
+        chatHead.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = params.x;
+                        initialY = params.y;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        params.x = initialX
+                                + (int) (event.getRawX() - initialTouchX);
+                        params.y = initialY
+                                + (int) (event.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(chatHead, params);
+                        return true;
                 }
-            });
-            ShakeDetector.updateConfiguration((sp_sensitivity + 1) / 2, sp_shakes);
-            waitAndRemoveListener(4000);
-        }
-        else if(sp_shakes == 0 && !destroyed){
-            dataAccepted = true;
-            ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
-            myClipboard.setPrimaryClip(myClip);
-
-            //Start browser
-            if(isURL(snapshot.getValue().toString()))startBrowser(snapshot.getValue().toString());
-        }
-
+                return false;
+            }
+        });
+        windowManager.addView(chatHead, params);
     }
 
     //Start Browser method
@@ -302,7 +464,7 @@ public class UniClipService extends Service {
         return false;
     }
 
-    //Het Clipboard data method
+    //Get Clipboard data method
     private String getCBData(){
         ClipData clipdata = myClipboard.getPrimaryClip();        //Get primary clip
         ClipData.Item item = null;
@@ -331,11 +493,16 @@ public class UniClipService extends Service {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if(!destroyed) {
+                if (!destroyed) {
                     ShakeDetector.updateConfiguration(1000, 99999999);
                     ShakeDetector.stop();
+
+                    //Reset shareOff
+                    shareOff = false;
+
                 }
-                if(!dataAccepted)vibrate(320);
+
+                if (!dataAccepted) vibrate(220);
             }
         }, time);
     }

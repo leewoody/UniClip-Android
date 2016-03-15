@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -28,9 +30,11 @@ import com.daimajia.androidanimations.library.YoYo;
 
 public class SplashActivity extends Activity{
 
-    private ImageView iv_logo, iv_slogan;
+    private ImageView app_logo, app_slogan;
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     boolean sp_first_run;
+    private TextView app_version;
+    private RelativeLayout rl_splash_bottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +50,10 @@ public class SplashActivity extends Activity{
         SharedPreferences sp = getSharedPreferences(PREF_FILE, 0);
 
         //UI Components
-        iv_logo = (ImageView) findViewById(R.id.iv_logo);
+        app_logo = (ImageView) findViewById(R.id.app_logo);
+        app_version = (TextView) findViewById(R.id.app_version);
+        rl_splash_bottom = (RelativeLayout) findViewById(R.id.rl_splash_bottom);
 
-        animate(iv_logo, 1800, 0);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -60,15 +65,30 @@ public class SplashActivity extends Activity{
         }, 2800);
     }
 
-    //Swing animate view
-    private void animate(final View v, final int duration, final int delay){
+    //fadeAnimate view
+    private void fadeAnimate(final View v, final int duration, final int delay){
         //App title animation
         Handler app_title_anim_handler = new Handler();
         app_title_anim_handler.postDelayed(new Runnable() {
             @Override
             public void run() {
 
-                YoYo.with(Techniques.FadeIn)
+                YoYo.with(Techniques.FadeInUp)
+                        .duration(duration)
+                        .playOn(v);
+            }
+        }, delay);
+    }
+
+    //slideInUpAnimate view
+    private void slideInUpAnimate(final View v, final int duration, final int delay){
+        //App title animation
+        Handler app_title_anim_handler = new Handler();
+        app_title_anim_handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                YoYo.with(Techniques.SlideInUp)
                         .duration(duration)
                         .playOn(v);
             }

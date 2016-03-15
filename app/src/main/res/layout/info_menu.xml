@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rl_info"
-    android:visibility="gone"
     android:paddingLeft="30sp"
     android:paddingRight="30sp"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -14,8 +13,8 @@
         android:text="About UniClip!"
         android:textSize="30sp"
         android:id="@+id/info_title"
-        android:layout_marginTop="40sp"
-        android:textColor="@color/colorPrimary"/>
+        android:layout_marginTop="20sp"
+        android:textColor="@color/colorAccent"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -37,13 +36,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1.0.0.0.1"
+                android:text="@string/app_version"
                 android:textSize="16sp"
                 android:id="@+id/info_version"
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/info_version_title"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="#AAFFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -75,7 +74,7 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/info_developer_title"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="#AAFFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -106,7 +105,7 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/info_other_devices_title"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="#AAFFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"

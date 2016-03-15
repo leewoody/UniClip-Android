@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rl_help"
-    android:visibility="visible"
     android:paddingLeft="30sp"
     android:paddingRight="30sp"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -14,54 +13,56 @@
         android:text="How To Use"
         android:textSize="30sp"
         android:id="@+id/help_title"
-        android:layout_marginTop="40sp"
-        android:textColor="@color/colorPrimary"/>
+        android:layout_marginTop="20sp"
+        android:textColor="@color/colorAccent"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/help_title"
         android:layout_marginTop="20sp"
+        android:fadeScrollbars="false"
+        android:layout_marginBottom="12sp"
+        android:scrollbarSize="4sp"
+        android:scrollbarStyle="outsideOverlay"
         android:paddingRight="16sp">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="helpname: "
+                android:text="Cloudboard: "
                 android:textSize="18sp"
-                android:id="@+id/help_helpname_title"
+                android:id="@+id/help_cloudboard_title"
                 android:textColor="#88FFFFFF"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="help@gmail.com"
+                android:text="Cloudboard is your Clipboard on the Cloud. Whatever you copy or share first is sent to Cloudboard beforing sharing it with other devices."
                 android:textSize="16sp"
-                android:id="@+id/help_helpname"
+                android:id="@+id/help_cloudboard"
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
-                android:layout_below="@+id/help_helpname_title"
-                android:textColor="@color/colorPrimary"/>
+                android:layout_below="@+id/help_cloudboard_title"
+                android:textColor="#AAFFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="2sp"
                 android:background="#33FFFFFF"
-                android:layout_below="@id/help_helpname"
+                android:layout_below="@id/help_cloudboard"
                 android:layout_marginTop="8sp"
                 android:id="@+id/hl3"/>
-
-
-
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Device name: "
+                android:text="Sharing Clipboard"
+                android:id="@+id/help_sharing_title"
                 android:textSize="18sp"
-                android:id="@+id/help_device_title"
                 android:layout_marginTop="18sp"
                 android:layout_below="@id/hl3"
                 android:textColor="#88FFFFFF"/>
@@ -69,20 +70,75 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LG H118B"
+                android:text="1. With your other devices:"
                 android:textSize="16sp"
-                android:id="@+id/help_device"
+                android:id="@+id/help_sharing_1_title"
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
-                android:layout_below="@+id/help_device_title"
-                android:textColor="@color/colorPrimary"/>
+                android:layout_below="@+id/help_sharing_title"
+                android:textColor="#AAFFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UniClip! automatically syncs clipboards of all your devices running it. To sync clipboard on a device, all you have to do is shake the device a few number of times** within 5 seconds of clipboard change of the device that sent the clipboard. This 5 seconds interval is marked by two vibrations, one at the start and one at the end of the interval. \n\nMake sure all these devices have same primary Google account."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_1"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_1_title"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="**: The number of shakes mentioned, and its sensitivity can be changed. See main screen for settings."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_starstar1"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_1"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2. With your friends:"
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_2_title"
+                android:layout_marginTop="12sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/help_sharing_starstar1"
+                android:textColor="#AAFFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You can also share your clipboard with you friends. Just copy the text on your device and shake it few number of times** within 5 seconds of copying. In the next screen, select your friends you want to share clipboard with. And thats it!"
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_2"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_2_title"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="**: The number of shakes mentioned, and its sensitivity can be changed. See main screen for settings."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_starstar2"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_2"
+                android:textColor="#88FFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="2sp"
                 android:background="#33FFFFFF"
                 android:id="@+id/hl4"
-                android:layout_below="@id/help_device"
+                android:layout_below="@id/help_sharing_starstar2"
                 android:layout_marginTop="8sp"/>
 
 
@@ -90,9 +146,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Registered devices: "
+                android:text="Manage friends:"
                 android:textSize="18sp"
-                android:id="@+id/help_other_devices_title"
+                android:id="@+id/help_manage_title"
                 android:layout_marginTop="18sp"
                 android:layout_below="@id/hl4"
                 android:textColor="#88FFFFFF"/>
@@ -100,21 +156,33 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LG V10"
+                android:text="To manage your friends list, click on 'Manage' button on the main page or below. You can add/remove your friends (already on UniClip) to your list."
                 android:textSize="16sp"
-                android:id="@+id/help_other_devices"
+                android:id="@+id/help_manage"
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
-                android:layout_below="@+id/help_other_devices_title"
-                android:textColor="@color/colorPrimary"/>
+                android:layout_below="@+id/help_manage_title"
+                android:textColor="#AAFFFFFF"/>
+
+            <Button
+                android:layout_width="120sp"
+                android:layout_height="34sp"
+                android:layout_marginTop="10sp"
+                android:background="@color/colorAccent"
+                android:text="Manage"
+                android:id="@+id/b_help_manage_friends"
+                android:layout_marginLeft="8sp"
+                android:textColor="#AAFFFFFF"
+                android:layout_below="@+id/help_manage"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="2sp"
                 android:background="#33FFFFFF"
                 android:id="@+id/hl5"
-                android:layout_below="@id/help_other_devices"
-                android:layout_marginTop="8sp"/>
+                android:layout_below="@id/b_help_manage_friends"
+                android:layout_marginTop="8sp"
+                android:layout_marginBottom="16sp"/>
 
 
         </RelativeLayout>

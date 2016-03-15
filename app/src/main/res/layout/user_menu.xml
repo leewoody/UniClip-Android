@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rl_user"
-    android:visibility="visible"
     android:paddingLeft="30sp"
     android:paddingRight="30sp"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -14,8 +13,8 @@
         android:text="User Info"
         android:textSize="30sp"
         android:id="@+id/user_title"
-        android:layout_marginTop="40sp"
-        android:textColor="@color/colorPrimary"/>
+        android:layout_marginTop="20sp"
+        android:textColor="@color/colorAccent"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -38,13 +37,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="user@gmail.com"
+                android:text="Grant 'Contacts' permission in android system settings."
                 android:textSize="16sp"
                 android:id="@+id/user_username"
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/user_username_title"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="#AAFFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -76,7 +75,7 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/user_device_title"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="#AAFFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -137,7 +136,7 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginLeft="8sp"
                 android:layout_below="@+id/user_access_pin_title"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="#AAFFFFFF"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"

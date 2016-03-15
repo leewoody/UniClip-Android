@@ -5,15 +5,34 @@
     android:background="@color/colorPrimary"
     android:id="@+id/rl_main">
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_splash_bottom"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/splash_bottom"
+        android:alpha="0.2"/>
+
 
     <ImageView
         android:layout_width="180sp"
         android:layout_height="60sp"
-        android:id="@+id/iv_logo"
+        android:id="@+id/app_logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="6dp"
         android:src="@drawable/app_title"
         android:layout_centerVertical="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/app_version"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:textColor="#99FFFFFF"
+        android:layout_marginBottom="20sp"
+        android:text="@string/app_version"/>
 
 
 

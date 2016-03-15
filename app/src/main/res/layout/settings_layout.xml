@@ -79,14 +79,14 @@
     </RelativeLayout>
 
 
-    <!-- RL Shake-->
+    <!-- RL Get-->
     <RelativeLayout
         android:layout_width="400sp"
         android:layout_height="wrap_content"
         android:layout_below="@id/rl_on_data_arrive"
         android:layout_marginTop="24sp"
         android:paddingBottom="12sp"
-        android:id="@+id/rl_shake"
+        android:id="@+id/rl_get"
         android:paddingTop="12sp"
         android:paddingRight="14sp"
         android:background="#11FFFFFF">
@@ -97,7 +97,7 @@
             android:textSize="16sp"
             android:textColor="@color/colorAccent"
             android:paddingLeft="16sp"
-            android:id="@+id/rl_shakes_title"/>
+            android:id="@+id/rl_get_title"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -106,19 +106,19 @@
             android:textColor="#88FFFFFF"
             android:paddingLeft="16sp"
             android:layout_marginTop="18sp"
-            android:layout_below="@+id/rl_shakes_title"
-            android:id="@+id/shakes_title"/>
+            android:layout_below="@+id/rl_get_title"
+            android:id="@+id/get_title"/>
 
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="16sp"
-            android:id="@+id/sb_shakes"
+            android:id="@+id/sb_get_shakes"
             android:max="5"
-            android:layout_below="@id/shakes_title"
+            android:layout_below="@id/get_title"
             android:layout_marginTop="12dp"
             android:layout_marginRight="6sp"
-            android:layout_toStartOf="@+id/sensitivity_indicator"/>
+            android:layout_toStartOf="@+id/get_sensitivity_indicator"/>
 
 
         <TextView
@@ -126,9 +126,9 @@
             android:layout_height="match_parent"
             android:text="Shake sensitiviy:"
             android:textColor="#AAFFFFFF"
-            android:layout_below="@id/sb_shakes"
+            android:layout_below="@id/sb_get_shakes"
             android:paddingLeft="16sp"
-            android:id="@+id/sensitivity_title"
+            android:id="@+id/get_sensitivity_title"
             android:layout_marginTop="22sp"/>
 
 
@@ -136,12 +136,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="16sp"
-            android:id="@+id/sb_sensitivity"
-            android:layout_below="@id/sensitivity_title"
+            android:id="@+id/sb_get_sensitivity"
+            android:layout_below="@id/get_sensitivity_title"
             android:max="5"
             android:layout_marginTop="12dp"
             android:layout_marginRight="6sp"
-            android:layout_toStartOf="@+id/sensitivity_indicator"/>
+            android:layout_toStartOf="@+id/get_sensitivity_indicator"/>
 
 
         <TextView
@@ -149,8 +149,8 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textColor="#88FFFFFF"
-            android:id="@+id/sensitivity_indicator"
-            android:layout_below="@id/sensitivity_title"
+            android:id="@+id/get_sensitivity_indicator"
+            android:layout_below="@id/get_sensitivity_title"
             android:layout_alignParentRight="true"
             android:layout_marginTop="14sp"/>
 
@@ -161,13 +161,126 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textColor="#88FFFFFF"
-            android:id="@+id/shakes_indicator"
-            android:layout_below="@id/shakes_title"
+            android:id="@+id/get_shakes_indicator"
+            android:layout_below="@id/get_title"
             android:layout_alignParentRight="true"
             android:layout_marginTop="14sp"/>
 
     </RelativeLayout>
 
+
+    <!-- RL Share-->
+    <RelativeLayout
+        android:layout_width="400sp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_get"
+        android:layout_marginTop="24sp"
+        android:paddingBottom="12sp"
+        android:id="@+id/rl_share"
+        android:paddingTop="12sp"
+        android:paddingRight="14sp"
+        android:background="#11FFFFFF">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Share data by shaking:"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:paddingLeft="16sp"
+            android:id="@+id/rl_share_title"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Number of shakes:"
+            android:textColor="#88FFFFFF"
+            android:paddingLeft="16sp"
+            android:layout_marginTop="18sp"
+            android:layout_below="@+id/rl_share_title"
+            android:id="@+id/share_title"/>
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16sp"
+            android:id="@+id/sb_share_shakes"
+            android:max="5"
+            android:layout_below="@id/share_title"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="6sp"
+            android:layout_toStartOf="@+id/share_sensitivity_indicator"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Shake sensitiviy:"
+            android:textColor="#AAFFFFFF"
+            android:layout_below="@id/sb_share_shakes"
+            android:paddingLeft="16sp"
+            android:id="@+id/share_sensitivity_title"
+            android:layout_marginTop="22sp"/>
+
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16sp"
+            android:id="@+id/sb_share_sensitivity"
+            android:layout_below="@id/share_sensitivity_title"
+            android:max="5"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="6sp"
+            android:layout_toStartOf="@+id/share_sensitivity_indicator"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="#88FFFFFF"
+            android:id="@+id/share_sensitivity_indicator"
+            android:layout_below="@id/share_sensitivity_title"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="14sp"/>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="#88FFFFFF"
+            android:id="@+id/share_shakes_indicator"
+            android:layout_below="@id/share_title"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="14sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Manage friends:"
+            android:textColor="#AAFFFFFF"
+            android:layout_below="@id/sb_share_sensitivity"
+            android:paddingLeft="16sp"
+            android:id="@+id/share_friends_title"
+            android:layout_marginTop="22sp"/>
+
+        <Button
+            android:layout_width="120sp"
+            android:layout_height="34sp"
+            android:layout_marginTop="10sp"
+            android:background="@color/colorAccent"
+            android:text="Manage"
+            android:id="@+id/b_manage_friends"
+            android:layout_marginLeft="16sp"
+            android:textColor="#AAFFFFFF"
+            android:layout_below="@+id/share_friends_title"/>
+
+
+    </RelativeLayout>
+
+    <!--Theme-->
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -178,16 +291,30 @@
         android:textColor="#AAFFFFFF"
         android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
         android:button="@null"
-        android:layout_below="@+id/rl_shake"
+        android:layout_below="@+id/rl_share"
         android:layout_marginTop="30dp"/>
 
 
+    <!-- Get Help-->
     <ImageView
         android:layout_width="22dp"
         android:layout_height="26dp"
-        android:id="@+id/b_help_shake"
+        android:id="@+id/b_help_get"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/rl_shake"
+        android:layout_alignTop="@+id/rl_get"
+        android:layout_marginTop="6sp"
+        android:layout_marginRight="6sp"
+        android:src="@drawable/help_shake"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true" />
+
+    <!-- Share Help-->
+    <ImageView
+        android:layout_width="22dp"
+        android:layout_height="26dp"
+        android:id="@+id/b_help_share"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/rl_share"
         android:layout_marginTop="6sp"
         android:layout_marginRight="6sp"
         android:src="@drawable/help_shake"

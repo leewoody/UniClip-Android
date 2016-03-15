@@ -39,7 +39,6 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -55,27 +54,26 @@ import co.mobiwise.materialintro.view.MaterialIntroView;
 
 public class MainActivity extends Activity{
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
-    Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin, b_diagnose, b_go_back_to_main;
+    Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin, b_diagnose, b_go_back_to_main, b_manage_friends, b_help_manage_friends;
     CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme, cb_open_url;
     EditText input_access_pin;
     SharedPreferences sp;
     SharedPreferences.Editor ed;
     private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run, sp_open_url, sp_are_creator, sp_authenticated;
     private String sp_user_email, sp_device_name;
-    ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_shake;
-    SeekBar sb_sensitivity, sb_numberShakes;
-    TextView sensitivity_indicator, shakes_indicator, access_pin_desc, welcome_text;
-    private int sensitivity, numberShakes;
-    private int sp_sensitivity, sp_shakes;
+    ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_get, b_help_share;
+    SeekBar sb_get_sensitivity, sb_get_numberShakes, sb_share_sensitivity, sb_share_numberShakes;
+    TextView get_sensitivity_indicator, get_shakes_indicator, access_pin_desc, welcome_text;
+    TextView share_sensitivity_indicator, share_shakes_indicator;
+    private int get_sensitivity, get_numberShakes, share_sensitivity, share_numberShakes;
+    private int sp_get_sensitivity, sp_get_shakes, sp_share_sensitivity, sp_share_shakes;
     Animation fade_in, fade_out, rotate, blink, slide_in_top, slide_out_top, fade_in_rl_top, fade_out_rl_top, bob, fade_out_rl_settings;
-    private RelativeLayout rl_settings, rl_running, rl_main, rl_top, rl_menu_on, rl_menu_content, rl_history, rl_info, rl_user, rl_help;
-    private String user_email;
-    private View.OnClickListener  mOnClickListener;
+    private RelativeLayout rl_settings, rl_running, rl_main, rl_top, rl_menu_on, rl_menu_content, rl_history, rl_info, rl_user, rl_help, rl_first_page;
     private ClipboardManager myClipboard;
     private ArrayList<String> history_list_activity;
     private Handler handler_history, handler_devices, handler_status, handler_connection;
     private TextView user_access_pin, status_service, status_connection;
-    public int colorPrimary, colorAccent;
+    public static int colorPrimary, colorAccent;
     private int page = 1; //Main screen
     private boolean usernode_created_now = false;
 
@@ -98,6 +96,8 @@ public class MainActivity extends Activity{
         b_view_access_pin = (Button) findViewById(R.id.b_view_access_pin);
         b_set_access_pin = (Button) findViewById(R.id.b_set_access_pin);
         b_diagnose = (Button) findViewById(R.id.b_diagnose);
+        b_manage_friends = (Button) findViewById(R.id.b_manage_friends);
+        b_help_manage_friends = (Button) findViewById(R.id.b_help_manage_friends);
         b_go_back_to_main = (Button) findViewById(R.id.b_go_back_to_main);
         cb_autostart = (CheckBox) findViewById(R.id.cb_autostart);
         cb_notification = (CheckBox) findViewById(R.id.cb_notification);
@@ -113,11 +113,16 @@ public class MainActivity extends Activity{
         b_history = (ImageView) findViewById(R.id.b_history);
         b_help = (ImageView) findViewById(R.id.b_help);
         b_info = (ImageView) findViewById(R.id.b_info);
-        b_help_shake = (ImageView) findViewById(R.id.b_help_shake);
-        sb_sensitivity = (SeekBar) findViewById(R.id.sb_sensitivity);
-        sb_numberShakes = (SeekBar) findViewById(R.id.sb_shakes);
-        sensitivity_indicator = (TextView) findViewById(R.id.sensitivity_indicator);
-        shakes_indicator = (TextView) findViewById(R.id.shakes_indicator);
+        b_help_get = (ImageView) findViewById(R.id.b_help_get);
+        b_help_share = (ImageView) findViewById(R.id.b_help_share);
+        sb_get_sensitivity = (SeekBar) findViewById(R.id.sb_get_sensitivity);
+        sb_get_numberShakes = (SeekBar) findViewById(R.id.sb_get_shakes);
+        get_sensitivity_indicator = (TextView) findViewById(R.id.get_sensitivity_indicator);
+        get_shakes_indicator = (TextView) findViewById(R.id.get_shakes_indicator);
+        sb_share_sensitivity = (SeekBar) findViewById(R.id.sb_share_sensitivity);
+        sb_share_numberShakes = (SeekBar) findViewById(R.id.sb_share_shakes);
+        share_sensitivity_indicator = (TextView) findViewById(R.id.share_sensitivity_indicator);
+        share_shakes_indicator = (TextView) findViewById(R.id.share_shakes_indicator);
         welcome_text = (TextView) findViewById(R.id.welcome_text);
         access_pin_desc = (TextView) findViewById(R.id.access_pin_desc);
         user_access_pin = (TextView) findViewById(R.id.user_access_pin);
@@ -138,6 +143,7 @@ public class MainActivity extends Activity{
         rl_main = (RelativeLayout) findViewById(R.id.rl_main);
         rl_top = (RelativeLayout) findViewById(R.id.rl_top);
         rl_menu_on = (RelativeLayout) findViewById(R.id.rl_menu_on);
+        rl_first_page = (RelativeLayout) findViewById(R.id.rl_first_page);
         rl_history = (RelativeLayout) findViewById(R.id.rl_history);
         rl_user = (RelativeLayout) findViewById(R.id.rl_user);
         rl_info = (RelativeLayout) findViewById(R.id.rl_info);
@@ -159,6 +165,42 @@ public class MainActivity extends Activity{
                 if (isServiceRunning(UniClipService.class))
                     makeToast("Service will continue running in the background.");
 
+            }
+
+        });
+
+        //Diagnose Button listener
+        b_diagnose.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                b_diagnose.setText("Checking");
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        b_diagnose.setText("Diagnose");
+                        diagnose();
+                    }
+                }, 3000);
+
+            }
+
+        });
+
+        //Mangae friends Button listener
+        b_manage_friends.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(50);
+
+                startActivity(new Intent(MainActivity.this, ManageFriendsActivity.class).putExtra("prev_screen", "main_screen_menu"));
+            }
+
+        });
+
+        //Mangae friends Button listener
+        b_help_manage_friends.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(50);
+
+                startActivity(new Intent(MainActivity.this, ManageFriendsActivity.class).putExtra("prev_screen", "main_screen_menu"));
             }
 
         });
@@ -355,10 +397,17 @@ public class MainActivity extends Activity{
                 int key = sp.getInt("access_pin", 0);
                 if(key != 0){
                     b_view_access_pin.setText("Access PIN: " + String.valueOf(key));
+                    (new Handler()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            b_view_access_pin.setText("View Access Pin");
+                        }
+                    }, 10000);
                 }
                 else {
                     b_view_access_pin.setText("Error");
                 }
+
 
             }
 
@@ -375,6 +424,7 @@ public class MainActivity extends Activity{
                 //MenuIntroActivity
                 menuShowcaseInitiate();
 
+                rl_first_page.setVisibility(View.VISIBLE);
                 rl_user.setVisibility(View.INVISIBLE);
                 rl_info.setVisibility(View.INVISIBLE);
                 rl_history.setVisibility(View.INVISIBLE);
@@ -462,6 +512,8 @@ public class MainActivity extends Activity{
         b_history.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+                rl_first_page.setVisibility(View.INVISIBLE);
                 rl_history.setVisibility(View.VISIBLE);
                 rl_info.setVisibility(View.INVISIBLE);
                 rl_user.setVisibility(View.INVISIBLE);
@@ -472,11 +524,37 @@ public class MainActivity extends Activity{
             }
         });
 
-        //Help for shakes button listener
-        b_help_shake.setOnClickListener(new View.OnClickListener() {
+        //Help for get button listener
+        b_help_get.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
-                makeToast("Help pressed.");
+                makeToast("See 'Sharing Clipboard, section 1.");
+
+                //Open help menu
+                rl_menu_on.setVisibility(View.VISIBLE);
+                rl_menu_content.setVisibility(View.VISIBLE);
+                rl_first_page.setVisibility(View.INVISIBLE);
+                rl_help.setVisibility(View.VISIBLE);
+                rl_user.setVisibility(View.INVISIBLE);
+                rl_history.setVisibility(View.INVISIBLE);
+                rl_info.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        //Help for share button listener
+        b_help_share.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(27);
+                makeToast("See 'Sharing Clipboard, section 2.");
+
+                //Open help menu
+                rl_menu_on.setVisibility(View.VISIBLE);
+                rl_menu_content.setVisibility(View.VISIBLE);
+                rl_help.setVisibility(View.VISIBLE);
+                rl_user.setVisibility(View.INVISIBLE);
+                rl_history.setVisibility(View.INVISIBLE);
+                rl_info.setVisibility(View.INVISIBLE);
+
             }
         });
 
@@ -551,6 +629,8 @@ public class MainActivity extends Activity{
         b_user.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+                rl_first_page.setVisibility(View.INVISIBLE);
                 rl_user.setVisibility(View.VISIBLE);
                 rl_info.setVisibility(View.INVISIBLE);
                 rl_history.setVisibility(View.INVISIBLE);
@@ -575,6 +655,9 @@ public class MainActivity extends Activity{
         b_info.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+
+                rl_first_page.setVisibility(View.INVISIBLE);
                 rl_info.setVisibility(View.VISIBLE);
                 rl_user.setVisibility(View.INVISIBLE);
                 rl_history.setVisibility(View.INVISIBLE);
@@ -587,6 +670,9 @@ public class MainActivity extends Activity{
         b_help.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+
+                rl_first_page.setVisibility(View.INVISIBLE);
                 rl_help.setVisibility(View.VISIBLE);
                 rl_user.setVisibility(View.INVISIBLE);
                 rl_history.setVisibility(View.INVISIBLE);
@@ -737,7 +823,7 @@ public class MainActivity extends Activity{
         @Override
         public void run() {
             if(isNetworkAvailable()){
-                status_connection.setText("Connection:\n  Connected to server.");
+                status_connection.setText("Connection:\n  Connected to the server.");
                 b_diagnose.setVisibility(View.GONE);
             }
             else {
@@ -893,7 +979,6 @@ public class MainActivity extends Activity{
                     if(isEven(i))row1.setTextColor(Color.parseColor("#CCFFFFFF"));
                     else row1.setTextColor(Color.parseColor("#88FFFFFF"));
 
-                    row1.setTypeface(Typeface.MONOSPACE);
                     row1.setTextSize(16);
 
                     row1.setOnClickListener(new View.OnClickListener() {
@@ -930,8 +1015,7 @@ public class MainActivity extends Activity{
                 row1.setPadding(20, 12, 20, 12);
                 row1.setText("Clipboard history is empty!");
 
-                row1.setTextColor(colorPrimary);
-                row1.setTypeface(Typeface.MONOSPACE);
+                row1.setTextColor(Color.parseColor("#88FFFFFF"));
                 row1.setTextSize(16);
 
                 ll_history_feed.addView(row1);
@@ -981,7 +1065,7 @@ public class MainActivity extends Activity{
                         row1.setText(i + ". " + postSnapshot.getKey().toString());
                         i++;
 
-                        if(postSnapshot.getValue().toString().equals("1"))row1.setTextColor(colorPrimary);
+                        if(postSnapshot.getValue().toString().equals("1"))row1.setTextColor(Color.parseColor("#AAFFFFFF"));
                         else if(postSnapshot.getValue().toString().equals("0"))row1.setTextColor(Color.parseColor("#AC2358"));
                         row1.setTypeface(Typeface.MONOSPACE);
                         row1.setTextSize(16);
@@ -1027,11 +1111,6 @@ public class MainActivity extends Activity{
         //Showcase UI
         mainShowcaseInitiate();
 
-
-        //Reset authentication
-        ed.putBoolean("authenticated", false).commit();
-        sp_authenticated = sp.getBoolean("authenticated", false);
-
         //Get Color
         colorPrimary = getResources().getColor(R.color.colorPrimary);
         colorAccent = getResources().getColor(R.color.colorAccent);
@@ -1055,36 +1134,20 @@ public class MainActivity extends Activity{
         }
 
         //Make snack if network unavailable
-        if(!isNetworkAvailable())makeSnack("Network unavailable.");
+        //if(!isNetworkAvailable())makeSnack("Network unavailable.");
 
         //Detect accelerometer
         PackageManager manager = getPackageManager();
         boolean hasAccelerometer = manager.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
 
         if(!hasAccelerometer){
-            sb_sensitivity.setEnabled(false);
-            sb_numberShakes.setEnabled(false);
-            sb_sensitivity.setProgress(0);
+            sb_get_sensitivity.setEnabled(false);
+            sb_get_numberShakes.setEnabled(false);
+            sb_get_sensitivity.setProgress(0);
 
-        }
-
-        //Set content if this device is not the creator
-        if(!sp_are_creator){
-            access_pin_desc.setText("In order to start listening to the cloudboard, you need to input the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
-            b_view_access_pin.setVisibility(View.GONE);
-
-            sync_anim.clearAnimation();
-
-            if(!sp_authenticated) {
-                b_set_access_pin.setVisibility(View.VISIBLE);
-                input_access_pin.setVisibility(View.VISIBLE);
-            }
-            else{
-                b_set_access_pin.setText("Verified");
-                b_set_access_pin.setVisibility(View.VISIBLE);
-                b_set_access_pin.setEnabled(false);
-                input_access_pin.setVisibility(View.GONE);
-            }
+            sb_share_sensitivity.setEnabled(false);
+            sb_share_numberShakes.setEnabled(false);
+            sb_share_sensitivity.setProgress(0);
         }
 
         //Detect Vibrator
@@ -1156,60 +1219,126 @@ public class MainActivity extends Activity{
             }
         });
 
+
+
+
+
         //Set up content if service is running
         if (isServiceRunning(UniClipService.class)) {
+
+            //Set Status in Authentication Screen
+            handler_status = new Handler();
+            refreshServiceStatus.run();
+
+            handler_connection = new Handler();
+            refreshConnectionStatus.run();
+
 
             b_start_stop.setText("Stop UniClip!");
 
             rl_settings.setVisibility(View.GONE);
             rl_running.setVisibility(View.VISIBLE);
-            if(sp_are_creator){
-
-            }
-
-            sync_anim.setAlpha(0.2f);
+            sync_anim.setAlpha(0.1f);
 
             welcome_text.setText("You can close this app. The background service will make " +
                     "sure clipboards on all your devices stay unified.");
 
-        } else {
+
+            //Set content if creator
+            if(sp_are_creator) {
+                if (sp_authenticated) {
+
+                    if (isNetworkAvailable())
+                        status_service.setText("Service:\n  Running. Listening to the cloudboard.");
+                    else status_service.setText("Service:\n  Running. Waiting for network.");
+                } else if (!sp_authenticated) {
+
+                    //Waiting for authentication
+                    if (isNetworkAvailable())
+                        status_service.setText("Service:\n  Waiting for authentication.");
+                    else {
+                        status_service.setText("Service:\n  Not running. Waiting for network.");
+                    }
+                }
+            }
+            //Set content if not creator
+            else {
+                if (sp_authenticated) {
+                    b_set_access_pin.setVisibility(View.VISIBLE);
+                    b_set_access_pin.setText("Verified");
+                    b_view_access_pin.setVisibility(View.GONE);
+                    b_set_access_pin.setEnabled(false);
+                    input_access_pin.setVisibility(View.GONE);
+
+                    if (isNetworkAvailable()) {
+                        status_service.setText("Service:\n  Running. Listening to the cloudboard.");
+                        status_connection.setText("Connection:\n  Connected to the server.");
+                    }
+                    else{
+                        status_service.setText("Service:\n  Running. Waiting for network.");
+                        status_connection.setText("Connection:\n  Internet unavailable.");
+                    }
+                }
+                else if (!sp_authenticated) {
+                    access_pin_desc.setText("In order to start listening to the cloudboard, you need to input the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
+                    b_view_access_pin.setVisibility(View.GONE);
+
+                    sync_anim.clearAnimation();
+                    b_set_access_pin.setVisibility(View.VISIBLE);
+                    input_access_pin.setVisibility(View.VISIBLE);
+
+                    //Waiting for authentication
+                    if (isNetworkAvailable()){
+                        status_service.setText("Service:\n  Waiting for authentication.");
+                        status_connection.setText("Connection:\n  Connected to the server.");
+                    }
+                    else {
+                        status_service.setText("Service:\n  Can't authenticate. No network.");
+                        status_connection.setText("Connection:\n  Internet unavailable.");
+                    }
+                }
+            }
+
+        }
+        //Service not running
+        else {
             b_start_stop.setText("Start UniClip!");
             rl_settings.setVisibility(View.VISIBLE);
+            rl_running.setVisibility(View.GONE);
             sync_anim.setAlpha(0.00f);
 
-            welcome_text.setText("UniClip is a multi-device clipboard synchronization "+
+            welcome_text.setText("UniClip is a multi-device clipboard synchronization " +
                     "application, which makes sharing texts, links, etc easy.");
         }
 
-        //Set content if authenticated and not a creator
-        if(sp_authenticated && sp_are_creator){
-
-            if(isNetworkAvailable())status_service.setText("Service:\n  Running. Listening to the cloudboard.");
-            else status_service.setText("Service:\n  Running. Waiting for network.");
-        }
-
-        else if(isServiceRunning(UniClipService.class) && !sp_authenticated){
-            //Waiting for authentication
-
-            if(isNetworkAvailable())status_service.setText("Service:\n  Waiting for authentication.");
-            else {
-                status_service.setText("Service:\n  Not running. Waiting for network.");
-            }
-        }
 
 
 
+
+
+        //Sync Icon Animation
         sync_anim.startAnimation(rotate);
 
+        //Set Shake Sensitivity and number of Shakes
+        sp_get_sensitivity = sp.getInt("get_sensitivity", 2+1);
+        sp_get_shakes = sp.getInt("get_shakes", 2);
+        sp_share_sensitivity = sp.getInt("share_sensitivity", 2+1);
+        sp_share_shakes = sp.getInt("share_shakes", 3);
 
-        sp_sensitivity = sp.getInt("sensitivity", 2+1);
-        sp_shakes = sp.getInt("shakes", 2);
+        //Set seekbar progresses
+        sb_get_numberShakes.setProgress(sp_get_shakes);
+        sb_get_sensitivity.setProgress(sp_get_sensitivity - 1);
+        get_sensitivity_indicator.setText(String.valueOf(sp_get_sensitivity));
+        get_shakes_indicator.setText(String.valueOf(sp_get_shakes));
 
-        sb_numberShakes.setProgress(sp_shakes);
-        sb_sensitivity.setProgress(sp_sensitivity);
-        sensitivity_indicator.setText(String.valueOf(sp_sensitivity+1));
-        shakes_indicator.setText(String.valueOf(sp_shakes));
 
+        sb_share_numberShakes.setProgress(sp_share_shakes - 1);
+        sb_share_sensitivity.setProgress(sp_share_sensitivity - 1);
+        share_sensitivity_indicator.setText(String.valueOf(sp_share_sensitivity));
+        share_shakes_indicator.setText(String.valueOf(sp_share_shakes));
+
+
+        //Initialize Checkboxes
         if(sp_autostart)cb_autostart.setChecked(true);
         else cb_autostart.setChecked(false);
 
@@ -1232,34 +1361,29 @@ public class MainActivity extends Activity{
         }
 
 
-        int value = sb_numberShakes.getProgress();
-        shakes_indicator.setText(String.valueOf(value));
 
-
-        sb_sensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        //Seekbar OnChange Listeners
+        sb_get_sensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // TODO Auto-generated method stub
-                sensitivity = progress;
-                sensitivity_indicator.setText(String.valueOf(sensitivity + 1));
-                ed.putInt("sensitivity", sensitivity);
+                get_sensitivity = progress;
+                get_sensitivity_indicator.setText(String.valueOf(get_sensitivity + 1));
+                ed.putInt("get_sensitivity", get_sensitivity + 1);
                 ed.commit();
             }
         });
 
 
-        sb_numberShakes.setOnSeekBarChangeListener(
+        sb_get_numberShakes.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
@@ -1272,20 +1396,64 @@ public class MainActivity extends Activity{
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress,
                                                   boolean fromUser) {
-                        numberShakes = progress;
-                        shakes_indicator.setText(String.valueOf(numberShakes));
-                        ed.putInt("shakes", numberShakes);
+                        get_numberShakes = progress;
+                        get_shakes_indicator.setText(String.valueOf(get_numberShakes));
+                        ed.putInt("get_shakes", get_numberShakes);
                         ed.commit();
 
-                        if(progress == 0)sb_sensitivity.setEnabled(false);
-                        else sb_sensitivity.setEnabled(true);
+                        if(progress == 0)sb_get_sensitivity.setEnabled(false);
+                        else sb_get_sensitivity.setEnabled(true);
 
                     }
                 }
         );
 
-        if(sb_numberShakes.getProgress() == 0)sb_sensitivity.setEnabled(false);
+        sb_share_sensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                share_sensitivity = progress;
+                share_sensitivity_indicator.setText(String.valueOf(share_sensitivity + 1));
+                ed.putInt("share_sensitivity", share_sensitivity + 1);
+                ed.commit();
+            }
+        });
+
+
+        sb_share_numberShakes.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress,
+                                                  boolean fromUser) {
+                        share_numberShakes = progress;
+                        share_shakes_indicator.setText(String.valueOf(share_numberShakes + 1));
+                        ed.putInt("share_shakes", share_numberShakes + 1);
+                        ed.commit();
+
+                    }
+                }
+        );
+
+        //Disable sensitivities if number of shakes
+        if(sb_get_numberShakes.getProgress() == 0)sb_get_sensitivity.setEnabled(false);
+
+        //Disable first_run flag
         ed.putBoolean("first_run", false).commit();
 
     }
@@ -1326,24 +1494,24 @@ public class MainActivity extends Activity{
 
         //Check if this device is creator
         if(fb != null)
-        fb.child("creator").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+            fb.child("creator").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
 
-                    if(sp_device_name.equals(snapshot.getValue().toString())){
-                        ed.putBoolean("creator", true).commit();
-                    }
-                    else{
-                        ed.putBoolean("creator", false).commit();
+                        if(sp_device_name.equals(snapshot.getValue().toString())){
+                            ed.putBoolean("creator", true).commit();
+                        }
+                        else{
+                            ed.putBoolean("creator", false).commit();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(FirebaseError error) {
-            }
-        });
+                @Override
+                public void onCancelled(FirebaseError error) {
+                }
+            });
 
         if(sp.getBoolean("creator", false))
             sp_authenticated = true;
@@ -1372,6 +1540,7 @@ public class MainActivity extends Activity{
             }
         }, delay);
     }
+
     //Menu showcase
     private void menuShowcaseInitiate() {
         //Menu Button
@@ -1571,6 +1740,28 @@ public class MainActivity extends Activity{
         String permission = "android.permission.GET_ACCOUNTS";
         int res = getApplicationContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+    //Diagnose Method
+    private void diagnose(){
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+
+        //3G check
+        boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+                .isConnectedOrConnecting();
+        //WiFi Check
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                .isConnectedOrConnecting();
+
+        if (!is3g && !isWifi){
+            makeToast("Both Wifi and Mobile data are off.");
+        }
+        else if (is3g && !isWifi){
+            makeToast("Mobile data is on, Wifi is off. Check if you are in network range.");
+        }
+        else if (!is3g && isWifi){
+            makeToast("There seems to be a problem with Wifi. Try Mobile data instead.");
+        }
     }
 
 }

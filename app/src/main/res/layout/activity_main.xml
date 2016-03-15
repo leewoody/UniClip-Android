@@ -115,13 +115,27 @@
 
     </RelativeLayout>
 
+
+    <!--Menu Content-->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/rl_menu_content"
         android:layout_below="@+id/rl_menu_on"
-        android:background="#DE000000"
+        android:background="@color/colorPrimary"
+        android:alpha="0.92"
         android:visibility="gone">
+
+        <!--Menu background-->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/splash_bottom"
+            android:alpha="0.2"/>
+
 
         <include layout="@layout/user_menu"/>
 
@@ -131,18 +145,8 @@
 
         <include layout="@layout/help_menu"/>
 
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/rl_cityscape">
+        <include layout="@layout/first_page_menu"/>
 
 
     </RelativeLayout>
-
-
 </RelativeLayout>

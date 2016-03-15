@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:id="@+id/rl_main">
+
+
+    <include layout="@layout/rl_top_layout"
+        android:id="@+id/include_top"/>
+
+    <RelativeLayout
+        android:layout_width="400sp"
+        android:layout_height="2sp"
+        android:layout_marginTop="8sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10sp"
+        android:id="@+id/hl10"
+        android:background="#44FFFFFF"
+        android:layout_below="@id/include_top"/>
+
+    <ScrollView
+        android:layout_width="400sp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/hl10"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="14sp"
+        android:layout_marginLeft="14sp"
+        android:layout_above="@+id/rl_get_friends_share"
+        android:background="#33FFFFFF">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Friends list:"
+                android:textSize="24sp"
+                android:id="@+id/friends_feed_title"
+                android:layout_marginLeft="14sp"
+                android:layout_marginTop="12sp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginBottom="16sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/ll_get_friends_feed"
+                android:orientation="vertical"
+                android:layout_below="@+id/friends_feed_title"
+                android:layout_centerHorizontal="true"
+                android:padding="14sp">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/ll_add_friend"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_below="@+id/friends_feed_title"
+                android:layout_centerHorizontal="true"
+                android:padding="14sp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Friend's email"
+                    android:textColorHint="#AAFFFFFF"
+                    android:textColor="@color/colorAccent"
+                    android:id="@+id/et_add_friend_email"
+                    android:layout_marginBottom="20sp"
+                    android:layout_marginLeft="6sp"
+                    android:layout_marginRight="6sp"
+                    android:background="@drawable/card_background_layout"/>
+
+                <RelativeLayout
+                    android:layout_width="400sp"
+                    android:layout_height="2sp"
+                    android:layout_marginTop="8sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10sp"
+                    android:id="@+id/hl11"
+                    android:background="#44FFFFFF"
+                    android:layout_below="@id/et_add_friend_email"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_friend_desc"
+                    android:text="Ask your friend their email address, and put it here. \n\nClick 'Add', and you are good to go.\n\nRegistered email can be found in User section in the Menu."
+                    android:padding="12sp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="158sp"
+        android:id="@+id/rl_get_friends_share"
+        android:layout_centerHorizontal="true"
+        android:padding="14sp"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:layout_width="400sp"
+            android:layout_height="2sp"
+            android:layout_marginBottom="12sp"
+            android:id="@+id/hl9"
+            android:background="#44FFFFFF"
+            android:layout_above="@+id/b_friends_manage_add"/>
+
+        <Button
+            android:layout_width="400sp"
+            android:layout_height="wrap_content"
+            android:text="Add a friend"
+            android:layout_marginBottom="12sp"
+            android:id="@+id/b_friends_manage_add"
+            android:layout_above="@+id/b_friends_manage_delete"
+            android:background="@drawable/card_background_layout"
+            android:textColor="#BCFFFFFF"/>
+
+        <Button
+            android:layout_width="400sp"
+            android:layout_height="wrap_content"
+            android:text="Delete a friend"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/b_friends_manage_delete"
+            android:alpha="0.9"
+            android:background="@drawable/card_background_layout"
+            android:textColor="#BCFFFFFF"/>
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

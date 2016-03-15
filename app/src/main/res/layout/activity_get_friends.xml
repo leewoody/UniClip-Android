@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:id="@+id/rl_main">
+
+
+    <include layout="@layout/rl_top_layout"
+        android:id="@+id/include_top"/>
+
+    <RelativeLayout
+        android:layout_width="400sp"
+        android:layout_height="2sp"
+        android:layout_marginTop="8sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10sp"
+        android:id="@+id/hl10"
+        android:background="#44FFFFFF"
+        android:layout_below="@id/include_top"/>
+
+    <ScrollView
+        android:layout_width="400sp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/hl10"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="14sp"
+        android:layout_marginLeft="14sp"
+        android:layout_above="@+id/rl_get_friends_share"
+        android:background="#33FFFFFF">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Select friends:"
+                android:textSize="24sp"
+                android:id="@+id/get_friends_feed_title"
+                android:layout_marginLeft="14sp"
+                android:layout_marginTop="12sp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginBottom="16sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/ll_get_friends_feed"
+                android:orientation="vertical"
+                android:layout_below="@id/get_friends_feed_title"
+                android:layout_centerHorizontal="true"
+                android:padding="14sp">
+
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="158sp"
+        android:id="@+id/rl_get_friends_share"
+        android:layout_centerHorizontal="true"
+        android:padding="14sp"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:layout_width="400sp"
+            android:layout_height="2sp"
+            android:layout_marginBottom="12sp"
+            android:id="@+id/hl9"
+            android:background="#44FFFFFF"
+            android:layout_above="@+id/b_manage_friends"/>
+
+        <Button
+            android:layout_width="400sp"
+            android:layout_height="wrap_content"
+            android:text="Manage Friends"
+            android:layout_above="@+id/b_share"
+            android:layout_marginBottom="12sp"
+            android:id="@+id/b_manage_friends"
+            android:background="@drawable/card_background_layout"
+            android:textColor="#BCFFFFFF"/>
+
+        <Button
+            android:layout_width="400sp"
+            android:layout_height="wrap_content"
+            android:text="Share"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/b_share"
+            android:alpha="0.9"
+            android:background="@color/colorAccent"
+            android:textColor="#BCFFFFFF"/>
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>
