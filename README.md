@@ -27,7 +27,7 @@ What It Does
 
 **1:** UniClip syncs clipboards on all registered devices that are currently listening the cloudboard.
 
-**2:** That's about it.
+**2:** UniClip also lets users share clipboards with their friends.
 
 Cloudboard
 -------
