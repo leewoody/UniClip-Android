@@ -58,5 +58,5 @@ Open source libraries
 
 [12]: http://i.imgur.com/JaTbpka.png
 [13]: http://i.imgur.com/Hqeu9mH.png
-[14]: http://i.imgur.com/62BYx6M.png
+[14]: http://i.imgur.com/0IsDnQ2.png
 [15]: http://i.imgur.com/XaNLkf4.png
