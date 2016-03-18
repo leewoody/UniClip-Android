@@ -57,6 +57,6 @@ Open source libraries
 [6]: https://github.com/HeinrichReimer
 
 [12]: http://i.imgur.com/JaTbpka.png
-[13]: http://i.imgur.com/Zm04vKH.png
+[13]: http://i.imgur.com/Hqeu9mH.png
 [14]: http://i.imgur.com/62BYx6M.png
-[15]: http://i.imgur.com/97woBUD.png
+[15]: http://i.imgur.com/XaNLkf4.png
