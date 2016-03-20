@@ -43,6 +43,8 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 public class UniClipService extends Service {
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     private Firebase fb;
@@ -53,7 +55,7 @@ public class UniClipService extends Service {
     SharedPreferences sp;
     private SharedPreferences.Editor ed;
     boolean destroyed = false;
-    private int sp_get_shakes, sp_get_sensitivity, sp_share_shakes, sp_share_sensitivity;
+    private int sp_get_shakes, sp_get_sensitivity, sp_share_shakes, sp_share_sensitivity, sp_unread;
     private String sp_user_email, sp_device_name;
     Boolean usernode_created_now = false, authenticated = false;
 
@@ -85,6 +87,7 @@ public class UniClipService extends Service {
             sp_vibrate = sp.getBoolean("vibrate", true);
             sp_get_sensitivity = sp.getInt("get_sensitivity", 2);
             sp_get_shakes = sp.getInt("get_shakes", 2);
+            sp_unread = sp.getInt("unread", 0);
             sp_share_sensitivity = sp.getInt("share_sensitivity", 2);
             sp_share_shakes = sp.getInt("share_shakes", 2);
             sp_user_email = sp.getString("user_email", "unknown");
@@ -92,6 +95,9 @@ public class UniClipService extends Service {
             sp_open_url = sp.getBoolean("open_url", true);;
             sp_are_creator = sp.getBoolean("creator", false);
             sp_authenticated = sp.getBoolean("authenticated", false);
+
+            //Update Shortcut Badger
+            updateBadger();
 
 
             //ArrayList for storing History
@@ -241,6 +247,12 @@ public class UniClipService extends Service {
         return START_STICKY;
 
 
+    }
+
+    private void updateBadger() {
+        sp_unread = sp.getInt("unread", 0);
+        //ShortcutBadger
+        ShortcutBadger.applyCount(getApplication(), sp_unread);
     }
 
 
@@ -501,8 +513,14 @@ public class UniClipService extends Service {
                     shareOff = false;
 
                 }
+                //If data wasn't accepted by the user.
+                if (!dataAccepted){
+                    vibrate(220);
 
-                if (!dataAccepted) vibrate(220);
+                    //Update Shortcut Badger
+                    ed.putInt("unread", sp.getInt("unread", 0) + 1).commit();
+                    updateBadger();
+                }
             }
         }, time);
     }

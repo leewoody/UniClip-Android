@@ -138,7 +138,7 @@
             android:paddingLeft="16sp"
             android:id="@+id/sb_get_sensitivity"
             android:layout_below="@id/get_sensitivity_title"
-            android:max="5"
+            android:max="4"
             android:layout_marginTop="12dp"
             android:layout_marginRight="6sp"
             android:layout_toStartOf="@+id/get_sensitivity_indicator"/>

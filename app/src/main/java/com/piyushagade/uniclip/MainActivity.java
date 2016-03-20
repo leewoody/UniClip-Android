@@ -37,6 +37,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.client.DataSnapshot;
@@ -51,6 +52,7 @@ import co.mobiwise.materialintro.animation.MaterialIntroListener;
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
 import co.mobiwise.materialintro.view.MaterialIntroView;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class MainActivity extends Activity{
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
@@ -66,15 +68,14 @@ public class MainActivity extends Activity{
     TextView get_sensitivity_indicator, get_shakes_indicator, access_pin_desc, welcome_text;
     TextView share_sensitivity_indicator, share_shakes_indicator;
     private int get_sensitivity, get_numberShakes, share_sensitivity, share_numberShakes;
-    private int sp_get_sensitivity, sp_get_shakes, sp_share_sensitivity, sp_share_shakes;
+    private int sp_get_sensitivity, sp_get_shakes, sp_share_sensitivity, sp_share_shakes, sp_unread;
     Animation fade_in, fade_out, rotate, blink, slide_in_top, slide_out_top, fade_in_rl_top, fade_out_rl_top, bob, fade_out_rl_settings;
     private RelativeLayout rl_settings, rl_running, rl_main, rl_top, rl_menu_on, rl_menu_content, rl_history, rl_info, rl_user, rl_help, rl_first_page;
     private ClipboardManager myClipboard;
     private ArrayList<String> history_list_activity;
-    private Handler handler_history, handler_devices, handler_status, handler_connection;
+    private Handler handler_history, handler_status, handler_connection;
     private TextView user_access_pin, status_service, status_connection;
     public static int colorPrimary, colorAccent;
-    private int page = 1; //Main screen
     private boolean usernode_created_now = false;
 
     @Override
@@ -99,11 +100,13 @@ public class MainActivity extends Activity{
         b_manage_friends = (Button) findViewById(R.id.b_manage_friends);
         b_help_manage_friends = (Button) findViewById(R.id.b_help_manage_friends);
         b_go_back_to_main = (Button) findViewById(R.id.b_go_back_to_main);
+
         cb_autostart = (CheckBox) findViewById(R.id.cb_autostart);
         cb_notification = (CheckBox) findViewById(R.id.cb_notification);
         cb_vibrate = (CheckBox) findViewById(R.id.cb_vibrate);
         cb_theme = (CheckBox) findViewById(R.id.cb_theme);
         cb_open_url = (CheckBox) findViewById(R.id.cb_open_url);
+
         clip_icon = (ImageView) findViewById(R.id.clip_icon);
         sync_anim = (ImageView) findViewById(R.id.sync_anim);
         b_close = (ImageView) findViewById(R.id.b_close);
@@ -115,12 +118,14 @@ public class MainActivity extends Activity{
         b_info = (ImageView) findViewById(R.id.b_info);
         b_help_get = (ImageView) findViewById(R.id.b_help_get);
         b_help_share = (ImageView) findViewById(R.id.b_help_share);
+
         sb_get_sensitivity = (SeekBar) findViewById(R.id.sb_get_sensitivity);
         sb_get_numberShakes = (SeekBar) findViewById(R.id.sb_get_shakes);
-        get_sensitivity_indicator = (TextView) findViewById(R.id.get_sensitivity_indicator);
-        get_shakes_indicator = (TextView) findViewById(R.id.get_shakes_indicator);
         sb_share_sensitivity = (SeekBar) findViewById(R.id.sb_share_sensitivity);
         sb_share_numberShakes = (SeekBar) findViewById(R.id.sb_share_shakes);
+
+        get_sensitivity_indicator = (TextView) findViewById(R.id.get_sensitivity_indicator);
+        get_shakes_indicator = (TextView) findViewById(R.id.get_shakes_indicator);
         share_sensitivity_indicator = (TextView) findViewById(R.id.share_sensitivity_indicator);
         share_shakes_indicator = (TextView) findViewById(R.id.share_shakes_indicator);
         welcome_text = (TextView) findViewById(R.id.welcome_text);
@@ -128,6 +133,7 @@ public class MainActivity extends Activity{
         user_access_pin = (TextView) findViewById(R.id.user_access_pin);
         status_connection = (TextView) findViewById(R.id.status_connection);
         status_service = (TextView) findViewById(R.id.status_service);
+
         fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_in_rl_top = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -138,6 +144,7 @@ public class MainActivity extends Activity{
         rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
         slide_in_top = AnimationUtils.loadAnimation(this, R.anim.slide_in_top);
         slide_out_top = AnimationUtils.loadAnimation(this, R.anim.slide_out_top);
+
         rl_settings = (RelativeLayout) findViewById(R.id.rl_settings);
         rl_running = (RelativeLayout) findViewById(R.id.rl_running);
         rl_main = (RelativeLayout) findViewById(R.id.rl_main);
@@ -149,14 +156,37 @@ public class MainActivity extends Activity{
         rl_info = (RelativeLayout) findViewById(R.id.rl_info);
         rl_help = (RelativeLayout) findViewById(R.id.rl_help);
         rl_menu_content = (RelativeLayout) findViewById(R.id.rl_menu_content);
+
         input_access_pin = (EditText) findViewById(R.id.input_access_pin);
 
+
+        //Ripple Effect for componenets
+
+        //Start_Stop Button
+        MaterialRippleLayout.on(b_start_stop).rippleColor(getResources().getColor(R.color.colorAccent))
+                .rippleAlpha(0.92f).rippleDuration(500)
+                .create();
+
+        //Menu
+        MaterialRippleLayout.on(b_view_access_pin).rippleColor(Color.WHITE)
+                .rippleAlpha(0.2f).rippleDuration(200).rippleRoundedCorners(140)
+                .create();
+
+        //Manage friends
+        MaterialRippleLayout.on(b_manage_friends).rippleColor(Color.WHITE)
+                .rippleAlpha(0.2f).rippleDuration(200).rippleRoundedCorners(140)
+                .create();
+
+        MaterialRippleLayout.on(b_help_manage_friends).rippleColor(Color.WHITE)
+                .rippleAlpha(0.2f).rippleDuration(200).rippleRoundedCorners(140)
+                .create();
+
+        //Get SharedPreferences
         sp = getSharedPreferences(PREF_FILE, 0);
         ed = sp.edit();
 
         //Initialize App
         initialize();
-
 
         //Close Button listener
         b_close.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +215,7 @@ public class MainActivity extends Activity{
 
         });
 
-        //Mangae friends Button listener
+        //Manage friends Button listener
         b_manage_friends.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(50);
@@ -195,7 +225,7 @@ public class MainActivity extends Activity{
 
         });
 
-        //Mangae friends Button listener
+        //Manage friends from Help menu Button listener
         b_help_manage_friends.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(50);
@@ -237,7 +267,6 @@ public class MainActivity extends Activity{
             public void onClick(View v) {
 
                 if (!isServiceRunning(UniClipService.class)) {
-                    page = 2; //Running Screen
 
                     Intent intent = new Intent(MainActivity.this, UniClipService.class);
                     intent.putExtra("isAutorun", "false");
@@ -247,7 +276,7 @@ public class MainActivity extends Activity{
                     b_start_stop.setText("Start UniClip!");
 
                     //Reinitialize
-                    reinitialize();
+                    reInitialize();
 
                     //Animate app title
                     swingAnimate(findViewById(R.id.app_title), 700, 1000);
@@ -303,10 +332,8 @@ public class MainActivity extends Activity{
 
                     makeToast("Here 2");
 
-                    page = 3; //Authentication Screen
-
                     //Reinitialize
-                    reinitialize();
+                    reInitialize();
 
                     //Animate app title
                     swingAnimate(findViewById(R.id.app_title), 700, 1000);
@@ -414,8 +441,6 @@ public class MainActivity extends Activity{
         });
 
 
-
-
         //Menu button listener
         b_menu.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -504,7 +529,6 @@ public class MainActivity extends Activity{
                         });
                     }
                 });
-
             }
         });
 
@@ -512,6 +536,10 @@ public class MainActivity extends Activity{
         b_history.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+                //Reset Shortcut badger
+                ed.putInt("unread", 0).commit();
+                updateBadger();
 
                 rl_first_page.setVisibility(View.INVISIBLE);
                 rl_history.setVisibility(View.VISIBLE);
@@ -531,6 +559,7 @@ public class MainActivity extends Activity{
                 makeToast("See 'Sharing Clipboard, section 1.");
 
                 //Open help menu
+                rl_first_page.setVisibility(View.INVISIBLE);
                 rl_menu_on.setVisibility(View.VISIBLE);
                 rl_menu_content.setVisibility(View.VISIBLE);
                 rl_first_page.setVisibility(View.INVISIBLE);
@@ -548,6 +577,7 @@ public class MainActivity extends Activity{
                 makeToast("See 'Sharing Clipboard, section 2.");
 
                 //Open help menu
+                rl_first_page.setVisibility(View.INVISIBLE);
                 rl_menu_on.setVisibility(View.VISIBLE);
                 rl_menu_content.setVisibility(View.VISIBLE);
                 rl_help.setVisibility(View.VISIBLE);
@@ -723,10 +753,8 @@ public class MainActivity extends Activity{
                              ed.putBoolean("notification", false);
                          }
                          ed.commit();
-
                      }
                  }
-
                 );
 
         //Open_URL checkbox listener
@@ -787,7 +815,6 @@ public class MainActivity extends Activity{
                  }
 
                 );
-
     }
 
 
@@ -803,13 +830,14 @@ public class MainActivity extends Activity{
             }
 
             else if(isServiceRunning(UniClipService.class) && !sp_authenticated){
-                //Waiting for authentication
 
+                //Waiting for authentication
                 if(isNetworkAvailable())status_service.setText("Service:\n  Waiting for authentication.");
                 else {
                     status_service.setText("Service:\n  Not running. Waiting for network.");
                 }
             }
+
             //If service not running
             else{
                 status_service.setText("Service:\n  Error. Restart the application.");
@@ -835,9 +863,8 @@ public class MainActivity extends Activity{
         }
     };
 
+    //Get Access Pin
     private void getAccessPin() {
-
-
         //Format email address (remove the .)
         String user_node = sp.getString("user_email", "").replaceAll("\\.", "");
 
@@ -858,12 +885,11 @@ public class MainActivity extends Activity{
             public void onCancelled(FirebaseError error) {
             }
         });
-
         fb = null;
     }
 
-
-    private void reinitialize() {
+    //Reinitialize
+    private void reInitialize() {
 
         //Get Values SP
         sp_are_creator = sp.getBoolean("creator", false);
@@ -889,7 +915,6 @@ public class MainActivity extends Activity{
 
 
         //Set content if this device is/is not the creator
-
         final Handler creatorHandler = new Handler();
         creatorHandler.postDelayed(new Runnable() {
             @Override
@@ -910,14 +935,11 @@ public class MainActivity extends Activity{
                     b_view_access_pin.setVisibility(View.VISIBLE);
 
                     sync_anim.startAnimation(rotate);
-                    b_set_access_pin.setVisibility(View.INVISIBLE); //Let this be invilsible
+                    b_set_access_pin.setVisibility(View.INVISIBLE); //Let this be invisible
                     input_access_pin.setVisibility(View.GONE);
                 }
             }
         }, 600);
-
-
-
 
 
         //Format email address (remove the .)
@@ -943,10 +965,7 @@ public class MainActivity extends Activity{
             public void onCancelled(FirebaseError error) {
             }
         });
-
     }
-
-
 
     //History refresh with 4 sec delay
     private Runnable refreshHistory = new Runnable() {
@@ -956,6 +975,85 @@ public class MainActivity extends Activity{
             handler_history.postDelayed(this, 4000);
         }
     };
+
+
+    //Refresh device list runnable with 4 sec delay
+    private Runnable refreshDevicesList = new Runnable() {
+        public void run() {
+            setRegisteredDeviceList();
+            handler_history.postDelayed(this, 4000);
+        }
+    };
+
+    //Check if a number is even
+    private boolean isEven(int i) {
+        if(i % 2 == 0) return true;
+        return false;
+    }
+
+    //Set devices in feed
+    private void setRegisteredDeviceList() {
+        int i = 1;
+        final LinearLayout ll_other_devices_feed = (LinearLayout) findViewById(R.id.ll_other_devices_feed);
+        ll_other_devices_feed.removeAllViews();
+
+        final Firebase fb_devices = new Firebase("https://uniclip.firebaseio.com/cloudboard/" +
+                sp_user_email.replaceAll("\\.", "") + "/devices");
+
+        fb_devices.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                ll_other_devices_feed.removeAllViews();
+
+                int i = 1;    //Serial number
+                if (snapshot.getChildrenCount() != 0)
+                    for (final DataSnapshot postSnapshot : snapshot.getChildren()) {
+
+                        final TextView row1 = new TextView(getBaseContext());
+                        row1.generateViewId();
+                        row1.setPadding(20, 12, 20, 12);
+
+                        row1.setText(i + ". " + postSnapshot.getKey().toString());
+                        i++;
+
+                        if(postSnapshot.getValue().toString().equals("1"))row1.setTextColor(Color.parseColor("#AAFFFFFF"));
+                        else if(postSnapshot.getValue().toString().equals("0"))row1.setTextColor(Color.parseColor("#AC2358"));
+                        row1.setTextSize(16);
+
+                        row1.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                if(postSnapshot.getValue().toString().equals("1"))makeToast(postSnapshot.getKey().toString() + " is listening.");
+                                else if(postSnapshot.getValue().toString().equals("0"))makeToast(postSnapshot.getKey().toString() + " is inactive.");
+                            }
+
+                        });
+
+                        ll_other_devices_feed.addView(row1);
+                        ll_other_devices_feed.setVisibility(View.VISIBLE);
+                    }
+                else {
+                    final TextView row1 = new TextView(getBaseContext());
+                    row1.generateViewId();
+                    row1.setPadding(20, 12, 20, 12);
+                    row1.setText("No registered devices.");
+
+                    row1.setTextColor(Color.parseColor("#AAFFFFFF"));
+                    row1.setTypeface(Typeface.MONOSPACE);
+                    row1.setTextSize(16);
+
+                    ll_other_devices_feed.addView(row1);
+                    ll_other_devices_feed.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
+
+    }
+
 
     //Set history feed
     private void setHistoryListItems() {
@@ -1024,90 +1122,10 @@ public class MainActivity extends Activity{
             }
     }
 
-    //Check if a number is even
-    private boolean isEven(int i) {
-        if(i % 2 == 0) return true;
-        return false;
-    }
-
-    //Refresh device list runnable with 4 sec delay
-    private Runnable refreshDevicesList = new Runnable() {
-        public void run() {
-            setOtherDevicesListItems();
-
-            handler_history.postDelayed(this, 4000);
-        }
-    };
-
-    //Set devices in feed
-    private void setOtherDevicesListItems() {
-        int i = 1;
-        final LinearLayout ll_other_devices_feed = (LinearLayout) findViewById(R.id.ll_other_devices_feed);
-        ll_other_devices_feed.removeAllViews();
-
-        final Firebase fb_devices = new Firebase("https://uniclip.firebaseio.com/cloudboard/" +
-                sp_user_email.replaceAll("\\.", "") + "/devices");
-
-        fb_devices.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                ll_other_devices_feed.removeAllViews();
-
-                int i = 1;    //Serial number
-                if (snapshot.getChildrenCount() != 0)
-                    for (final DataSnapshot postSnapshot : snapshot.getChildren()) {
-
-                        final TextView row1 = new TextView(getBaseContext());
-                        row1.generateViewId();
-                        row1.setPadding(20, 12, 20, 12);
-
-                        row1.setText(i + ". " + postSnapshot.getKey().toString());
-                        i++;
-
-                        if(postSnapshot.getValue().toString().equals("1"))row1.setTextColor(Color.parseColor("#AAFFFFFF"));
-                        else if(postSnapshot.getValue().toString().equals("0"))row1.setTextColor(Color.parseColor("#AC2358"));
-                        row1.setTypeface(Typeface.MONOSPACE);
-                        row1.setTextSize(16);
-
-                        row1.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                if(postSnapshot.getValue().toString().equals("1"))makeToast(postSnapshot.getKey().toString() + " is listening.");
-                                else if(postSnapshot.getValue().toString().equals("0"))makeToast(postSnapshot.getKey().toString() + " is inactive.");
-                            }
-
-                        });
-
-                        ll_other_devices_feed.addView(row1);
-                        ll_other_devices_feed.setVisibility(View.VISIBLE);
-                    }
-                else {
-                    final TextView row1 = new TextView(getBaseContext());
-                    row1.generateViewId();
-                    row1.setPadding(20, 12, 20, 12);
-                    row1.setText("No registered devices.");
-
-                    row1.setTextColor(Color.parseColor("#AAFFFFFF"));
-                    row1.setTypeface(Typeface.MONOSPACE);
-                    row1.setTextSize(16);
-
-                    ll_other_devices_feed.addView(row1);
-                    ll_other_devices_feed.setVisibility(View.VISIBLE);
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
-
-    }
 
     //Initialize application
     private void initialize() {
+
         //Showcase UI
         mainShowcaseInitiate();
 
@@ -1126,6 +1144,7 @@ public class MainActivity extends Activity{
         sp_open_url = sp.getBoolean("open_url", true);
         sp_are_creator = sp.getBoolean("creator", false);
         sp_authenticated = sp.getBoolean("authenticated", false);
+        sp_unread = sp.getInt("unread", 0);
 
         //Intro Screen
         if(sp_first_run){
@@ -1162,7 +1181,6 @@ public class MainActivity extends Activity{
             sp_vibrate = false;
             ed.putBoolean("vibrate", false).commit();
         }
-
 
         //Get user email
         if(hasPermission()) {
@@ -1218,9 +1236,6 @@ public class MainActivity extends Activity{
             public void onCancelled(FirebaseError error) {
             }
         });
-
-
-
 
 
         //Set up content if service is running
@@ -1300,6 +1315,8 @@ public class MainActivity extends Activity{
             }
 
         }
+
+
         //Service not running
         else {
             b_start_stop.setText("Start UniClip!");
@@ -1312,18 +1329,16 @@ public class MainActivity extends Activity{
         }
 
 
-
-
-
-
         //Sync Icon Animation
         sync_anim.startAnimation(rotate);
+
 
         //Set Shake Sensitivity and number of Shakes
         sp_get_sensitivity = sp.getInt("get_sensitivity", 2+1);
         sp_get_shakes = sp.getInt("get_shakes", 2);
         sp_share_sensitivity = sp.getInt("share_sensitivity", 2+1);
         sp_share_shakes = sp.getInt("share_shakes", 3);
+
 
         //Set seekbar progresses
         sb_get_numberShakes.setProgress(sp_get_shakes);
@@ -1359,8 +1374,6 @@ public class MainActivity extends Activity{
             cb_theme.setChecked(false);
             rl_main.setBackgroundColor(Color.parseColor("#DE111111"));
         }
-
-
 
         //Seekbar OnChange Listeners
         sb_get_sensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -1455,12 +1468,11 @@ public class MainActivity extends Activity{
 
         //Disable first_run flag
         ed.putBoolean("first_run", false).commit();
-
     }
-
 
     //Check if user exists, if not set this as creator
     private void checkIfCreator(){
+
         //Format email address (remove the .)
         String user_node = sp_user_email.replaceAll("\\.", "");
 
@@ -1520,14 +1532,10 @@ public class MainActivity extends Activity{
         //Register this device
         if(sp_authenticated )
             fb.child("devices").child(sp_device_name).setValue("1");
-
-
-
     }
 
-
     //Swing animate view
-    private void swingAnimate(final View v, final int duration, final int delay){
+    private void swingAnimate(final View v, final int duration, final int delay) {
         //App title animation
         Handler app_title_anim_handler = new Handler();
         app_title_anim_handler.postDelayed(new Runnable() {
@@ -1608,7 +1616,7 @@ public class MainActivity extends Activity{
                 .setMaskColor(Color.parseColor("#66000000"))
                 .setFocusGravity(FocusGravity.CENTER)
                 .setFocusType(Focus.MINIMUM)
-                .setDelayMillis(200)
+                .setDelayMillis(100)
                 .enableFadeAnimation(true)
                 .performClick(false)
                 .dismissOnTouch(true)
@@ -1624,7 +1632,7 @@ public class MainActivity extends Activity{
                                 .setMaskColor(Color.parseColor("#66000000"))
                                 .setFocusGravity(FocusGravity.CENTER)
                                 .setFocusType(Focus.NORMAL)
-                                .setDelayMillis(200)
+                                .setDelayMillis(100)
                                 .enableFadeAnimation(true)
                                 .performClick(false)
                                 .dismissOnTouch(true)
@@ -1640,7 +1648,7 @@ public class MainActivity extends Activity{
                                                 .setMaskColor(Color.parseColor("#66000000"))
                                                 .setFocusGravity(FocusGravity.CENTER)
                                                 .setFocusType(Focus.ALL)
-                                                .setDelayMillis(200)
+                                                .setDelayMillis(100)
                                                 .enableFadeAnimation(true)
                                                 .performClick(false)
                                                 .dismissOnTouch(true)
@@ -1658,12 +1666,14 @@ public class MainActivity extends Activity{
 
     }
 
+    //Set Clipboard History Lists
     private void syncHistoryLists() {
         if(isServiceRunning(UniClipService.class)){
             history_list_activity = UniClipService.history_list_service;
         }
     }
 
+    //Check if service is running
     private boolean isServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -1674,6 +1684,7 @@ public class MainActivity extends Activity{
         return false;
     }
 
+    //Check if Network is available
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -1681,16 +1692,13 @@ public class MainActivity extends Activity{
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void sendToast(Object charSequence){
-        Toast.makeText(getBaseContext(), (String) charSequence, Toast.LENGTH_SHORT);
-
-    }
-
+    //Make Snack
     public void makeSnack(String t){
         View v = findViewById(R.id.rl_main);
         Snackbar.make(v, t, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
+    //Make Snack for Permission
     public void makeSnackForPermissions(String t){
         View v = findViewById(R.id.rl_main);
         Snackbar.make(v, t, Snackbar.LENGTH_LONG)
@@ -1706,14 +1714,17 @@ public class MainActivity extends Activity{
                 .show();
     }
 
+    //Vibrate method
     private void vibrate(int time){
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
     }
 
+    //Make Toast
     private void makeToast(Object data) {
         Toast.makeText(getApplicationContext(),String.valueOf(data),Toast.LENGTH_LONG).show();
     }
 
+    //Get System Device Name
     public static String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
@@ -1723,6 +1734,7 @@ public class MainActivity extends Activity{
         return manufacturer + " " + model;
     }
 
+    //Get Account Name
     private static Account getAccount(AccountManager accountManager) {
         Account[] accounts = accountManager.getAccountsByType("com.google");
         Account account;
@@ -1734,9 +1746,9 @@ public class MainActivity extends Activity{
         return account;
     }
 
+    //Check if 'Contact' permission is granted
     private boolean hasPermission()
     {
-
         String permission = "android.permission.GET_ACCOUNTS";
         int res = getApplicationContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
@@ -1762,6 +1774,12 @@ public class MainActivity extends Activity{
         else if (!is3g && isWifi){
             makeToast("There seems to be a problem with Wifi. Try Mobile data instead.");
         }
+    }
+
+    private void updateBadger() {
+        sp_unread = sp.getInt("unread", 0);
+        //ShortcutBadger
+        ShortcutBadger.applyCount(getApplication(), sp_unread);
     }
 
 }

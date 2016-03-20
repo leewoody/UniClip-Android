@@ -8,11 +8,10 @@ import android.util.Log;
 
 public class AutoStart extends BroadcastReceiver
 {
-    public void onReceive(Context arg0, Intent arg1)
+    public void onReceive(Context ctx, Intent arg1)
     {
-        Intent intent = new Intent(arg0,UniClipService.class);
+        Intent intent = new Intent(ctx,UniClipService.class);
         intent.putExtra("isAutorun", "true");
-        arg0.startService(intent);
-        Log.i("Autostart", "started");
+        ctx.startService(intent);
     }
 }
