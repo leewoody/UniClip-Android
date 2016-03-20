@@ -5,6 +5,14 @@ UniClip for Android
 UniClip is an cross-device clipboard synchronization application. 
 
 
+Play Store
+----
+The game is available on Google Play:
+
+<a href="https://play.google.com/store/apps/details?id=com.piyushagade.uniclip">
+	<img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60" />
+</a>
+
 Screenshots
 -----------
 
@@ -19,7 +27,7 @@ What It Does
 
 **1:** UniClip syncs clipboards on all registered devices that are currently listening the cloudboard.
 
-**2:** That's about it.
+**2:** UniClip also lets users share clipboards with their friends.
 
 Cloudboard
 -------
@@ -49,6 +57,6 @@ Open source libraries
 [6]: https://github.com/HeinrichReimer
 
 [12]: http://i.imgur.com/JaTbpka.png
-[13]: http://i.imgur.com/Zm04vKH.png
-[14]: http://i.imgur.com/62BYx6M.png
-[15]: http://i.imgur.com/97woBUD.png
+[13]: http://i.imgur.com/Hqeu9mH.png
+[14]: http://i.imgur.com/0IsDnQ2.png
+[15]: http://i.imgur.com/XaNLkf4.png
