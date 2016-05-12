@@ -13,6 +13,13 @@ The app is available on Google Play:
 	<img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60" />
 </a>
 
+UniClip for Windows desktop
+----
+
+<a href="https://github.com/piyushagade/UniClip-Desktop/raw/master/output/windows/UniClip_Setup.exe">
+	Click here to download
+</a> UniClip for windows.
+
 Screenshots
 -----------
 
