@@ -1,5 +1,6 @@
 package com.piyushagade.uniclip;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -20,7 +21,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -54,29 +58,100 @@ import co.mobiwise.materialintro.shape.FocusGravity;
 import co.mobiwise.materialintro.view.MaterialIntroView;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
-public class MainActivity extends Activity{
+@SuppressWarnings("unused")
+public class MainActivity extends Activity {
+
+
+    private long refreshHistoryInterval = 4000;
+    private long refreshConnectionStatusInterval = 6000;
+    private long refreshServiceStatusInterval = 6000;
+    private long refreshDevicesListInterval = 4000;
+
+    private static final int MY_PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private boolean runRunnables = true;
+
+    private  void stopRunnables(){
+        stopRunnables = true;
+        refreshHistoryInterval = 400000;
+        refreshConnectionStatusInterval = 600000;
+        refreshServiceStatusInterval = 600000;
+        refreshDevicesListInterval = 600000;
+    }
+
+    private  void resumeRunnables(){
+        stopRunnables = false;
+        refreshHistoryInterval = 4000;
+        refreshConnectionStatusInterval = 6000;
+        refreshServiceStatusInterval = 6000;
+        refreshDevicesListInterval = 4000;
+    }
+
+    @Override
+    protected void onPause() {
+
+        //Stop Runnables
+        stopRunnables();
+
+        //Stop Runnables
+        if(handler_devices != null) handler_devices.removeCallbacks(refreshDevicesList);
+        if(handler_status != null) handler_status.removeCallbacks(refreshServiceStatus);
+        if(handler_connection != null) handler_connection.removeCallbacks(refreshConnectionStatus);
+
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        //Stop Runnables
+        stopRunnables();
+
+        finish();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+
+        //Resume Runnables
+        resumeRunnables();
+
+        super.onResume();
+    }
+
+    private Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin, b_diagnose, b_go_back_to_main, b_manage_friends, b_help_manage_friends;
+    private CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme, cb_open_url;
+    private EditText input_access_pin;
+    private ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_get, b_help_share, decode_qr;
+    private SeekBar sb_get_sensitivity, sb_get_numberShakes, sb_share_sensitivity, sb_share_numberShakes;
+    private TextView get_sensitivity_indicator, get_shakes_indicator, access_pin_desc, welcome_text;
+    private TextView user_access_pin, status_service, status_connection;
+    private TextView share_sensitivity_indicator, share_shakes_indicator;
+    private RelativeLayout rl_settings, rl_running, rl_main, rl_top, rl_menu_on, rl_menu_content, rl_history, rl_info, rl_user, rl_help, rl_first_page;
+
+    private Animation fade_in, fade_out, rotate, blink, slide_in_top, slide_out_top, fade_in_rl_top, fade_out_rl_top, bob, fade_out_rl_settings;
+
+    private ClipboardManager myClipboard;
+
+    private ArrayList<String> history_list_activity;
+
+    private boolean usernode_created_now = false;
+
+    private boolean stopRunnables;
+    private Handler handler_history, handler_devices, handler_status, handler_connection;
+
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
-    Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin, b_diagnose, b_go_back_to_main, b_manage_friends, b_help_manage_friends;
-    CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme, cb_open_url;
-    EditText input_access_pin;
-    SharedPreferences sp;
-    SharedPreferences.Editor ed;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor ed;
     private boolean sp_autostart, sp_notification, sp_vibrate, sp_theme, sp_first_run, sp_open_url, sp_are_creator, sp_authenticated;
     private String sp_user_email, sp_device_name;
-    ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_get, b_help_share;
-    SeekBar sb_get_sensitivity, sb_get_numberShakes, sb_share_sensitivity, sb_share_numberShakes;
-    TextView get_sensitivity_indicator, get_shakes_indicator, access_pin_desc, welcome_text;
-    TextView share_sensitivity_indicator, share_shakes_indicator;
     private int get_sensitivity, get_numberShakes, share_sensitivity, share_numberShakes;
     private int sp_get_sensitivity, sp_get_shakes, sp_share_sensitivity, sp_share_shakes, sp_unread;
-    Animation fade_in, fade_out, rotate, blink, slide_in_top, slide_out_top, fade_in_rl_top, fade_out_rl_top, bob, fade_out_rl_settings;
-    private RelativeLayout rl_settings, rl_running, rl_main, rl_top, rl_menu_on, rl_menu_content, rl_history, rl_info, rl_user, rl_help, rl_first_page;
-    private ClipboardManager myClipboard;
-    private ArrayList<String> history_list_activity;
-    private Handler handler_history, handler_status, handler_connection;
-    private TextView user_access_pin, status_service, status_connection;
+
     public static int colorPrimary, colorAccent;
-    private boolean usernode_created_now = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +161,11 @@ public class MainActivity extends Activity{
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-
         Firebase.setAndroidContext(this);
 
+
         setContentView(R.layout.activity_main);
+
 
         //UI Components
         b_start_stop = (Button) findViewById(R.id.b_start_stop);
@@ -118,6 +194,7 @@ public class MainActivity extends Activity{
         b_info = (ImageView) findViewById(R.id.b_info);
         b_help_get = (ImageView) findViewById(R.id.b_help_get);
         b_help_share = (ImageView) findViewById(R.id.b_help_share);
+        decode_qr = (ImageView) findViewById(R.id.decode_qr);
 
         sb_get_sensitivity = (SeekBar) findViewById(R.id.sb_get_sensitivity);
         sb_get_numberShakes = (SeekBar) findViewById(R.id.sb_get_shakes);
@@ -159,8 +236,20 @@ public class MainActivity extends Activity{
 
         input_access_pin = (EditText) findViewById(R.id.input_access_pin);
 
+//        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.camera_view);
+//
+//        QREader.getInstance().setUpConfig(new QRDataListener() {
+//            @Override
+//            public void onDetected(final String data) {
+//                Log.d("QREader", "Value : " + data);
+//
+//                makeToast(data);
+//            }
+//        });
+//
+//        QREader.getInstance().init(this, surfaceView);
 
-        //Ripple Effect for componenets
+        //Ripple Effect for components
 
         //Start_Stop Button
         MaterialRippleLayout.on(b_start_stop).rippleColor(getResources().getColor(R.color.colorAccent))
@@ -266,7 +355,13 @@ public class MainActivity extends Activity{
         b_start_stop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                //If service is not running and needs to be started
                 if (!isServiceRunning(UniClipService.class)) {
+                    //Stop Runnables
+                    resumeRunnables();
+
+                    //Showcase
+                    runningShowcaseInitiate();
 
                     Intent intent = new Intent(MainActivity.this, UniClipService.class);
                     intent.putExtra("isAutorun", "false");
@@ -321,16 +416,16 @@ public class MainActivity extends Activity{
 
                     //Set Status in Running Screen
                     handler_status = new Handler();
-                    refreshServiceStatus.run();
+                    if(runRunnables && false) refreshServiceStatus.run();
 
                     handler_connection = new Handler();
-                    refreshConnectionStatus.run();
+                    if(runRunnables && false) refreshConnectionStatus.run();
 
                 }
 
                 else if (!isServiceRunning(UniClipService.class) && !sp_are_creator) {
-
-                    makeToast("Here 2");
+                    //Showcase
+                    runningShowcaseInitiate();
 
                     //Reinitialize
                     reInitialize();
@@ -380,19 +475,29 @@ public class MainActivity extends Activity{
 
                     //Set Status in Authentication Screen
                     handler_status = new Handler();
-                    refreshServiceStatus.run();
+                    if(runRunnables && false) refreshServiceStatus.run();
 
                     handler_connection = new Handler();
-                    refreshConnectionStatus.run();
+                    if(runRunnables && false) refreshConnectionStatus.run();
 
                 }
 
                 //Service was running
                 else {
+                    //Stop unnecessary runnables
+                    stopRunnables();
+
+
+                    //Reset Shortcut Badger
+                    ed.putInt("unread", 0).commit();
+                    updateBadger();
+
+                    //Stop Service
                     stopService(new Intent(getBaseContext(), UniClipService.class));
                     b_start_stop.setVisibility(View.VISIBLE);
                     ed.putBoolean("authenticated", false).commit();
 
+                    //Change UI
                     b_start_stop.setText("Start UniClip!");
                     rl_settings.startAnimation(fade_in);
                     rl_settings.setVisibility(View.VISIBLE);
@@ -449,6 +554,14 @@ public class MainActivity extends Activity{
                 //MenuIntroActivity
                 menuShowcaseInitiate();
 
+                //Resume Menu Runnables
+                resumeRunnables();
+
+                if(!isServiceRunning(UniClipService.class))
+                {
+                    findViewById(R.id.user_device).setVisibility(View.GONE);
+                }
+
                 rl_first_page.setVisibility(View.VISIBLE);
                 rl_user.setVisibility(View.INVISIBLE);
                 rl_info.setVisibility(View.INVISIBLE);
@@ -483,10 +596,15 @@ public class MainActivity extends Activity{
 
         });
 
-        //Back button listener
+        //Back (Close menu) button listener
         b_back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
+
+                //Stop Menu Runnables
+                refreshHistoryInterval = 400000;
+                refreshDevicesListInterval = 600000;
+
 
                 //Animate app title
                 swingAnimate(findViewById(R.id.app_title), 700, 1500);
@@ -548,7 +666,7 @@ public class MainActivity extends Activity{
                 rl_help.setVisibility(View.INVISIBLE);
 
                 handler_history = new Handler();
-                handler_history.postDelayed(refreshHistory, 0);
+                if(runRunnables) handler_history.postDelayed(refreshHistory, 0);
             }
         });
 
@@ -584,6 +702,35 @@ public class MainActivity extends Activity{
                 rl_user.setVisibility(View.INVISIBLE);
                 rl_history.setVisibility(View.INVISIBLE);
                 rl_info.setVisibility(View.INVISIBLE);
+
+            }
+        });
+
+        //Decode QR
+        decode_qr.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(27);
+
+
+
+                if (ActivityCompat.checkSelfPermission(
+                        getApplicationContext(), Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.CAMERA},
+                            MY_PERMISSIONS_REQUEST_CAMERA);
+
+                    return;
+                }
+                else{
+
+
+                    if(isNetworkAvailable())
+                        startActivity(new Intent(MainActivity.this, QRActivity.class));
+                    else
+                        makeSnack("Internet not available.");
+                }
 
             }
         });
@@ -676,8 +823,8 @@ public class MainActivity extends Activity{
                 int key = sp.getInt("access_pin", 0);
                 if(sp_are_creator)user_access_pin.setText(String.valueOf(key));
 
-                handler_history = new Handler();
-                handler_history.postDelayed(refreshDevicesList, 0);
+                handler_devices  = new Handler();
+                if(runRunnables) handler_devices.postDelayed(refreshDevicesList, 0);
             }
         });
 
@@ -818,48 +965,62 @@ public class MainActivity extends Activity{
     }
 
 
+
     private Runnable refreshServiceStatus = new Runnable() {
+
         @Override
         public void run() {
-            sp_authenticated = sp.getBoolean("authenticated", false);
 
-            if(isServiceRunning(UniClipService.class) && sp_authenticated){
+            Log.d(TAG, "Service status synced");
 
-                if(isNetworkAvailable())status_service.setText("Service:\n  Running. Listening to the cloudboard.");
-                else status_service.setText("Service:\n  Running. Waiting for network.");
-            }
+            if(!stopRunnables) {
+                sp_authenticated = sp.getBoolean("authenticated", false);
 
-            else if(isServiceRunning(UniClipService.class) && !sp_authenticated){
+                //Service running and authenticated
+                if (isServiceRunning(UniClipService.class) && sp_authenticated) {
+                    if (isNetworkAvailable())
+                        status_service.setText("Service:\n  Running. Listening to the cloudboard.");
+                    else status_service.setText("Service:\n  Running. Waiting for network.");
 
-                //Waiting for authentication
-                if(isNetworkAvailable())status_service.setText("Service:\n  Waiting for authentication.");
+                    //Service running and NOT authenticated
+                } else if (isServiceRunning(UniClipService.class) && !sp_authenticated) {
+
+                    //Waiting for authentication
+                    if (isNetworkAvailable())
+                        status_service.setText("Service:\n  Waiting for authentication.");
+                    else {
+                        status_service.setText("Service:\n  Not running. Waiting for network.");
+                    }
+                }
+
+                //If service not running
                 else {
-                    status_service.setText("Service:\n  Not running. Waiting for network.");
+                    status_service.setText("Service:\n  Error. Restart the application.");
                 }
             }
 
-            //If service not running
-            else{
-                status_service.setText("Service:\n  Error. Restart the application.");
-            }
-
-            handler_status.postDelayed(this, 6000);
+            handler_status.postDelayed(this, refreshServiceStatusInterval);
         }
     };
+
 
     private Runnable refreshConnectionStatus = new Runnable() {
         @Override
         public void run() {
-            if(isNetworkAvailable()){
-                status_connection.setText("Connection:\n  Connected to the server.");
-                b_diagnose.setVisibility(View.GONE);
-            }
-            else {
-                status_connection.setText("Connection:\n  Internet unavailable.");
-                b_diagnose.setVisibility(View.VISIBLE);
-            }
 
-            handler_connection.postDelayed(this, 6000);
+            Log.d(TAG, "Connection status synced");
+
+            if(!stopRunnables)
+                if(isNetworkAvailable()){
+                    status_connection.setText("Connection:\n  Connected to the server.");
+                    b_diagnose.setVisibility(View.GONE);
+                }
+                else {
+                    status_connection.setText("Connection:\n  Internet unavailable.");
+                    b_diagnose.setVisibility(View.VISIBLE);
+                }
+
+            handler_connection.postDelayed(this, refreshConnectionStatusInterval);
         }
     };
 
@@ -970,9 +1131,15 @@ public class MainActivity extends Activity{
     //History refresh with 4 sec delay
     private Runnable refreshHistory = new Runnable() {
         public void run() {
-            setHistoryListItems();
 
-            handler_history.postDelayed(this, 4000);
+
+            Log.d(TAG, "Cloudboard history synced");
+
+            if(!stopRunnables)
+                setHistoryListItems();
+
+
+            handler_history.postDelayed(this, refreshHistoryInterval);
         }
     };
 
@@ -980,8 +1147,13 @@ public class MainActivity extends Activity{
     //Refresh device list runnable with 4 sec delay
     private Runnable refreshDevicesList = new Runnable() {
         public void run() {
-            setRegisteredDeviceList();
-            handler_history.postDelayed(this, 4000);
+
+            Log.d(TAG, "Device list synced");
+
+            if(!stopRunnables)
+                setRegisteredDeviceList();
+
+            handler_devices.postDelayed(this, refreshDevicesListInterval);
         }
     };
 
@@ -1064,6 +1236,7 @@ public class MainActivity extends Activity{
         ll_history_feed.removeAllViews();
 
         myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
         if(history_list_activity != null)
             if(history_list_activity.size() != 0)
                 for (final String listItem : history_list_activity) {
@@ -1125,6 +1298,7 @@ public class MainActivity extends Activity{
 
     //Initialize application
     private void initialize() {
+
 
         //Showcase UI
         mainShowcaseInitiate();
@@ -1195,6 +1369,7 @@ public class MainActivity extends Activity{
         }
 
         else if(!hasPermission() && !sp_first_run){
+
             startActivity(new Intent(MainActivity.this, ActivityPermission.class));
             finish();
         }
@@ -1243,10 +1418,10 @@ public class MainActivity extends Activity{
 
             //Set Status in Authentication Screen
             handler_status = new Handler();
-            refreshServiceStatus.run();
+            if(runRunnables && false) refreshServiceStatus.run();
 
             handler_connection = new Handler();
-            refreshConnectionStatus.run();
+            if(runRunnables && false) refreshConnectionStatus.run();
 
 
             b_start_stop.setText("Stop UniClip!");
@@ -1666,6 +1841,84 @@ public class MainActivity extends Activity{
 
     }
 
+    //Runscreen showcase
+    private void runningShowcaseInitiate() {
+        //View Access Pin Button
+        if(sp_are_creator)
+            new MaterialIntroView.Builder(this)
+                    .enableDotAnimation(false)
+                    .setMaskColor(Color.parseColor("#66000000"))
+                    .setFocusGravity(FocusGravity.CENTER)
+                    .setFocusType(Focus.MINIMUM)
+                    .setDelayMillis(50)
+                    .enableFadeAnimation(true)
+                    .performClick(false)
+                    .dismissOnTouch(true)
+                    .setInfoText("Click here to see your Access Pin. Use this in other devices of yours to authenticate them.")
+                    .setTarget(b_view_access_pin)
+                    .setUsageId("card_1")
+                    .setListener(new MaterialIntroListener() {
+                        @Override
+                        public void onUserClicked(String materialIntroViewId) {
+                            //Start/Stop button
+                            new MaterialIntroView.Builder(MainActivity.this)
+                                    .enableDotAnimation(false)
+                                    .setMaskColor(Color.parseColor("#66000000"))
+                                    .setFocusGravity(FocusGravity.CENTER)
+                                    .setFocusType(Focus.ALL)
+                                    .setDelayMillis(100)
+                                    .enableFadeAnimation(true)
+                                    .performClick(false)
+                                    .dismissOnTouch(true)
+                                    .setInfoText("This is the Uniclip's service status. For more info, see Help in the Menu.")
+                                    .setTarget(status_service)
+                                    .setUsageId("card_2")
+                                    .setListener(new MaterialIntroListener() {
+                                        @Override
+                                        public void onUserClicked(String materialIntroViewId) {
+                                            //Settings
+                                            new MaterialIntroView.Builder(MainActivity.this)
+                                                    .enableDotAnimation(false)
+                                                    .setMaskColor(Color.parseColor("#66000000"))
+                                                    .setFocusGravity(FocusGravity.CENTER)
+                                                    .setFocusType(Focus.ALL)
+                                                    .setDelayMillis(100)
+                                                    .enableFadeAnimation(true)
+                                                    .performClick(false)
+                                                    .dismissOnTouch(true)
+                                                    .setInfoText("Click here to stop the UniClip service. This will disallow this device from syncing its clipboard with other devices of yours.")
+                                                    .setTarget(b_start_stop)
+                                                    .setUsageId("card_3")
+                                                    .setListener(new MaterialIntroListener() {
+                                                        @Override
+                                                        public void onUserClicked(String materialIntroViewId) {
+                                                            //Settings
+                                                            new MaterialIntroView.Builder(MainActivity.this)
+                                                                    .enableDotAnimation(false)
+                                                                    .setMaskColor(Color.parseColor("#66000000"))
+                                                                    .setFocusGravity(FocusGravity.CENTER)
+                                                                    .setFocusType(Focus.MINIMUM)
+                                                                    .setDelayMillis(100)
+                                                                    .enableFadeAnimation(true)
+                                                                    .performClick(false)
+                                                                    .dismissOnTouch(true)
+                                                                    .setInfoText("Click here to close the UI. The service will however keep running in the background and sync this device's clipboard.")
+                                                                    .setTarget(b_close)
+                                                                    .setUsageId("card_4")
+                                                                    .show();
+                                                        }
+                                                    })
+                                                    .show();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    })
+                    .show();
+
+
+    }
+
     //Set Clipboard History Lists
     private void syncHistoryLists() {
         if(isServiceRunning(UniClipService.class)){
@@ -1746,7 +1999,7 @@ public class MainActivity extends Activity{
         return account;
     }
 
-    //Check if 'Contact' permission is granted
+    //Check if 'Accounts' permission is granted
     private boolean hasPermission()
     {
         String permission = "android.permission.GET_ACCOUNTS";
@@ -1782,4 +2035,29 @@ public class MainActivity extends Activity{
         ShortcutBadger.applyCount(getApplication(), sp_unread);
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(MainActivity.this, QRActivity.class));
+
+                        }
+                    }, 2000);
+
+
+                } else {
+
+                }
+            }
+        }
+    }
 }
+

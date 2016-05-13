@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:id="@+id/rl_running"
     android:visibility="invisible"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -11,11 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/rl_access_pin">
+
+        <requestFocus/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#AAFFFFFF"
-            android:text="Access Pin"
+            android:text="Add a mobile"
             android:textSize="18sp"
             android:id="@+id/access_pin_title"/>
 
@@ -86,12 +89,64 @@
     </RelativeLayout>
     <!-- / Access Pin -->
 
+
+
+    <!-- QR -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_qr"
+        android:layout_below="@id/rl_access_pin">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#AAFFFFFF"
+            android:text="Add a desktop"
+            android:layout_marginTop="20sp"
+            android:textSize="18sp"
+            android:id="@+id/qr_title"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#88FFFFFF"
+            android:text="To add a desktop, open the Uniclip app on your desktop, and scan the QR Code generated on your desktop."
+            android:textSize="16sp"
+            android:layout_marginTop="12sp"
+            android:padding="6sp"
+            android:layout_below="@id/qr_title"
+            android:id="@+id/qr_desc"/>
+
+       <ImageView
+           android:layout_width="60sp"
+           android:layout_height="60sp"
+           android:src="@drawable/qr"
+           android:layout_below="@id/qr_desc"
+           android:layout_centerHorizontal="true"
+           android:id="@+id/decode_qr"/>
+
+
+        <RelativeLayout
+            android:layout_width="400sp"
+            android:layout_height="1sp"
+            android:id="@+id/hl9"
+            android:background="#88FFFFFF"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:layout_below="@+id/decode_qr"/>
+
+    </RelativeLayout>
+
+
+
     <!-- Status -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/rl_status"
-        android:layout_below="@id/rl_access_pin">
+        android:visibility="gone"
+        android:layout_below="@id/rl_qr">
 
         <TextView
             android:layout_width="match_parent"
@@ -150,6 +205,5 @@
             android:layout_below="@+id/b_diagnose"/>
 
     </RelativeLayout>
-
 
 </RelativeLayout>

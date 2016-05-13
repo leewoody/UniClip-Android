@@ -25,17 +25,20 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
-public class ActivityPermission extends Activity{
+public class ActivityPermission extends Activity {
 
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private Handler handler_permission;
     private Button b_permission_proceed, b_grant_permission;
-    boolean k =false;
+    boolean k = false;
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,11 @@ public class ActivityPermission extends Activity{
 
         Firebase.setAndroidContext(this);
 
+
         setContentView(R.layout.activity_permission);
+
+
+
 
         b_grant_permission = (Button) findViewById(R.id.b_grant_permission);
         b_permission_proceed = (Button) findViewById(R.id.b_permission_proceed);
@@ -65,11 +72,10 @@ public class ActivityPermission extends Activity{
 
         b_permission_proceed.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(hasPermission()){
+                if (hasPermission()) {
                     startActivity(new Intent(ActivityPermission.this, MainActivity.class));
                     finish();
-                }
-                else
+                } else
                     ((TextView) findViewById(R.id.when_done)).setText("Something went wrong. Try again!");
 
 
@@ -83,12 +89,12 @@ public class ActivityPermission extends Activity{
 
     private Runnable checkPermissionRunnable = new Runnable() {
         public void run() {
-            if(hasPermission()){
+            if (hasPermission()) {
                 b_grant_permission.setVisibility(View.INVISIBLE);
                 b_permission_proceed.setVisibility(View.VISIBLE);
                 (findViewById(R.id.when_done)).setVisibility(View.VISIBLE);
 
-                if(!k){
+                if (!k) {
                     makeToast("Permission granted!");
                     k = true;
 //                    startActivity(new Intent(ActivityPermission.this, MainActivity.class));
@@ -117,17 +123,17 @@ public class ActivityPermission extends Activity{
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void sendToast(Object charSequence){
+    public void sendToast(Object charSequence) {
         Toast.makeText(getBaseContext(), (String) charSequence, Toast.LENGTH_SHORT);
 
     }
 
-    public void makeSnack(String t){
+    public void makeSnack(String t) {
         View v = findViewById(R.id.rl_main);
         Snackbar.make(v, t, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
-    public void makeSnackForPermissions(String t){
+    public void makeSnackForPermissions(String t) {
         View v = findViewById(R.id.rl_main);
         Snackbar.make(v, t, Snackbar.LENGTH_LONG)
                 .setAction("Let's Go", new View.OnClickListener() {
@@ -142,12 +148,12 @@ public class ActivityPermission extends Activity{
                 .show();
     }
 
-    private void vibrate(int time){
+    private void vibrate(int time) {
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
     }
 
     private void makeToast(Object data) {
-        Toast.makeText(getApplicationContext(),String.valueOf(data),Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), String.valueOf(data), Toast.LENGTH_LONG).show();
     }
 
     public static String getDeviceName() {
@@ -170,7 +176,7 @@ public class ActivityPermission extends Activity{
         return account;
     }
 
-    private boolean hasPermission(){
+    private boolean hasPermission() {
 
         String permission = "android.permission.GET_ACCOUNTS";
         int res = getApplicationContext().checkCallingOrSelfPermission(permission);

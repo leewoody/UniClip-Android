@@ -1,20 +1,23 @@
 package com.piyushagade.uniclip;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.heinrichreimersoftware.materialintro.slide.FragmentSlide;
 import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
-import com.heinrichreimersoftware.materialintro.slide.Slide;
 
 public class MainIntroActivity extends IntroActivity {
+    private static final int MY_PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -88,28 +91,22 @@ public class MainIntroActivity extends IntroActivity {
                     .backgroundDark(R.color.introDark5)
                     .scrollable(true)
                     .build());
+
         }
 
         //Page Slide Listeners
         addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if(!hasPermission())
-                    if(position == 5){
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                //Wait
-                                startActivity(new Intent(MainIntroActivity.this, MainActivity.class));
-                                finish();
-                            }
-                        }, 3000);
-
-
+                if(!hasPermission()) {
+                    // Timer Slide
+                    if (position == 5) {
 
                     }
+                }
+
                 if(hasPermission())
+                    // Timer Slide
                     if(position == 4){
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
@@ -141,6 +138,32 @@ public class MainIntroActivity extends IntroActivity {
         String permission = "android.permission.GET_ACCOUNTS";
         int res = getApplicationContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_GET_ACCOUNTS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Wait
+                            startActivity(new Intent(MainIntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    }, 2000);
+
+
+                } else {
+                    startActivity(new Intent(MainIntroActivity.this, ActivityPermission.class));
+                    finish();
+                }
+            }
+        }
     }
 
 }

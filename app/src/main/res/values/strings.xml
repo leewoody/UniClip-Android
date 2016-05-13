@@ -4,7 +4,7 @@
     <!-- Strings related to Settings -->
 
 
-    <string name="app_version">v1.0.1</string>
+    <string name="app_version">v1.1</string>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 

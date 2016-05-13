@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -111,7 +112,7 @@ public class UniClipService extends Service {
                     this.stopSelf();
                 }
             } catch (NullPointerException w) {
-                makeToast("Service will continue running in the background.");
+                //makeToast("Service will continue running in the background.");
             }
 
 
@@ -167,7 +168,7 @@ public class UniClipService extends Service {
                 }
             });
 
-            //Auto authenticate Creator
+            //Auto-authenticate Creator
             if(sp_are_creator) {
                 sp_authenticated = true;
                 ed.putBoolean("authenticated", true).commit();
@@ -238,8 +239,38 @@ public class UniClipService extends Service {
 
                     //Begin shake detection
                     if(!shareOff)
-                    shakeDetection(null);
+                        shakeDetection(null);
 
+                }
+            });
+
+            //Listen for new desktops to be reauthorized
+            fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    Log.d("Reauth", "Requested.");
+
+                    if(snapshot.getValue().toString().equals("1")) {
+                        //Display a notification asking for reauthorization
+                        displayGenericNotification();
+
+                        //Vibrate
+                        vibrate(140);
+
+//                        //Restore reauthorization state
+//                        final Handler handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                fb.child("reauthorization").setValue("0");
+//                            }
+//                        }, 20000);
+                    }
+                }
+
+
+                @Override
+                public void onCancelled(FirebaseError error) {
                 }
             });
         }
@@ -354,7 +385,7 @@ public class UniClipService extends Service {
                     .setContentIntent(pIntent)
                     .setDefaults(Notification.DEFAULT_SOUND)
                     .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.close_x)
+                    .setSmallIcon(R.drawable.notif_ico)
                     .build();
 
             final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -386,7 +417,7 @@ public class UniClipService extends Service {
                     .setContentIntent(pIntent)
                     .setDefaults(Notification.DEFAULT_SOUND)
                     .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.close_x)
+                    .setSmallIcon(R.drawable.notif_ico)
                     .build();
 
             final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -399,6 +430,50 @@ public class UniClipService extends Service {
                     notificationManager.cancel(1);
                 }
             }, 10000);
+        }
+    }
+
+
+
+    //Display Notification
+    protected void displayGenericNotification(){
+        if(true) {
+            Intent intent = new Intent(UniClipService.this, QRActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+            String notification_text = "Click on this notification to authorize your desktop.";
+
+            Notification myNotification = new Notification.Builder(this)
+                    .setContentTitle("UniClip!")
+                    .setContentText(notification_text)
+                    .setTicker("Authorization required!")
+                    .setStyle(new Notification.BigTextStyle().bigText(notification_text))
+                    .setLights(Color.WHITE, 200, 100)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentIntent(pIntent)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setAutoCancel(true)
+                    .setSmallIcon(R.drawable.notif_lock_ico)
+                    .build();
+
+            final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(1, myNotification);
+
+
+            //Listen for reauthorization state reset and cancel notification on authorization
+            fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null && snapshot.getValue().equals("0")) {
+                        notificationManager.cancel(1);
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError error) {
+                }
+            });
+
         }
     }
 
