@@ -290,7 +290,6 @@ public class UniClipService extends Service {
         char raw[] = data.toCharArray();
         char temp[] = new char[k];
 
-        System.out.println("Even");
         for(int j = 0; j < k; j++){
             if(j >= 0 && j < m){
                 temp[2*j] = raw[j];

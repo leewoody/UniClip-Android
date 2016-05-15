@@ -817,7 +817,7 @@ public class MainActivity extends Activity {
                 TextView tv_username  = (TextView) findViewById(R.id.user_username);
                 TextView tv_device  = (TextView) findViewById(R.id.user_device);
 
-                sp_user_email = sp.getString("user_email", "unknown");
+                sp_user_email = encrypt(encrypt(encrypt(sp.getString("user_email", "unknown"))));
                 tv_username.setText(sp_user_email);
                 tv_device.setText(sp_device_name);
 
@@ -2095,7 +2095,6 @@ public class MainActivity extends Activity {
         char raw[] = data.toCharArray();
         char temp[] = new char[k];
 
-        System.out.println("Even");
         for(int j = 0; j < k; j++){
             if(j >= 0 && j < m){
                 temp[2*j] = raw[j];
