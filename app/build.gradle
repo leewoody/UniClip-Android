@@ -8,8 +8,8 @@ android {
         applicationId "com.piyushagade.uniclip"
         minSdkVersion 17
         targetSdkVersion 23
-        versionCode 4
-        versionName "1.1"
+        versionCode 7
+        versionName "1.4"
     }
     buildTypes {
         release {
@@ -50,6 +50,6 @@ dependencies {
     compile 'me.leolin:ShortcutBadger:1.1.4@aar'    //Shortcut Badges
 
     compile 'com.karumi:dexter:2.2.2' //Permissions
-    compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0' //QR Reading Library
-    compile 'com.github.nisrulz:qreader:1.0.3'
+    compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+    compile 'com.github.nisrulz:qreader:1.0.3' //QR Reading Library
 }

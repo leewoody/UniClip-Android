@@ -1181,27 +1181,61 @@ public class MainActivity extends Activity {
                 if (snapshot.getChildrenCount() != 0)
                     for (final DataSnapshot postSnapshot : snapshot.getChildren()) {
 
-                        final TextView row1 = new TextView(getBaseContext());
-                        row1.generateViewId();
-                        row1.setPadding(20, 12, 20, 12);
+                        if(postSnapshot.getValue().toString().equals("0") ||
+                                postSnapshot.getValue().toString().equals("1")) {
+                            final TextView row1 = new TextView(getBaseContext());
+                            row1.generateViewId();
+                            row1.setPadding(20, 12, 20, 12);
 
-                        row1.setText(i + ". " + postSnapshot.getKey().toString());
-                        i++;
+                            row1.setText(i + ". " + postSnapshot.getKey().toString());
+                            i++;
 
-                        if(postSnapshot.getValue().toString().equals("1"))row1.setTextColor(Color.parseColor("#AAFFFFFF"));
-                        else if(postSnapshot.getValue().toString().equals("0"))row1.setTextColor(Color.parseColor("#AC2358"));
-                        row1.setTextSize(16);
+                            if (postSnapshot.getValue().toString().equals("1"))
+                                row1.setTextColor(Color.parseColor("#AAFFFFFF"));
+                            else if (postSnapshot.getValue().toString().equals("0"))
+                                row1.setTextColor(Color.parseColor("#AC2358"));
+                            row1.setTextSize(16);
 
-                        row1.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                if(postSnapshot.getValue().toString().equals("1"))makeToast(postSnapshot.getKey().toString() + " is listening.");
-                                else if(postSnapshot.getValue().toString().equals("0"))makeToast(postSnapshot.getKey().toString() + " is inactive.");
-                            }
+                            row1.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    if (postSnapshot.getValue().toString().equals("1"))
+                                        makeToast(postSnapshot.getKey().toString() + " is listening.");
+                                    else if (postSnapshot.getValue().toString().equals("0"))
+                                        makeToast(postSnapshot.getKey().toString() + " is inactive.");
+                                }
 
-                        });
+                            });
 
-                        ll_other_devices_feed.addView(row1);
-                        ll_other_devices_feed.setVisibility(View.VISIBLE);
+                            ll_other_devices_feed.addView(row1);
+                            ll_other_devices_feed.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            //2 - windows
+                            //3 - Mac
+                            //4  -Linux
+                            final TextView row1 = new TextView(getBaseContext());
+                            row1.generateViewId();
+                            row1.setPadding(20, 12, 20, 12);
+
+                            String variant_num = postSnapshot.getValue().toString();
+                            String[] variant = {"Windows", "Linux", "Mac"};
+
+                            row1.setText(i + ". " + variant[Integer.valueOf(variant_num) - 2] + " desktop");
+                            i++;
+
+
+                            row1.setTextSize(16);
+
+                            row1.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    makeToast("Desktop" + " is listening.");
+                                }
+
+                            });
+
+                            ll_other_devices_feed.addView(row1);
+                            ll_other_devices_feed.setVisibility(View.VISIBLE);
+                        }
                     }
                 else {
                     final TextView row1 = new TextView(getBaseContext());

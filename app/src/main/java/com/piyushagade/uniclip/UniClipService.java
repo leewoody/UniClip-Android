@@ -4,6 +4,7 @@ package com.piyushagade.uniclip;
  * Created by Piyush Agade on 02-07-2016.
  */
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
@@ -21,6 +23,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,6 +39,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.firebase.client.realtime.util.StringListReader;
 import com.github.tbouron.shakedetector.library.ShakeDetector;
 
 import java.util.ArrayList;
@@ -48,6 +52,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class UniClipService extends Service {
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private Firebase fb;
     private ClipboardManager myClipboard;
     private float sensitivity;
@@ -140,6 +145,9 @@ public class UniClipService extends Service {
 
                             //Persist the key
                             ed.putInt("access_pin", key).commit();
+
+                            //Set reauthorization state
+                            fb.child("reauthorization").setValue("0");
                         }
                     }
 
@@ -194,24 +202,24 @@ public class UniClipService extends Service {
 
                             if (snapshot.getValue() != null) {
                                 //Add current incoming clip if not available in history.
-                                if (!history_list_service.contains(snapshot.getValue().toString()) &&
+                                if (!history_list_service.contains(decrypt(decrypt(decrypt(snapshot.getValue().toString())))) &&
                                         !snapshot.getValue().toString().equals(""))
-                                    history_list_service.add(snapshot.getValue().toString());
+                                    history_list_service.add(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
 
                                 //Set data accepted as false
                                 dataAccepted = false;
 
                                 //Set the clipboard with incoming text if both are not same
-                                if (!String.valueOf(snapshot.getValue()).equals(getCBData()) &&
+                                if (!decrypt(decrypt(decrypt(String.valueOf(snapshot.getValue())))).equals(getCBData()) &&
                                         !snapshot.getValue().toString().equals("")) {
+                                    //Listening to save data to clipboard
+                                    shareOff = true;
+
                                     //Send notification
                                     displayNotification();
 
                                     //Vibrate
                                     vibrate(140);
-
-                                    //Listening to save data to clipboard
-                                    shareOff = true;
 
                                     //Begin shake detection
                                     shakeDetection(snapshot);
@@ -232,7 +240,7 @@ public class UniClipService extends Service {
                 public void onPrimaryClipChanged() {
                     //Set data to firebase
                     if(!getCBData().equals("") && sp_authenticated)
-                        fb.child("data").setValue(getCBData());
+                        fb.child("data").setValue(encrypt(encrypt(encrypt(getCBData()))));
 
                     //Send notification
                     displayNotification();
@@ -250,21 +258,15 @@ public class UniClipService extends Service {
                 public void onDataChange(DataSnapshot snapshot) {
                     Log.d("Reauth", "Requested.");
 
+                    //If reauthorize node doesnt prexist
+                    if(snapshot.getValue() == null)  fb.child("reauthorization").setValue("0");
+                    else
                     if(snapshot.getValue().toString().equals("1")) {
                         //Display a notification asking for reauthorization
                         displayGenericNotification();
 
                         //Vibrate
                         vibrate(140);
-
-//                        //Restore reauthorization state
-//                        final Handler handler = new Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                fb.child("reauthorization").setValue("0");
-//                            }
-//                        }, 20000);
                     }
                 }
 
@@ -278,6 +280,49 @@ public class UniClipService extends Service {
         return START_STICKY;
 
 
+    }
+
+    //Encrypt function
+    private String encrypt(String data) {
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        System.out.println("Even");
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[2*j] = raw[j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[2*j - k + 1] = raw[j];
+                else temp[2*j - k] = raw[j];
+            }
+        }
+
+        return String.valueOf(temp);
+    }
+
+    //Decrypt function
+    private String decrypt(String data){
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[j] = raw[2*j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[j] = raw[2*j - k + 1];
+                else temp[j] = raw[2*j - k];
+            }
+
+        }
+        return String.valueOf(temp);
     }
 
     private void updateBadger() {
@@ -307,12 +352,12 @@ public class UniClipService extends Service {
                         dataAccepted = true;
 
                         //Update local clipboard
-                        ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
+                        ClipData myClip = ClipData.newPlainText("text", decrypt(decrypt(decrypt(String.valueOf(snapshot.getValue())))));
                         if (!destroyed) myClipboard.setPrimaryClip(myClip);
 
                         //Start browser
-                        if (isURL(snapshot.getValue().toString()))
-                            startBrowser(snapshot.getValue().toString());
+                        if (isURL(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
+                            startBrowser(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
 
                     }
 
@@ -330,7 +375,7 @@ public class UniClipService extends Service {
                     //Start get friend_node activity and send clipboard data
                     if(k && !shareOff){
                         startActivity(new Intent(UniClipService.this, GetFriendNodeActivity.class)
-                                .putExtra("data_shared", getCBData())
+                                .putExtra("data_shared", encrypt(encrypt(encrypt(getCBData()))))
                                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                         k = false;
                     }
@@ -353,12 +398,12 @@ public class UniClipService extends Service {
             dataAccepted = true;
 
             //Update local clipboard
-            ClipData myClip = ClipData.newPlainText("text", String.valueOf(snapshot.getValue()));
+            ClipData myClip = ClipData.newPlainText("text", decrypt(decrypt(decrypt(String.valueOf(snapshot.getValue())))));
             myClipboard.setPrimaryClip(myClip);
 
             //Start browser
-            if (isURL(snapshot.getValue().toString()))
-                startBrowser(snapshot.getValue().toString());
+            if (isURL(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
+                startBrowser(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
 
         }
 
@@ -435,46 +480,67 @@ public class UniClipService extends Service {
 
 
 
-    //Display Notification
+    //Display Notification for reauthorization
     protected void displayGenericNotification(){
-        if(true) {
-            Intent intent = new Intent(UniClipService.this, QRActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
-            String notification_text = "Click on this notification to authorize your desktop.";
+        Intent intent;
+        PendingIntent pIntent = null;
 
-            Notification myNotification = new Notification.Builder(this)
-                    .setContentTitle("UniClip!")
-                    .setContentText(notification_text)
-                    .setTicker("Authorization required!")
-                    .setStyle(new Notification.BigTextStyle().bigText(notification_text))
-                    .setLights(Color.WHITE, 200, 100)
-                    .setWhen(System.currentTimeMillis())
-                    .setContentIntent(pIntent)
-                    .setDefaults(Notification.DEFAULT_SOUND)
-                    .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.notif_lock_ico)
-                    .build();
+        if (ActivityCompat.checkSelfPermission(
+                getApplicationContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
 
-            final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(1, myNotification);
-
-
-            //Listen for reauthorization state reset and cancel notification on authorization
-            fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.getValue() != null && snapshot.getValue().equals("0")) {
-                        notificationManager.cancel(1);
-                    }
-                }
-
-                @Override
-                public void onCancelled(FirebaseError error) {
-                }
-            });
+            makeToast("Please grant \"Camera\" permissions in the UniClip application.");
+            intent = new Intent(UniClipService.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
         }
+        else{
+
+
+            if(isNetworkAvailable()) {
+                intent = new Intent(UniClipService.this, QRActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+            }
+            else
+                makeToast("Internet not available.");
+        }
+
+
+
+        String notification_text = "Click here to authorize your desktop.";
+
+        Notification myNotification = new Notification.Builder(this)
+                .setContentTitle("UniClip!")
+                .setContentText(notification_text)
+                .setTicker("Authorization required!")
+                .setStyle(new Notification.BigTextStyle().bigText(notification_text))
+                .setLights(Color.WHITE, 200, 100)
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(pIntent)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.notif_lock_ico)
+                .build();
+
+        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, myNotification);
+
+
+        //Listen for reauthorization state reset and cancel notification on authorization
+        fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null && snapshot.getValue().equals("0")) {
+                    notificationManager.cancel(1);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
     }
 
 
