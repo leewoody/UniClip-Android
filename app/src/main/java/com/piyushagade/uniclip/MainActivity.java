@@ -750,7 +750,7 @@ public class MainActivity extends Activity {
                 final String input_pin = input_access_pin.getText().toString();
 
                 //Format email address (remove the .)
-                String user_node = sp_user_email.replaceAll("\\.", "");
+                String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
                 //Firebase
                 Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
@@ -816,6 +816,8 @@ public class MainActivity extends Activity {
                 //Set data
                 TextView tv_username  = (TextView) findViewById(R.id.user_username);
                 TextView tv_device  = (TextView) findViewById(R.id.user_device);
+
+                sp_user_email = sp.getString("user_email", "unknown");
                 tv_username.setText(sp_user_email);
                 tv_device.setText(sp_device_name);
 
@@ -833,7 +835,6 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 vibrate(27);
 
-
                 rl_first_page.setVisibility(View.INVISIBLE);
                 rl_info.setVisibility(View.VISIBLE);
                 rl_user.setVisibility(View.INVISIBLE);
@@ -847,7 +848,6 @@ public class MainActivity extends Activity {
         b_help.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
-
 
                 rl_first_page.setVisibility(View.INVISIBLE);
                 rl_help.setVisibility(View.VISIBLE);
@@ -971,8 +971,6 @@ public class MainActivity extends Activity {
         @Override
         public void run() {
 
-            Log.d(TAG, "Service status synced");
-
             if(!stopRunnables) {
                 sp_authenticated = sp.getBoolean("authenticated", false);
 
@@ -1008,8 +1006,6 @@ public class MainActivity extends Activity {
         @Override
         public void run() {
 
-            Log.d(TAG, "Connection status synced");
-
             if(!stopRunnables)
                 if(isNetworkAvailable()){
                     status_connection.setText("Connection:\n  Connected to the server.");
@@ -1027,7 +1023,7 @@ public class MainActivity extends Activity {
     //Get Access Pin
     private void getAccessPin() {
         //Format email address (remove the .)
-        String user_node = sp.getString("user_email", "").replaceAll("\\.", "");
+        String user_node = encrypt(encrypt(encrypt(sp.getString("user_email", "").replaceAll("\\.", ""))));
 
         //Firebase
         Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
@@ -1082,7 +1078,7 @@ public class MainActivity extends Activity {
             public void run() {
                 sp_are_creator = sp.getBoolean("creator", false);
                 if(!sp_are_creator){
-                    access_pin_desc.setText("In order to start listening to the cloudboard, you need to input the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
+                    access_pin_desc.setText("In order to start listening to the cloudboard, you need to put in the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
 
                     b_view_access_pin.setVisibility(View.GONE);
 
@@ -1104,7 +1100,7 @@ public class MainActivity extends Activity {
 
 
         //Format email address (remove the .)
-        String user_node = sp_user_email.replaceAll("\\.", "");
+        String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
         //Firebase
         Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
@@ -1132,9 +1128,6 @@ public class MainActivity extends Activity {
     private Runnable refreshHistory = new Runnable() {
         public void run() {
 
-
-            Log.d(TAG, "Cloudboard history synced");
-
             if(!stopRunnables)
                 setHistoryListItems();
 
@@ -1147,8 +1140,6 @@ public class MainActivity extends Activity {
     //Refresh device list runnable with 4 sec delay
     private Runnable refreshDevicesList = new Runnable() {
         public void run() {
-
-            Log.d(TAG, "Device list synced");
 
             if(!stopRunnables)
                 setRegisteredDeviceList();
@@ -1420,7 +1411,7 @@ public class MainActivity extends Activity {
 
 
         //Format email address (remove the .)
-        String user_node = sp_user_email.replaceAll("\\.", "");
+        String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
         //Firebase
         Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
@@ -1683,7 +1674,7 @@ public class MainActivity extends Activity {
     private void checkIfCreator(){
 
         //Format email address (remove the .)
-        String user_node = sp_user_email.replaceAll("\\.", "");
+        String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
         //Firebase
         final Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
@@ -2092,6 +2083,51 @@ public class MainActivity extends Activity {
                 }
             }
         }
+    }
+
+
+
+    //Encrypt function
+    private String encrypt(String data) {
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        System.out.println("Even");
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[2*j] = raw[j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[2*j - k + 1] = raw[j];
+                else temp[2*j - k] = raw[j];
+            }
+        }
+
+        return String.valueOf(temp);
+    }
+
+    //Decrypt function
+    private String decrypt(String data){
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[j] = raw[2*j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[j] = raw[2*j - k + 1];
+                else temp[j] = raw[2*j - k];
+            }
+
+        }
+        return String.valueOf(temp);
     }
 }
 

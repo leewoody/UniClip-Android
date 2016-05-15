@@ -122,7 +122,7 @@ public class UniClipService extends Service {
 
 
             //Format email address (remove the .)
-            String user_node = sp_user_email.replaceAll("\\.", "");
+            String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
             //Firebase
             fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
@@ -370,7 +370,7 @@ public class UniClipService extends Service {
                     ShakeDetector.updateConfiguration((sp_share_sensitivity) / 2, sp_share_shakes);
 
                     //Format email address (remove the .)
-                    String user_node = sp_user_email.replaceAll("\\.", "");
+                    String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
                     //Start get friend_node activity and send clipboard data
                     if(k && !shareOff){

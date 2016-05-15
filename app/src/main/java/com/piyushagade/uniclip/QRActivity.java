@@ -73,7 +73,7 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
                     k = 1;
 
                     //Format email address (remove the .)
-                    String user_node = sp_user_email.replaceAll("\\.", "");
+                    String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
                     //Firebase
                     fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
@@ -82,7 +82,7 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
                     fb.child("reauthorization").setValue("0");
 
                     //Format email address (remove the .)
-                    String user_email = sp_user_email.replaceAll("\\.", "");
+                    String user_email = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
                     //Firebase
                     fb = new Firebase("https://uniclip.firebaseio.com/desktops/");
@@ -166,4 +166,48 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
         Snackbar.make(v, t, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
+
+
+    //Encrypt function
+    private String encrypt(String data) {
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        System.out.println("Even");
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[2*j] = raw[j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[2*j - k + 1] = raw[j];
+                else temp[2*j - k] = raw[j];
+            }
+        }
+
+        return String.valueOf(temp);
+    }
+
+    //Decrypt function
+    private String decrypt(String data){
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[j] = raw[2*j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[j] = raw[2*j - k + 1];
+                else temp[j] = raw[2*j - k];
+            }
+
+        }
+        return String.valueOf(temp);
+    }
 }
