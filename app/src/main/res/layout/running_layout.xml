@@ -111,7 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#88FFFFFF"
-            android:text="To add a desktop, open the Uniclip app on your desktop, and scan the QR Code generated on your desktop."
+            android:text="To add a desktop, open the Uniclip app on your desktop, and scan the QR Code generated on your desktop by clicking on the icon below.\n\nFor help, see 'Help' section in menu."
             android:textSize="16sp"
             android:layout_marginTop="12sp"
             android:padding="6sp"

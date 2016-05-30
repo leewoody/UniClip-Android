@@ -116,6 +116,38 @@
                 android:layout_marginTop="8sp"/>
 
 
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Desktop client: "
+                android:textSize="18sp"
+                android:id="@+id/info_other_desktop_client_title"
+                android:layout_marginTop="18sp"
+                android:layout_below="@id/hl5"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To download desktop client, follow the link given below. \n\nhttp://piyushagade.github.io/web/uniclip\n"
+                android:textSize="16sp"
+                android:id="@+id/info_other_desktop_client"
+                android:layout_marginTop="8sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/info_other_desktop_client_title"
+                android:textColor="#AAFFFFFF"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="2sp"
+                android:background="#33FFFFFF"
+                android:id="@+id/hl6"
+                android:layout_below="@id/info_other_desktop_client"
+                android:layout_marginTop="8sp"/>
+
+
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

@@ -753,7 +753,7 @@ public class MainActivity extends Activity {
                 String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
                 //Firebase
-                Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+                Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
 
                 fb.child("key").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -817,7 +817,7 @@ public class MainActivity extends Activity {
                 TextView tv_username  = (TextView) findViewById(R.id.user_username);
                 TextView tv_device  = (TextView) findViewById(R.id.user_device);
 
-                sp_user_email = encrypt(encrypt(encrypt(sp.getString("user_email", "unknown"))));
+                sp_user_email = (sp.getString("user_email", "unknown"));
                 tv_username.setText(sp_user_email);
                 tv_device.setText(sp_device_name);
 
@@ -862,7 +862,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 vibrate(27);
                 history_list_activity.clear();
-                UniClipService.history_list_service.clear();
+                if(UniClipService.history_list_service != null) UniClipService.history_list_service.clear();
                 setHistoryListItems();
             }
         });
@@ -1026,7 +1026,7 @@ public class MainActivity extends Activity {
         String user_node = encrypt(encrypt(encrypt(sp.getString("user_email", "").replaceAll("\\.", ""))));
 
         //Firebase
-        Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+        Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
 
         //Get access pin from firebase
         fb.child("key").addValueEventListener(new ValueEventListener() {
@@ -1103,7 +1103,7 @@ public class MainActivity extends Activity {
         String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
         //Firebase
-        Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+        Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
 
         //Check if this device is creator
         fb.child("creator").addValueEventListener(new ValueEventListener() {
@@ -1160,8 +1160,8 @@ public class MainActivity extends Activity {
         final LinearLayout ll_other_devices_feed = (LinearLayout) findViewById(R.id.ll_other_devices_feed);
         ll_other_devices_feed.removeAllViews();
 
-        final Firebase fb_devices = new Firebase("https://uniclip.firebaseio.com/cloudboard/" +
-                sp_user_email.replaceAll("\\.", "") + "/devices");
+        final Firebase fb_devices = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" +
+                encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", "")))) + "/devices");
 
         fb_devices.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1235,7 +1235,6 @@ public class MainActivity extends Activity {
                     row1.setText("No registered devices.");
 
                     row1.setTextColor(Color.parseColor("#AAFFFFFF"));
-                    row1.setTypeface(Typeface.MONOSPACE);
                     row1.setTextSize(16);
 
                     ll_other_devices_feed.addView(row1);
@@ -1414,7 +1413,7 @@ public class MainActivity extends Activity {
         String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
         //Firebase
-        Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+        Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
 
         //Get access pin
         getAccessPin();
@@ -1677,7 +1676,7 @@ public class MainActivity extends Activity {
         String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
         //Firebase
-        final Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+        final Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
 
         //Check if user node exists
         if (!usernode_created_now && fb != null)

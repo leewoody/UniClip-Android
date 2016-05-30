@@ -53,7 +53,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class UniClipService extends Service {
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
-    private Firebase fb;
+    private Firebase fb, fb_ota;
     private ClipboardManager myClipboard;
     private float sensitivity;
     private boolean dataAccepted;
@@ -69,6 +69,7 @@ public class UniClipService extends Service {
     private Handler cloudListenerHandler, clipListenerHandler;
     private WindowManager windowManager;
     private boolean k;
+    private int l;
     private boolean shareOff;
 
     @Override
@@ -125,7 +126,25 @@ public class UniClipService extends Service {
             String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
             //Firebase
-            fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
+            fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
+            fb_ota = new Firebase("https://uniclipold.firebaseio.com/ota/");
+
+
+
+            //Listen for OTA notifications
+            fb_ota.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        l = 0;
+                        displayOTANotification(snapshot.getValue().toString());
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError error) {
+                }
+            });
 
             //Check if user node exists
             if (!usernode_created_now)
@@ -212,6 +231,8 @@ public class UniClipService extends Service {
                                 //Set the clipboard with incoming text if both are not same
                                 if (!decrypt(decrypt(decrypt(String.valueOf(snapshot.getValue())))).equals(getCBData()) &&
                                         !snapshot.getValue().toString().equals("")) {
+
+
                                     //Listening to save data to clipboard
                                     shareOff = true;
 
@@ -243,11 +264,13 @@ public class UniClipService extends Service {
                         fb.child("data").setValue(encrypt(encrypt(encrypt(getCBData()))));
 
                     //Send notification
-                    displayNotification();
+                    if(false)   // Share to friends disabled
+                        displayNotification();
 
                     //Begin shake detection
-                    if(!shareOff)
-                        shakeDetection(null);
+                    if(false)   // Share to friends disabled
+                        if(!shareOff)
+                            shakeDetection(null);
 
                 }
             });
@@ -263,7 +286,7 @@ public class UniClipService extends Service {
                     else
                     if(snapshot.getValue().toString().equals("1")) {
                         //Display a notification asking for reauthorization
-                        displayGenericNotification();
+                        displayReauthorizationNotification();
 
                         //Vibrate
                         vibrate(140);
@@ -354,9 +377,11 @@ public class UniClipService extends Service {
                         ClipData myClip = ClipData.newPlainText("text", decrypt(decrypt(decrypt(String.valueOf(snapshot.getValue())))));
                         if (!destroyed) myClipboard.setPrimaryClip(myClip);
 
-                        //Start browser
+                        //Start special activity
                         if (isURL(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
                             startBrowser(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+                        else if(isPhone(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
+                            startDialer(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
 
                     }
 
@@ -403,6 +428,8 @@ public class UniClipService extends Service {
             //Start browser
             if (isURL(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
                 startBrowser(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+            else if(isPhone(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
+                startDialer(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
 
         }
 
@@ -448,7 +475,7 @@ public class UniClipService extends Service {
             PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
             String notification_text = "";
-            if(sp_get_shakes != 0) notification_text = "Shake your device " + sp_share_shakes + " times to open share Clipboard dialog.";
+            if(sp_share_shakes != 0) notification_text = "Shake your device " + sp_share_shakes + " times to open share Clipboard dialog.";
 
 
             Notification myNotification = new Notification.Builder(this)
@@ -480,7 +507,7 @@ public class UniClipService extends Service {
 
 
     //Display Notification for reauthorization
-    protected void displayGenericNotification(){
+    protected void displayReauthorizationNotification(){
 
         Intent intent;
         PendingIntent pIntent = null;
@@ -525,6 +552,104 @@ public class UniClipService extends Service {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, myNotification);
 
+        //Listen for reauthorization state reset and cancel notification on authorization
+        fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null && snapshot.getValue().equals("0")) {
+                    notificationManager.cancel(1);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+    }
+
+
+    //Display OTA Notification
+    protected void displayOTANotification(String text){
+
+        Intent intent;
+        PendingIntent pIntent = null;
+
+        intent = new Intent(UniClipService.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        String notification_text = text;
+
+        Notification myNotification = new Notification.Builder(this)
+                .setContentTitle("UniClip!")
+                .setContentText(notification_text)
+                .setTicker("A notification from UniClip's developers!")
+                .setStyle(new Notification.BigTextStyle().bigText(notification_text))
+                .setLights(Color.WHITE, 200, 100)
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(pIntent)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.notif_ico)
+                .build();
+
+        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, myNotification);
+
+    }
+
+
+
+
+
+
+
+
+    //Display Notification for special clips
+    protected void displaySpecialNotification(){
+
+        Intent intent;
+        PendingIntent pIntent = null;
+
+        if (ActivityCompat.checkSelfPermission(
+                getApplicationContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            makeToast("Please grant \"Camera\" permissions in the UniClip application.");
+            intent = new Intent(UniClipService.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        }
+        else{
+
+
+            if(isNetworkAvailable()) {
+                intent = new Intent(UniClipService.this, QRActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+            }
+            else
+                makeToast("Internet not available.");
+        }
+
+
+
+        String notification_text = "Click here to authorize your desktop.";
+
+        Notification myNotification = new Notification.Builder(this)
+                .setContentTitle("UniClip!")
+                .setContentText(notification_text)
+                .setTicker("Authorization required!")
+                .setStyle(new Notification.BigTextStyle().bigText(notification_text))
+                .setLights(Color.WHITE, 200, 100)
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(pIntent)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.notif_lock_ico)
+                .build();
+
+        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, myNotification);
 
         //Listen for reauthorization state reset and cancel notification on authorization
         fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
@@ -604,6 +729,16 @@ public class UniClipService extends Service {
         }
     }
 
+    //Start Dialer
+    private void startDialer(String number){
+        if(sp_open_url) {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(Uri.parse("tel:" + number));
+            startActivity(intent);
+        }
+    }
+
     //Check if URL
     private boolean isURL(String url) {
         final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
@@ -615,6 +750,23 @@ public class UniClipService extends Service {
         }
         return false;
     }
+
+
+    //Check if Phone number
+    private boolean isPhone(String phoneNumber) {
+        System.out.println(phoneNumber.length());
+        String regex = "^\\+?[0-9. ()-]{10,25}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(phoneNumber);
+
+
+        if (matcher.matches()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     //Get Clipboard data method
     private String getCBData(){

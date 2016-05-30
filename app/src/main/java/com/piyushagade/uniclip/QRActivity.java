@@ -25,10 +25,11 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
     private TextView myTextView;
     private QRCodeReaderView mydecoderview;
 
-    private Firebase fb;
+    private Firebase fb, fb_desktops;
     private String sp_user_email;
     SharedPreferences sp;
     private SharedPreferences.Editor ed;
+    private String user_node, user_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +43,57 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
 
         Firebase.setAndroidContext(this);
 
+
         //Hint
         makeSnack("Scan QR code on your desktop");
 
         //Read SharedPreferences
         sp = getSharedPreferences(PREF_FILE, 0);
         ed = sp.edit();
-
         sp_user_email = sp.getString("user_email", "unknown");
 
 
+        //Format email address (remove the .)
+        user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
+
+        //Firebase
+        fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
+
+        user_email = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
+
+        //Signal desktop application to come to front
+        fb.child("reauthorization").setValue("2");
+
+        //DecoderView
         mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
 
         myTextView = (TextView) findViewById(R.id.exampleTextView);
 
         myTextView.setText("");
+
+
+        //OnCLick Listeners
+        //Close Button listener
+        (findViewById(R.id.b_qr_back)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                finish();
+
+            }
+
+        });
+
+        //Help Button listener
+        (findViewById(R.id.b_qr_help)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                finish();
+
+            }
+
+        });
     }
 
-
+    //k ensures that pairing occurs only once
     int k = 0;
 
     @Override
@@ -72,25 +105,20 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
                 if(k == 0) {
                     k = 1;
 
-                    //Format email address (remove the .)
-                    String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
-
-                    //Firebase
-                    fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/" + user_node);
 
                     //Reset reauthorization state
                     fb.child("reauthorization").setValue("0");
 
-                    //Format email address (remove the .)
-                    String user_email = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
+                    //Firebase Object
+                    fb_desktops = new Firebase("https://uniclipold.firebaseio.com/desktops/");
 
-                    //Firebase
-                    fb = new Firebase("https://uniclip.firebaseio.com/desktops/");
+
 
                     //Associate the desktop with this account
-                    fb.child(decoded_text).setValue(String.valueOf(user_email));
+                    fb_desktops.child(decoded_text).setValue(String.valueOf(user_email));
 
-                    makeSnack("Pairing successful.");
+                    if(isNetworkAvailable()) makeSnack("Pairing successful.");
+                    else  makeSnack("Pairing successful. Waiting for network.");
 
                     vibrate(100);
 
@@ -102,7 +130,6 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
                             finish();
                         }
                     }, 1800);
-                    handler = null;
 
                 }
             }
@@ -165,7 +192,6 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
         View v = findViewById(R.id.rl_decoder);
         Snackbar.make(v, t, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
-
 
 
     //Encrypt function

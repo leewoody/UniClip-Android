@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -33,7 +32,6 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
@@ -74,7 +72,7 @@ public class ManageFriendsActivity extends Activity{
 
 
         //Firebase
-        fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/");
+        fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/");
 
         //Get intent data
         intent = getIntent();
@@ -133,14 +131,17 @@ public class ManageFriendsActivity extends Activity{
                 else if (b_friends_manage_add.getText().equals("Add")) {
                     userDoesntExists = true;
 
-                    fb.child((et_add_friend_email.getText().toString().replaceAll("\\.", "")))
+                    fb.child(encrypt(encrypt(encrypt((et_add_friend_email.getText().toString().replaceAll("\\.", ""))))))
                             .child("key").addValueEventListener(new ValueEventListener() {
 
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
+
+                            //User has account in UniClip
                             if (snapshot.exists()) {
+
                                 if (!snapshot.getValue().toString().equals(""))
-                                {   //User has account in UniClip
+                                {
                                     userDoesntExists = false;
                                     loadArray();
                                     if(!et_add_friend_email.getText().toString().equals(""))
@@ -155,11 +156,10 @@ public class ManageFriendsActivity extends Activity{
 
                                     saveArray();
                                 }
-
                             }
 
+                            //User has no account in UniClip
                             else {
-                                //User has no account in UniClip
                                 userDoesntExists = true;
                                 if(!et_add_friend_email.getText().toString().equals(""))
                                     makeToast("User not in our database.");
@@ -220,12 +220,6 @@ public class ManageFriendsActivity extends Activity{
 
 
     }
-
-
-//    friends_list.add("rohan2005p@gmail.com");
-//    friends_list.add("ninadmundalik@gmail.com");
-//    friends_list.add("stunningguy786@gmail.com");
-//    friends_list.add("arnavbhartiya@gmail.com");
 
     private String setFriendsList() {
         loadArray();
@@ -407,4 +401,45 @@ public class ManageFriendsActivity extends Activity{
         }
     }
 
+    //Encrypt function
+    private String encrypt(String data) {
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[2*j] = raw[j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[2*j - k + 1] = raw[j];
+                else temp[2*j - k] = raw[j];
+            }
+        }
+
+        return String.valueOf(temp);
+    }
+
+    //Decrypt function
+    private String decrypt(String data){
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[j] = raw[2*j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[j] = raw[2*j - k + 1];
+                else temp[j] = raw[2*j - k];
+            }
+
+        }
+        return String.valueOf(temp);
+    }
 }

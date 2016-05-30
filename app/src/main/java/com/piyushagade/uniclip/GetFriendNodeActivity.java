@@ -43,7 +43,6 @@ public class GetFriendNodeActivity extends Activity{
     private ImageView iv_logo, iv_slogan, b_menu;
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     private static final String FREINDS_FILE = "com.piyushagade.uniclip.friends";
-    boolean sp_first_run;
     private SharedPreferences.Editor ed;
     private String data;
     private Intent intent;
@@ -73,7 +72,7 @@ public class GetFriendNodeActivity extends Activity{
 
 
         //Firebase
-        final Firebase fb = new Firebase("https://uniclip.firebaseio.com/cloudboard/");
+        final Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/");
 
         //UI Components
         iv_logo = (ImageView) findViewById(R.id.app_logo);
@@ -108,7 +107,7 @@ public class GetFriendNodeActivity extends Activity{
             public void onClick(View v) {
                 if(send_list.size() != 0)
                     for(String friend: send_list){
-                        friend = friend.replaceAll("\\.", "");
+                        friend = encrypt(encrypt(encrypt(friend.replaceAll("\\.", ""))));
 
                         //Set data on firebase
                         fb.child(friend).child("data").setValue(data);
@@ -299,6 +298,48 @@ public class GetFriendNodeActivity extends Activity{
         {
             if(friends_list != null) friends_list.add(sp.getString(String.valueOf(i), "No_one"));
         }
+    }
+
+    //Encrypt function
+    private String encrypt(String data) {
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[2*j] = raw[j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[2*j - k + 1] = raw[j];
+                else temp[2*j - k] = raw[j];
+            }
+        }
+
+        return String.valueOf(temp);
+    }
+
+    //Decrypt function
+    private String decrypt(String data){
+        int k = data.length();
+        int m = (k + 1)/2;
+
+        char raw[] = data.toCharArray();
+        char temp[] = new char[k];
+
+        for(int j = 0; j < k; j++){
+            if(j >= 0 && j < m){
+                temp[j] = raw[2*j];
+            }
+            else if(j >= m  && j <= k - 1){
+                if(k % 2 == 0) temp[j] = raw[2*j - k + 1];
+                else temp[j] = raw[2*j - k];
+            }
+
+        }
+        return String.valueOf(temp);
     }
 
 }

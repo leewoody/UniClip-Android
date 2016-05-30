@@ -54,7 +54,7 @@
         <CheckBox
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Open URL in browser?"
+            android:text="Handle special clips?"
             android:id="@+id/cb_open_url"
             android:textSize="14sp"
             android:paddingLeft="16sp"
@@ -171,6 +171,7 @@
 
     <!-- RL Share-->
     <RelativeLayout
+        android:visibility="gone"
         android:layout_width="400sp"
         android:layout_height="wrap_content"
         android:layout_below="@id/rl_get"
@@ -310,6 +311,7 @@
 
     <!-- Share Help-->
     <ImageView
+        android:visibility="gone"
         android:layout_width="22dp"
         android:layout_height="26dp"
         android:id="@+id/b_help_share"

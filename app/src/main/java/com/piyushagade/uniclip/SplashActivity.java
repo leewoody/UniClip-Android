@@ -35,6 +35,7 @@ public class SplashActivity extends Activity{
     boolean sp_first_run;
     private TextView app_version;
     private RelativeLayout rl_splash_bottom;
+    private int delayTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,11 @@ public class SplashActivity extends Activity{
         app_version = (TextView) findViewById(R.id.app_version);
         rl_splash_bottom = (RelativeLayout) findViewById(R.id.rl_splash_bottom);
 
+        //Variable splash screen display time
+        if(isServiceRunning(UniClipService.class))
+            delayTime = 1000;
+        else
+            delayTime = 2800;
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -62,8 +68,9 @@ public class SplashActivity extends Activity{
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 finish();
             }
-        }, 2800);
+        }, delayTime);
     }
+
 
     //fadeAnimate view
     private void fadeAnimate(final View v, final int duration, final int delay){

@@ -4,7 +4,7 @@
     <!-- Strings related to Settings -->
 
 
-    <string name="app_version">v1.5</string>
+    <string name="app_version">1.8</string>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
@@ -33,7 +33,7 @@
     <string name="intro5_desc">Please wait while we set up the UI, check for connection, and permissions.\n\n\n</string>
 
     <string name="intro6_title">Clipboard History!</string>
-    <string name="intro6_desc">UniClip maintains a clipboard history of the session. So, if you miss something, don\'t worry, just go to the Menu and click on the history icon.\n\n</string>
+    <string name="intro6_desc">UniClip maintains a clipboard history of the session. So, if you miss something, don\'t worry, just go to the Menu and click on the History icon.\n\n</string>
 
 
 </resources>
