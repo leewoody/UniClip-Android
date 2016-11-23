@@ -131,7 +131,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="To download desktop client, follow the link given below. \n\nhttp://piyushagade.github.io/web/uniclip\n"
+                android:text="To download desktop client, follow the link given below. \n\nhttp://piyushagade.xyz/uniclip\n"
                 android:textSize="16sp"
                 android:id="@+id/info_other_desktop_client"
                 android:layout_marginTop="8sp"

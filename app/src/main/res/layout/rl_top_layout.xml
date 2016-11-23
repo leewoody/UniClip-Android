@@ -14,7 +14,8 @@
         android:id="@+id/b_close"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/close_x"/>
+        android:src="@drawable/close_x"
+        android:layout_alignParentRight="true" />
 
 
     <ImageView
@@ -25,7 +26,8 @@
         android:id="@+id/b_menu"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:src="@drawable/menu"/>
+        android:src="@drawable/menu"
+        android:layout_alignParentLeft="true"/>
 
     <!--<TextView-->
         <!--android:layout_width="wrap_content"-->

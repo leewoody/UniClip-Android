@@ -29,21 +29,20 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.firebase.client.realtime.util.StringListReader;
 import com.github.tbouron.shakedetector.library.ShakeDetector;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,10 +66,14 @@ public class UniClipService extends Service {
 
     public static ArrayList<String> history_list_service;
     private Handler cloudListenerHandler, clipListenerHandler;
-    private WindowManager windowManager;
+    private WindowManager windowManager, wm;
     private boolean k;
     private int l;
     private boolean shareOff;
+    private LinearLayout ll;
+    private LayoutInflater li;
+    private View floatingView;
+
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -132,19 +135,20 @@ public class UniClipService extends Service {
 
 
             //Listen for OTA notifications
-            fb_ota.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.getValue() != null) {
-                        l = 0;
-                        displayOTANotification(snapshot.getValue().toString());
+            if(false)
+                fb_ota.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.getValue() != null) {
+                            l = 0;
+                            displayOTANotification(snapshot.getValue().toString());
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(FirebaseError error) {
-                }
-            });
+                    @Override
+                    public void onCancelled(FirebaseError error) {
+                    }
+                });
 
             //Check if user node exists
             if (!usernode_created_now)
@@ -300,10 +304,87 @@ public class UniClipService extends Service {
             });
         }
 
+
+
         return START_STICKY;
 
 
     }
+
+    private void startFloating(int mode, final String data) {
+        // Floating window
+        if(sp_open_url) {
+            try {
+                li = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+
+                try {
+                    wm.removeView(floatingView);
+                } catch (IllegalArgumentException ie) {
+                    // Do nothing
+                } catch (NullPointerException npe) {
+                    // Do nothing
+                }
+
+                wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+
+                final WindowManager.LayoutParams parameters = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.MATCH_PARENT, 240, WindowManager.LayoutParams.TYPE_PHONE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        PixelFormat.TRANSLUCENT);
+                parameters.gravity = Gravity.TOP | Gravity.RIGHT;
+                parameters.x = 0;
+                parameters.y = 0;
+
+                floatingView = li.inflate(R.layout.floating_layout, null);
+
+                wm.addView(floatingView, parameters);
+
+                Button action = (Button) floatingView.findViewById(R.id.float_action);
+                TextView float_data = (TextView) floatingView.findViewById(R.id.float_data);
+                float_data.setText(data);
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            wm.removeView(floatingView);
+                        } catch (IllegalArgumentException ie) {
+                            // Do nothing
+                        }
+                    }
+                }, 6000);
+
+                switch (mode) {
+                    case 1:
+                        action.setText("Open");
+                        action.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startBrowser(data);
+                                wm.removeView(floatingView);
+                            }
+                        });
+                        break;
+                    case 2:
+                        action.setText("Call");
+                        action.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startDialer(data);
+                                wm.removeView(floatingView);
+                            }
+                        });
+                        break;
+                }
+
+            }catch (SecurityException se){
+                makeToast("You need to enable \"Draw over other apps\" to use \"Handle special clips\" feature.");
+            }
+        }
+
+    }
+
 
     //Encrypt function
     private String encrypt(String data) {
@@ -379,9 +460,11 @@ public class UniClipService extends Service {
 
                         //Start special activity
                         if (isURL(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
-                            startBrowser(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+                            startFloating(1, decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+
                         else if(isPhone(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
-                            startDialer(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+                            startFloating(2, decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+
 
                     }
 
@@ -425,11 +508,13 @@ public class UniClipService extends Service {
             ClipData myClip = ClipData.newPlainText("text", decrypt(decrypt(decrypt(String.valueOf(snapshot.getValue())))));
             myClipboard.setPrimaryClip(myClip);
 
-            //Start browser
+            //Start browser / dialer
             if (isURL(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
-                startBrowser(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+                startFloating(1, decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+
             else if(isPhone(decrypt(decrypt(decrypt(snapshot.getValue().toString())))))
-                startDialer(decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+                startFloating(2, decrypt(decrypt(decrypt(snapshot.getValue().toString()))));
+
 
         }
 
@@ -573,7 +658,7 @@ public class UniClipService extends Service {
     protected void displayOTANotification(String text){
 
         Intent intent;
-        PendingIntent pIntent = null;
+        PendingIntent pIntent;
 
         intent = new Intent(UniClipService.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
@@ -684,7 +769,7 @@ public class UniClipService extends Service {
 
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = 0;
-        params.y = 100;
+        params.y = 0;
 
         //this code is for dragging the chat head
         chatHead.setOnTouchListener(new View.OnTouchListener() {
@@ -770,7 +855,7 @@ public class UniClipService extends Service {
 
     //Get Clipboard data method
     private String getCBData(){
-        ClipData clipdata = myClipboard.getPrimaryClip();        //Get primary clip
+        ClipData clipdata = myClipboard.getPrimaryClip();//Get primary clip
         ClipData.Item item = null;
         if(clipdata != null){
             item = clipdata.getItemAt(0);                //Get 0th item from clipboard
@@ -789,10 +874,10 @@ public class UniClipService extends Service {
         destroyed = true;
 
         //Deregister Device
-        fb.child("devices").child(sp_device_name).setValue("0");
+        if(fb != null) fb.child("devices").child(sp_device_name).setValue("0");
     }
 
-    //Remove Listener after a time delay
+    //Remove Shake listener after a time delay
     public void waitAndRemoveListener(int time){
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

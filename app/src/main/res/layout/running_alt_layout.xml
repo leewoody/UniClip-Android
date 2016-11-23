@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_running"
+    android:visibility="visible"
+    android:background="@color/colorPrimary"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/g_running"
+        android:columnCount="2"
+        android:padding="6sp"
+        android:rowCount="3">
+
+        <RelativeLayout
+            android:background="@drawable/card_background_layout"
+            android:padding="10sp"
+            android:layout_width="130sp"
+            android:layout_height="130sp"
+            android:layout_margin="6sp"
+            android:layout_gravity="left|top">
+            <ImageView
+                android:layout_width="80sp"
+                android:layout_height="80sp"
+                android:src="@drawable/connected"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/iv_conn_status"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="6sp"
+                android:text="Connected"
+                android:layout_below="@id/iv_conn_status"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:background="@drawable/card_background_layout"
+            android:padding="10sp"
+            android:layout_width="130sp"
+            android:layout_height="130sp"
+            android:layout_margin="6sp"
+            android:layout_gravity="left|top">
+            <ImageView
+                android:layout_width="80sp"
+                android:layout_height="80sp"
+                android:src="@drawable/adddevice"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/iv_add_device"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="6sp"
+                android:text="Add a device"
+                android:layout_below="@id/iv_add_device"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_margin="6sp"
+            android:background="@drawable/card_background_layout"
+            android:padding="16sp">
+            <ImageView
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:src="@drawable/connected"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_margin="6sp"
+            android:background="@drawable/card_background_layout"
+            android:padding="16sp">
+            <ImageView
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:src="@drawable/connected"/>
+        </RelativeLayout>
+
+    </GridLayout>
+</RelativeLayout>

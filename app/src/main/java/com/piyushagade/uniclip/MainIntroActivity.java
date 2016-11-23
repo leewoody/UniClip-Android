@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
@@ -17,6 +16,7 @@ import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
 
 public class MainIntroActivity extends IntroActivity {
     private static final int MY_PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){

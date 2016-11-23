@@ -71,6 +71,7 @@ public class MainActivity extends Activity {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean runRunnables = true;
+    private RelativeLayout rl_noconnection;
 
     private  void stopRunnables(){
         stopRunnables = true;
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
         super.onResume();
     }
 
-    private Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin, b_diagnose, b_go_back_to_main, b_manage_friends, b_help_manage_friends;
+    private Button b_start_stop, b_clear_history, b_view_access_pin, b_set_access_pin, b_diagnose, b_go_back_to_main, b_manage_friends, b_help_manage_friends, b_enable_overlay;
     private CheckBox cb_autostart, cb_notification, cb_vibrate, cb_theme, cb_open_url;
     private EditText input_access_pin;
     private ImageView clip_icon, sync_anim, b_close, b_menu, b_back, b_info, b_user, b_history, b_help, b_help_get, b_help_share, decode_qr;
@@ -170,6 +171,7 @@ public class MainActivity extends Activity {
         //UI Components
         b_start_stop = (Button) findViewById(R.id.b_start_stop);
         b_clear_history = (Button) findViewById(R.id.b_clear_history);
+        b_enable_overlay = (Button) findViewById(R.id.b_enable_overlay);
         b_view_access_pin = (Button) findViewById(R.id.b_view_access_pin);
         b_set_access_pin = (Button) findViewById(R.id.b_set_access_pin);
         b_diagnose = (Button) findViewById(R.id.b_diagnose);
@@ -367,6 +369,30 @@ public class MainActivity extends Activity {
                     intent.putExtra("isAutorun", "false");
                     startService(intent);
 
+                    RelativeLayout rl_overlay_permission = (RelativeLayout) findViewById(R.id.rl_overlay_permission);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if(!Settings.canDrawOverlays(MainActivity.this)){
+                            rl_overlay_permission.setVisibility(View.VISIBLE);
+                        }else{
+                            rl_overlay_permission.setVisibility(View.GONE);
+                        }
+                    }
+
+                    //Check if Uniclip can drawoverlay and open settings page on service start
+                    if(sp_open_url){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if(!Settings.canDrawOverlays(MainActivity.this)){
+                                makeToast("Enable UniClip to draw over other apps.");
+
+                                Intent settings_intent = new Intent();
+                                settings_intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                settings_intent.setData(uri);
+                                startActivity(settings_intent);
+                            }
+                        }
+                    }
+
                     //Reset Button text for main screen
                     b_start_stop.setText("Start UniClip!");
 
@@ -419,7 +445,8 @@ public class MainActivity extends Activity {
                     if(runRunnables && false) refreshServiceStatus.run();
 
                     handler_connection = new Handler();
-                    if(runRunnables && false) refreshConnectionStatus.run();
+                    connection_monitor.run();
+
 
                 }
 
@@ -478,7 +505,7 @@ public class MainActivity extends Activity {
                     if(runRunnables && false) refreshServiceStatus.run();
 
                     handler_connection = new Handler();
-                    if(runRunnables && false) refreshConnectionStatus.run();
+                    connection_monitor.run();
 
                 }
 
@@ -867,6 +894,33 @@ public class MainActivity extends Activity {
             }
         });
 
+        //Grant overlay permission
+        b_enable_overlay.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(27);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if(!Settings.canDrawOverlays(MainActivity.this)){
+                        makeToast("Enable UniClip to draw over other apps.");
+
+                        Intent settings_intent = new Intent();
+                        settings_intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        settings_intent.setData(uri);
+                        startActivity(settings_intent);
+
+                        b_enable_overlay.setText("Verify");
+                    }
+                    else{
+                        //Verified
+                        RelativeLayout rl_overlay_permission = (RelativeLayout) findViewById(R.id.rl_overlay_permission);
+                        rl_overlay_permission.setVisibility(View.GONE);
+                        makeSnack("Permission granted.");
+                        b_enable_overlay.setText("Grant Permission");
+                    }
+                }
+            }
+        });
+
 
         //Autostart checkbox listener
         cb_autostart.setOnCheckedChangeListener
@@ -962,9 +1016,33 @@ public class MainActivity extends Activity {
                  }
 
                 );
+
+        //Network monitor
+        rl_noconnection = (RelativeLayout) findViewById(R.id.rl_no_connection);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, 6000);
     }
 
+    private Runnable connection_monitor = new Runnable() {
+        @Override
+        public void run() {
 
+            if(isNetworkAvailable()){
+                if(rl_noconnection != null) rl_noconnection.setVisibility(View.INVISIBLE);
+            }
+            else {
+                if(rl_noconnection != null) rl_noconnection.setVisibility(View.VISIBLE);
+                diagnose();
+            }
+
+            handler_connection.postDelayed(this, refreshConnectionStatusInterval);
+        }
+    };
 
     private Runnable refreshServiceStatus = new Runnable() {
 
@@ -1047,6 +1125,15 @@ public class MainActivity extends Activity {
 
     //Reinitialize
     private void reInitialize() {
+        //Overlay permission
+        RelativeLayout rl_overlay_permission = (RelativeLayout) findViewById(R.id.rl_overlay_permission);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.canDrawOverlays(MainActivity.this)){
+                rl_overlay_permission.setVisibility(View.VISIBLE);
+            }else{
+                rl_overlay_permission.setVisibility(View.GONE);
+            }
+        }
 
         //Get Values SP
         sp_are_creator = sp.getBoolean("creator", false);
@@ -1175,7 +1262,9 @@ public class MainActivity extends Activity {
                         if(postSnapshot.getValue().toString().equals("0") ||
                                 postSnapshot.getValue().toString().equals("1")) {
                             final TextView row1 = new TextView(getBaseContext());
-                            row1.generateViewId();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                row1.generateViewId();
+                            }
                             row1.setPadding(20, 12, 20, 12);
 
                             row1.setText(i + ". " + postSnapshot.getKey().toString());
@@ -1205,7 +1294,9 @@ public class MainActivity extends Activity {
                             //3 - Mac
                             //4  -Linux
                             final TextView row1 = new TextView(getBaseContext());
-                            row1.generateViewId();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                row1.generateViewId();
+                            }
                             row1.setPadding(20, 12, 20, 12);
 
                             String variant_num = postSnapshot.getValue().toString();
@@ -1230,7 +1321,9 @@ public class MainActivity extends Activity {
                     }
                 else {
                     final TextView row1 = new TextView(getBaseContext());
-                    row1.generateViewId();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        row1.generateViewId();
+                    }
                     row1.setPadding(20, 12, 20, 12);
                     row1.setText("No registered devices.");
 
@@ -1265,7 +1358,9 @@ public class MainActivity extends Activity {
             if(history_list_activity.size() != 0)
                 for (final String listItem : history_list_activity) {
                     final TextView row1 = new TextView(getBaseContext());
-                    row1.generateViewId();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        row1.generateViewId();
+                    }
                     row1.setPadding(20, 12, 30, 12);
 
                     row1.setText(i + ". " + listItem.toString());
@@ -1306,7 +1401,9 @@ public class MainActivity extends Activity {
                 }
             else{
                 final TextView row1 = new TextView(getBaseContext());
-                row1.generateViewId();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    row1.generateViewId();
+                }
                 row1.setPadding(20, 12, 20, 12);
                 row1.setText("Clipboard history is empty!");
 
@@ -1322,7 +1419,6 @@ public class MainActivity extends Activity {
 
     //Initialize application
     private void initialize() {
-
 
         //Showcase UI
         mainShowcaseInitiate();
@@ -1344,10 +1440,22 @@ public class MainActivity extends Activity {
         sp_authenticated = sp.getBoolean("authenticated", false);
         sp_unread = sp.getInt("unread", 0);
 
+
+
         //Intro Screen
         if(sp_first_run){
             startActivity(new Intent(MainActivity.this, MainIntroActivity.class));
             finish();
+        }
+
+        //Overlay permission
+        RelativeLayout rl_overlay_permission = (RelativeLayout) findViewById(R.id.rl_overlay_permission);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.canDrawOverlays(MainActivity.this)){
+                rl_overlay_permission.setVisibility(View.VISIBLE);
+            }else{
+                rl_overlay_permission.setVisibility(View.GONE);
+            }
         }
 
         //Make snack if network unavailable
@@ -1445,7 +1553,7 @@ public class MainActivity extends Activity {
             if(runRunnables && false) refreshServiceStatus.run();
 
             handler_connection = new Handler();
-            if(runRunnables && false) refreshConnectionStatus.run();
+            connection_monitor.run();
 
 
             b_start_stop.setText("Stop UniClip!");
@@ -1978,17 +2086,18 @@ public class MainActivity extends Activity {
     //Make Snack for Permission
     public void makeSnackForPermissions(String t){
         View v = findViewById(R.id.rl_main);
-        Snackbar.make(v, t, Snackbar.LENGTH_LONG)
-                .setAction("Let's Go", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", getPackageName(), null));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                })
-                .show();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            Snackbar.make(v, t, Snackbar.LENGTH_LONG)
+                    .setAction("Let's Go", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                    Uri.fromParts("package", getPackageName(), null));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
     }
 
     //Vibrate method
@@ -2049,7 +2158,7 @@ public class MainActivity extends Activity {
             makeToast("Mobile data is on, Wifi is off. Check if you are in network range.");
         }
         else if (!is3g && isWifi){
-            makeToast("There seems to be a problem with Wifi. Try Mobile data instead.");
+            makeToast("There seems to be a problem with Wifi. Try mobile data instead.");
         }
     }
 

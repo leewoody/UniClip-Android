@@ -33,13 +33,13 @@
     <TextView
         android:layout_width="400sp"
         android:layout_height="wrap_content"
-        android:text=""
         android:textColor="#CCFFFFFF"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20sp"
         android:padding="6sp"
         android:layout_below="@+id/rl_top"
         android:textAlignment="center"
+        android:gravity="center"
         android:id="@+id/welcome_text"/>
 
     <RelativeLayout
@@ -153,4 +153,6 @@
 
 
     </RelativeLayout>
+
+    <include layout="@layout/no_connection"/>
 </RelativeLayout>

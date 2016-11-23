@@ -155,7 +155,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Adding a desktop is a little bit different. To allow a desktop to sync its clipboard with other devices, first, you need UniClip desktop client. Download it by following the link provided below on your desktop. \n\nhttp://piyushagade.github.io/web/uniclip\n\nNow that you have a desktop client, you now need to authenticate the desktop. To do that open UniClip desktop client and mobile app as well. A QR code will appear on your desktop which you need to scan on your mobile's UniClip app. And done!\n\nSee 'Keyboard shortcuts' section on desktop app to use it more efficiently."
+                android:text="Adding a desktop is a little bit different. To allow a desktop to sync its clipboard with other devices, first, you need UniClip desktop client. Download it by following the link provided below on your desktop. \n\nhttp://piyushagade.xyz/uniclip\n\nNow that you have a desktop client, you now need to authenticate the desktop. To do that open UniClip desktop client and mobile app as well. A QR code will appear on your desktop which you need to scan on your mobile's UniClip app. And done!\n\nSee 'Keyboard shortcuts' section on desktop app to use it more efficiently."
                 android:textSize="16sp"
                 android:id="@+id/help_sharing_3"
                 android:layout_marginTop="4sp"
