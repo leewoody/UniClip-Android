@@ -36,4 +36,10 @@
     <string name="intro6_desc">UniClip maintains a clipboard history of the session. So, if you miss something, don\'t worry, just go to the Menu and click on the History icon.\n\n</string>
 
 
+    <string name="action_settings">Settings</string>
+
+    <!-- Button text -->
+    <string name="btn_logout_from_google">Logout from Google</string>
+    <string name="btn_revoke_access">Revoke Access</string>
+
 </resources>

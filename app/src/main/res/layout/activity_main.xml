@@ -53,7 +53,7 @@
         android:layout_below="@+id/welcome_text"/>
 
     <ScrollView
-        android:layout_width="400sp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/rl_start_stop"
         android:layout_centerHorizontal="true"
@@ -71,8 +71,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingRight="12sp">
+            android:layout_height="match_parent">
 
             <include layout="@layout/running_layout"/>
             <include layout="@layout/settings_layout"/>

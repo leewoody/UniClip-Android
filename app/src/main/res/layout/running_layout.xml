@@ -3,76 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rl_running"
-    android:visibility="invisible"
+    android:visibility="gone"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-    <!-- Access Pin -->
+    <!-- Validate Pane-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_overlay_permission">
+        android:id="@+id/rl_validate"
+        android:visibility="gone">
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#AAFFFFFF"
-            android:text="Permission required"
-            android:layout_marginTop="10sp"
-            android:textSize="18sp"
-            android:id="@+id/enable_overlay_title"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#88FFFFFF"
-            android:text="To use 'Handle special clips' feature, UniClip needs 'Draw over other apps' permission."
-            android:textSize="16sp"
-            android:layout_below="@id/enable_overlay_title"
-            android:layout_marginTop="12sp"
-            android:padding="6sp"
-            android:id="@+id/enable_overlay_desc"/>
-
-        <Button
-            android:layout_width="180sp"
-            android:layout_height="40sp"
-            android:layout_below="@id/enable_overlay_desc"
-            android:layout_marginTop="10sp"
-            android:layout_marginLeft="6sp"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/b_enable_overlay"
-            android:textColor="#CCFFFFFF"
-            android:alpha=".94"
-            android:text="Grant Permission"
-            android:background="@color/colorAccent"/>
-
-        <RelativeLayout
-            android:layout_width="400sp"
-            android:layout_height="1sp"
-            android:id="@+id/hl2"
-            android:background="#66FFFFFF"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            android:layout_below="@+id/b_enable_overlay"/>
-
-
-    </RelativeLayout>
-    <!-- / Access Pin -->
-
-    <!-- Access Pin -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rl_overlay_permission"
-        android:id="@+id/rl_access_pin">
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#AAFFFFFF"
-            android:text="Add a mobile"
+            android:text="Validate this device"
             android:layout_marginTop="10sp"
             android:textSize="18sp"
             android:id="@+id/access_pin_title"/>
@@ -81,57 +27,89 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#88FFFFFF"
-            android:text="Whenever a new device wants to listen to your cloudboard, they will be prompted to input in the Access Key (like a PIN code)."
+            android:text="Please enter Access PIN associated with this account to begin."
             android:textSize="16sp"
             android:layout_marginTop="12sp"
             android:padding="6sp"
             android:layout_below="@id/access_pin_title"
             android:id="@+id/access_pin_desc"/>
 
-        <Button
-            android:layout_width="180sp"
-            android:layout_height="40sp"
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#88FFFFFF"
+            android:text="You can find Access PIN on the following device of yours:"
+            android:textSize="16sp"
+            android:layout_marginTop="12sp"
+            android:padding="6sp"
             android:layout_below="@id/access_pin_desc"
-            android:layout_marginTop="10sp"
-            android:layout_marginLeft="6sp"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/b_view_access_pin"
-            android:textColor="#CCFFFFFF"
-            android:alpha=".94"
-            android:text="View Access PIN"
-            android:background="@color/colorAccent"/>
+            android:id="@+id/access_pin_desc_2"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:text=""
+            android:textSize="16sp"
+            android:layout_marginTop="2sp"
+            android:padding="2sp"
+            android:layout_marginLeft="10sp"
+            android:layout_below="@id/access_pin_desc_2"
+            android:id="@+id/creator_device"/>
 
         <EditText
             android:layout_width="90sp"
-            android:layout_height="wrap_content"
+            android:layout_height="40sp"
             android:hint="Pin"
             android:gravity="center"
             android:textAlignment="center"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:inputType="number"
-            android:layout_below="@id/access_pin_desc"
+            android:layout_below="@id/creator_device"
             android:id="@+id/input_access_pin"
             android:layout_marginTop="10sp"
             android:layout_marginLeft="6sp"
-            android:visibility="invisible"
             android:textColorHint="#AAFFFFFF"
             android:textColor="@color/colorAccent"
             android:background="@drawable/card_background_layout"/>
 
         <Button
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_marginTop="10sp"
-            android:layout_below="@id/input_access_pin"
-            android:layout_marginLeft="6sp"
-            android:layout_alignParentLeft="true"
+            android:layout_width="40sp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/input_access_pin"
+            android:layout_alignBottom="@id/input_access_pin"
+            android:layout_toRightOf="@id/input_access_pin"
             android:id="@+id/b_set_access_pin"
             android:textColor="#CCFFFFFF"
             android:enabled="true"
-            android:visibility="gone"
             android:alpha=".94"
-            android:text="Validate"
+            android:text=">"
+            android:layout_marginBottom="2sp"
+            android:textSize="18sp"
             android:background="@color/colorAccent"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/input_access_pin"
+            android:layout_alignBottom="@id/input_access_pin"
+            android:layout_alignParentRight="true"
+            android:padding="10sp"
+            android:id="@+id/b_forgot_pin"
+            android:textColor="#CCFFFFFF"
+            android:enabled="true"
+            android:alpha=".94"
+            android:layout_marginRight="6sp"
+            android:text="Forgot PIN"
+            android:layout_marginBottom="2sp"
+            android:textSize="14sp"
+            android:background="@color/colorAccent"/>
+
+
 
         <RelativeLayout
             android:layout_width="400sp"
@@ -142,110 +120,113 @@
             android:layout_marginTop="12dp"
             android:layout_below="@+id/b_set_access_pin"/>
     </RelativeLayout>
-    <!-- / Access Pin -->
+    <!-- / Validate Pane-->
 
 
 
-    <!-- QR -->
+
+
+    <!-- Revalidate Pane-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_qr"
-        android:layout_below="@id/rl_access_pin">
+        android:id="@+id/rl_revalidate"
+        android:visibility="gone">
+
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#AAFFFFFF"
-            android:text="Add a desktop"
-            android:layout_marginTop="20sp"
+            android:text="Validate this device"
+            android:layout_marginTop="10sp"
             android:textSize="18sp"
-            android:id="@+id/qr_title"/>
+            android:id="@+id/re_access_pin_title"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#88FFFFFF"
-            android:text="To add a desktop, open the Uniclip app on your desktop, and scan the QR Code generated on your desktop by clicking on the icon below.\n\nFor help, see 'Help' section in menu."
+            android:text="Please enter Access PIN associated with this account to begin."
             android:textSize="16sp"
             android:layout_marginTop="12sp"
             android:padding="6sp"
-            android:layout_below="@id/qr_title"
-            android:id="@+id/qr_desc"/>
-
-       <ImageView
-           android:layout_width="60sp"
-           android:layout_height="60sp"
-           android:src="@drawable/qr"
-           android:layout_below="@id/qr_desc"
-           android:layout_centerHorizontal="true"
-           android:id="@+id/decode_qr"/>
+            android:layout_below="@id/re_access_pin_title"
+            android:id="@+id/re_access_pin_desc"/>
 
 
-        <RelativeLayout
-            android:layout_width="400sp"
-            android:layout_height="1sp"
-            android:id="@+id/hl9"
-            android:background="#66FFFFFF"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            android:layout_below="@+id/decode_qr"/>
-
-    </RelativeLayout>
-
-
-
-    <!-- Status -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rl_status"
-        android:visibility="gone"
-        android:layout_below="@id/rl_qr">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#AAFFFFFF"
-            android:text="Status"
-            android:layout_marginTop="20sp"
-            android:textSize="18sp"
-            android:id="@+id/status_title"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#99FFFFFF"
-            android:text="Service: "
-            android:textSize="16sp"
-            android:layout_marginTop="12sp"
-            android:padding="6sp"
-            android:layout_below="@id/status_title"
-            android:id="@+id/status_service"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#88FFFFFF"
-            android:text="Connection: "
+            android:text="You can find Access PIN on the following device of yours:"
             android:textSize="16sp"
             android:layout_marginTop="12sp"
             android:padding="6sp"
-            android:layout_below="@id/status_service"
-            android:id="@+id/status_connection"/>
+            android:layout_below="@id/re_access_pin_desc"
+            android:id="@+id/re_access_pin_desc_2"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:text=""
+            android:textSize="16sp"
+            android:layout_marginTop="2sp"
+            android:padding="2sp"
+            android:layout_marginLeft="10sp"
+            android:layout_below="@id/re_access_pin_desc_2"
+            android:id="@+id/re_creator_device"/>
+
+        <EditText
+            android:layout_width="90sp"
+            android:layout_height="40sp"
+            android:hint="Pin"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:inputType="number"
+            android:layout_below="@id/re_creator_device"
+            android:id="@+id/re_input_access_pin"
+            android:layout_marginTop="10sp"
+            android:layout_marginLeft="6sp"
+            android:textColorHint="#AAFFFFFF"
+            android:textColor="@color/colorAccent"
+            android:background="@drawable/card_background_layout"/>
 
         <Button
-            android:layout_width="140sp"
-            android:layout_height="40sp"
-            android:layout_below="@id/status_connection"
-            android:layout_marginTop="12sp"
-            android:layout_marginLeft="6sp"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/b_diagnose"
-            android:visibility="gone"
+            android:layout_width="40sp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/re_input_access_pin"
+            android:layout_alignBottom="@id/re_input_access_pin"
+            android:layout_toRightOf="@id/re_input_access_pin"
+            android:id="@+id/re_b_set_access_pin"
             android:textColor="#CCFFFFFF"
+            android:enabled="true"
             android:alpha=".94"
-            android:text="Diagnose"
+            android:text=">"
+            android:layout_marginBottom="2sp"
+            android:textSize="18sp"
+            android:background="@color/colorAccent"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/re_input_access_pin"
+            android:layout_alignBottom="@id/re_input_access_pin"
+            android:layout_alignParentRight="true"
+            android:padding="10sp"
+            android:id="@+id/re_b_forgot_pin"
+            android:textColor="#CCFFFFFF"
+            android:enabled="true"
+            android:alpha=".94"
+            android:layout_marginRight="6sp"
+            android:text="Forgot PIN"
+            android:layout_marginBottom="2sp"
+            android:textSize="14sp"
             android:background="@color/colorAccent"/>
 
 
@@ -253,12 +234,675 @@
         <RelativeLayout
             android:layout_width="400sp"
             android:layout_height="1sp"
-            android:id="@+id/hl8"
-            android:background="#88FFFFFF"
+            android:id="@+id/re_hl6"
+            android:background="#66FFFFFF"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="12dp"
-            android:layout_below="@+id/b_diagnose"/>
+            android:layout_below="@+id/re_b_set_access_pin"/>
+    </RelativeLayout>
+
+
+
+    <!-- Email verification -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_email_verification"
+        android:visibility="gone">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#AAFFFFFF"
+            android:text="Verify your email"
+            android:layout_marginTop="10sp"
+            android:textSize="18sp"
+            android:id="@+id/verify_email_title"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#88FFFFFF"
+            android:text="We are creating a new account for you. Please enter the verification code that you received in your email."
+            android:textSize="16sp"
+            android:layout_marginTop="12sp"
+            android:padding="6sp"
+            android:layout_below="@id/verify_email_title"
+            android:id="@+id/verify_email_desc"/>
+
+
+        <EditText
+            android:layout_width="150sp"
+            android:layout_height="40sp"
+            android:hint="Code"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:inputType="number"
+            android:layout_below="@id/verify_email_desc"
+            android:id="@+id/verify_email_code"
+            android:layout_marginTop="10sp"
+            android:layout_marginLeft="6sp"
+            android:textColorHint="#AAFFFFFF"
+            android:textColor="@color/colorAccent"
+            android:background="@drawable/card_background_layout"/>
+
+        <Button
+            android:layout_width="40sp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/verify_email_code"
+            android:layout_alignBottom="@id/verify_email_code"
+            android:layout_toRightOf="@id/verify_email_code"
+            android:id="@+id/b_verify_email"
+            android:textColor="#CCFFFFFF"
+            android:enabled="true"
+            android:alpha=".94"
+            android:text=">"
+            android:layout_marginBottom="2sp"
+            android:textSize="18sp"
+            android:background="@color/colorAccent"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/b_verify_email"
+            android:layout_alignBottom="@id/b_verify_email"
+            android:layout_alignParentRight="true"
+            android:padding="10sp"
+            android:id="@+id/b_verify_email_resend"
+            android:textColor="#CCFFFFFF"
+            android:enabled="true"
+            android:alpha=".94"
+            android:layout_marginRight="6sp"
+            android:text="Forgot PIN"
+            android:layout_marginBottom="2sp"
+            android:textSize="14sp"
+            android:background="@color/colorAccent"/>
+
+
+
+        <RelativeLayout
+            android:layout_width="400sp"
+            android:layout_height="1sp"
+            android:id="@+id/verify_hl6"
+            android:background="#66FFFFFF"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:layout_below="@+id/b_verify_email_resend"/>
+    </RelativeLayout>
+
+
+    <!--Horizontal scrollview-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_authenticated_running"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/g_running"
+            android:fadeScrollbars="false"
+            android:scrollbarSize="4sp"
+            android:scrollbarStyle="outsideOverlay"
+            android:layout_alignParentTop="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:background="@drawable/card_background_layout"
+                    android:padding="10sp"
+                    android:layout_width="130sp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6sp"
+                    android:layout_marginRight="6sp"
+                    android:layout_gravity="left|top">
+                    <ImageView
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:src="@drawable/user"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/iv_user_icon"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:maxLines="1"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="6sp"
+                        android:text=""
+                        android:ellipsize="end"
+                        android:scrollHorizontally="true"
+                        android:id="@+id/running_user_email"
+                        android:layout_below="@+id/iv_user_icon"/>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="40sp"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/colorAccent"
+                        android:layout_centerHorizontal="true"
+                        android:text="switch"
+                        android:textColor="#CBFFFFFF"
+                        android:id="@+id/b_user_switch"
+                        android:paddingLeft="10sp"
+                        android:paddingRight="10sp"
+                        android:layout_below="@id/running_user_email"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/card_background_layout"
+                    android:padding="10sp"
+                    android:layout_width="130sp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6sp"
+                    android:layout_gravity="left|top">
+                    <ImageView
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:src="@drawable/adddevice"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/iv_add_device"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="6sp"
+                        android:maxLines="1"
+                        android:text=""
+                        android:ellipsize="end"
+                        android:scrollHorizontally="true"
+                        android:id="@+id/running_add_device"
+                        android:layout_below="@id/iv_add_device"/>
+
+
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="40sp"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/colorAccent"
+                        android:layout_centerHorizontal="true"
+                        android:text="Add device"
+                        android:textColor="#CBFFFFFF"
+                        android:id="@+id/b_add_devices"
+                        android:paddingLeft="10sp"
+                        android:paddingRight="10sp"
+                        android:layout_below="@id/running_add_device"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/card_background_layout"
+                    android:padding="10sp"
+                    android:layout_width="130sp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6sp"
+                    android:layout_gravity="left|top"
+                    android:id="@+id/g_access_pin">
+
+                    <ImageView
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:src="@drawable/pin"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/iv_pin"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="6sp"
+                        android:text="View Access PIN"
+                        android:id="@+id/running_access_pin"
+                        android:layout_below="@id/iv_pin"/>
+
+
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="40sp"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/colorAccent"
+                        android:layout_centerHorizontal="true"
+                        android:text="View"
+                        android:textColor="#CBFFFFFF"
+                        android:paddingLeft="10sp"
+                        android:paddingRight="10sp"
+                        android:id="@+id/b_view_access_pin"
+                        android:layout_below="@id/running_access_pin"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/card_background_layout"
+                    android:padding="10sp"
+                    android:layout_width="130sp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6sp"
+                    android:layout_gravity="left|top">
+                    <ImageView
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:src="@drawable/history"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/iv_history"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="6sp"
+                        android:text="See clip history"
+                        android:id="@+id/running_history_desc"
+                        android:layout_below="@id/iv_history"/>
+
+
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="40sp"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/colorAccent"
+                        android:layout_centerHorizontal="true"
+                        android:text="History"
+                        android:textColor="#CBFFFFFF"
+                        android:paddingLeft="10sp"
+                        android:paddingRight="10sp"
+                        android:id="@+id/b_show_history"
+                        android:layout_below="@id/running_history_desc"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/card_background_layout"
+                    android:padding="10sp"
+                    android:layout_width="130sp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6sp"
+                    android:layout_gravity="left|top">
+                    <ImageView
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:src="@drawable/share"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/iv_share"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="6sp"
+                        android:text="Tell a friend"
+                        android:id="@+id/running_share_title"
+                        android:layout_below="@id/iv_share"/>
+
+
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="40sp"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/colorAccent"
+                        android:layout_centerHorizontal="true"
+                        android:text="Share"
+                        android:textColor="#CBFFFFFF"
+                        android:paddingLeft="10sp"
+                        android:paddingRight="10sp"
+                        android:layout_below="@id/running_share_title"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+
+
+        <!-- Permission div -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/g_running"
+            android:layout_marginTop="16sp"
+            android:id="@+id/rl_overlay_permission">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#AAFFFFFF"
+                android:text="Permission required"
+                android:layout_marginTop="10sp"
+                android:textSize="18sp"
+                android:id="@+id/enable_overlay_title"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#88FFFFFF"
+                android:text="To use 'Handle special clips' feature, UniClip needs 'Draw over other apps' permission."
+                android:textSize="16sp"
+                android:layout_below="@id/enable_overlay_title"
+                android:layout_marginTop="12sp"
+                android:padding="6sp"
+                android:id="@+id/enable_overlay_desc"/>
+
+            <Button
+                android:layout_width="180sp"
+                android:layout_height="40sp"
+                android:layout_below="@id/enable_overlay_desc"
+                android:layout_marginTop="10sp"
+                android:layout_marginLeft="6sp"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/b_enable_overlay"
+                android:textColor="#CCFFFFFF"
+                android:alpha=".94"
+                android:text="Grant Permission"
+                android:background="@color/colorAccent"/>
+
+            <RelativeLayout
+                android:layout_width="400sp"
+                android:layout_height="1sp"
+                android:id="@+id/hl2"
+                android:background="#66FFFFFF"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"
+                android:layout_below="@+id/b_enable_overlay"/>
+
+
+        </RelativeLayout>
+        <!-- / Permission Div -->
+
+
+
+
+
+        <!-- QR -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rl_qr"
+            android:layout_below="@id/rl_overlay_permission">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#AAFFFFFF"
+                android:text="Most recent clip"
+                android:layout_marginTop="20sp"
+                android:textSize="18sp"
+                android:id="@+id/qr_title"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#88FFFFFF"
+                android:text="To add a desktop, open the Uniclip app on your desktop, and scan the QR Code generated on your desktop by clicking on the icon below.\n\nFor help, see 'Help' section in menu."
+                android:textSize="16sp"
+                android:layout_marginTop="12sp"
+                android:padding="6sp"
+                android:layout_below="@id/qr_title"
+                android:id="@+id/qr_desc"/>
+
+
+        </RelativeLayout>
+
+
+
+        <!-- Status -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rl_status"
+            android:visibility="gone"
+            android:layout_below="@id/rl_qr">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#AAFFFFFF"
+                android:text="Status"
+                android:layout_marginTop="20sp"
+                android:textSize="18sp"
+                android:id="@+id/status_title"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#99FFFFFF"
+                android:text="Service: "
+                android:textSize="16sp"
+                android:layout_marginTop="12sp"
+                android:padding="6sp"
+                android:layout_below="@id/status_title"
+                android:id="@+id/status_service"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#88FFFFFF"
+                android:text="Connection: "
+                android:textSize="16sp"
+                android:layout_marginTop="12sp"
+                android:padding="6sp"
+                android:layout_below="@id/status_service"
+                android:id="@+id/status_connection"/>
+
+            <Button
+                android:layout_width="140sp"
+                android:layout_height="40sp"
+                android:layout_below="@id/status_connection"
+                android:layout_marginTop="12sp"
+                android:layout_marginLeft="6sp"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/b_diagnose"
+                android:visibility="gone"
+                android:textColor="#CCFFFFFF"
+                android:alpha=".94"
+                android:text="Diagnose"
+                android:background="@color/colorAccent"/>
+
+
+
+            <RelativeLayout
+                android:layout_width="400sp"
+                android:layout_height="1sp"
+                android:id="@+id/hl8"
+                android:background="#88FFFFFF"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"
+                android:layout_below="@+id/b_diagnose"/>
+
+        </RelativeLayout>
+
+        <!--Switch accounts-->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rl_running_user_menu"
+            android:layout_margin="10sp"
+            android:layout_alignTop="@id/g_running"
+            android:layout_alignLeft="@id/g_running"
+            android:layout_alignRight="@id/g_running"
+            android:background="#DDFFFFFF"
+            android:padding="6sp"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Switch user account"
+                android:textSize="16sp"
+                android:textColor="@color/colorAccent"
+                android:id="@+id/running_user_menu_heading"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter a new email address below to use UniClip with that account. If the account doesn't already exists, UniClip will create one."
+                android:textSize="12sp"
+                android:textColor="#AA000000"
+                android:gravity="center"
+                android:padding="6sp"
+                android:id="@+id/running_user_menu_desc"
+                android:layout_below="@id/running_user_menu_heading"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:hint="enter email address"
+                android:padding="6sp"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:layout_marginTop="16sp"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="#66000000"
+                android:id="@+id/running_user_menu_new_email"
+                android:layout_below="@id/running_user_menu_desc"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40sp"
+                android:layout_marginTop="10sp"
+                android:background="@color/colorAccent"
+                android:layout_alignParentRight="true"
+                android:text="Switch account"
+                android:textColor="#BBFFFFFF"
+                android:paddingLeft="10sp"
+                android:paddingRight="10sp"
+                android:id="@+id/running_user_switch"
+                android:layout_below="@id/running_user_menu_new_email"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40sp"
+                android:layout_marginTop="10sp"
+                android:background="@color/colorAccent"
+                android:layout_alignParentLeft="true"
+                android:text="Cancel"
+                android:textColor="#BBFFFFFF"
+                android:paddingLeft="10sp"
+                android:id="@+id/running_user_menu_back"
+                android:paddingRight="10sp"
+                android:layout_below="@id/running_user_menu_new_email"/>
+
+        </RelativeLayout>
+
+        <!-- add device -->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rl_running_adddevice_menu"
+            android:layout_margin="10sp"
+            android:layout_alignTop="@id/g_running"
+            android:layout_alignLeft="@id/g_running"
+            android:layout_alignRight="@id/g_running"
+            android:background="#DDFFFFFF"
+            android:padding="6sp"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add a mobile"
+                android:textSize="16sp"
+                android:layout_marginTop="14sp"
+                android:layout_marginLeft="6sp"
+                android:textColor="@color/colorAccent"
+                android:id="@+id/running_adddevice_menu_subheading_1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="To add a mobile device insert the Access Pin shown below in the UniClip app of your ohter mobile device."
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#AA000000"
+                android:layout_marginTop="6sp"
+                android:id="@+id/running_adddevice_menu_subdesc_1"
+                android:layout_below="@id/running_adddevice_menu_subheading_1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:text="1111"
+                android:gravity="center"
+                android:textSize="26sp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginTop="6sp"
+                android:id="@+id/running_adddevice_menu_pin"
+                android:layout_below="@id/running_adddevice_menu_subdesc_1"/>
+
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add a desktop"
+                android:layout_marginTop="18sp"
+                android:textSize="16sp"
+                android:layout_marginLeft="6sp"
+                android:textColor="@color/colorAccent"
+                android:layout_below="@id/running_adddevice_menu_pin"
+                android:id="@+id/running_adddevice_menu_subheading_2"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Adding a desktop is a little different. First, open UniClip client on your desktop/laptop, and scan the QR code generated using the button provided below."
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#AA000000"
+                android:layout_marginTop="6sp"
+                android:id="@+id/running_adddevice_menu_subdesc_2"
+                android:layout_below="@id/running_adddevice_menu_subheading_2"/>
+
+            <ImageView
+                android:layout_width="40sp"
+                android:layout_height="40sp"
+                android:src="@drawable/qr"
+                android:id="@+id/decode_qr"
+                android:layout_below="@id/running_adddevice_menu_subdesc_2"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="6sp"/>
+
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="34sp"
+                android:layout_marginTop="18sp"
+                android:background="@color/colorAccent"
+                android:layout_alignParentLeft="true"
+                android:text="Cancel"
+                android:textColor="#BBFFFFFF"
+                android:paddingLeft="10sp"
+                android:id="@+id/running_adddevice_menu_back"
+                android:paddingRight="10sp"
+                android:layout_below="@id/decode_qr"/>
+
+        </RelativeLayout>
+
 
     </RelativeLayout>
+    <!-- / Validate Pane-->
 
 </RelativeLayout>

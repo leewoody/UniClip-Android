@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -34,6 +35,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -51,12 +53,17 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.regex.Pattern;
+
+import javax.mail.MessagingException;
 
 import co.mobiwise.materialintro.animation.MaterialIntroListener;
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
 import co.mobiwise.materialintro.view.MaterialIntroView;
 import me.leolin.shortcutbadger.ShortcutBadger;
+
+import static android.view.View.GONE;
 
 @SuppressWarnings("unused")
 public class MainActivity extends Activity {
@@ -238,18 +245,6 @@ public class MainActivity extends Activity {
 
         input_access_pin = (EditText) findViewById(R.id.input_access_pin);
 
-//        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.camera_view);
-//
-//        QREader.getInstance().setUpConfig(new QRDataListener() {
-//            @Override
-//            public void onDetected(final String data) {
-//                Log.d("QREader", "Value : " + data);
-//
-//                makeToast(data);
-//            }
-//        });
-//
-//        QREader.getInstance().init(this, surfaceView);
 
         //Ripple Effect for components
 
@@ -337,7 +332,7 @@ public class MainActivity extends Activity {
                 rl_settings.setVisibility(View.VISIBLE);
 
                 rl_running.startAnimation(fade_out);
-                rl_running.setVisibility(View.GONE);
+                rl_running.setVisibility(GONE);
 
 
                 //Animate app title
@@ -347,9 +342,9 @@ public class MainActivity extends Activity {
                 welcome_text.setText("UniClip is a multi-device clipboard synchronization " +
                         "application, which makes sharing texts, links, etc easy.");
 
-                rl_menu_content.setVisibility(View.GONE);
+                rl_menu_content.setVisibility(GONE);
 
-                b_go_back_to_main.setVisibility(View.GONE);
+                b_go_back_to_main.setVisibility(GONE);
             }
         });
 
@@ -374,11 +369,11 @@ public class MainActivity extends Activity {
                         if(!Settings.canDrawOverlays(MainActivity.this)){
                             rl_overlay_permission.setVisibility(View.VISIBLE);
                         }else{
-                            rl_overlay_permission.setVisibility(View.GONE);
+                            rl_overlay_permission.setVisibility(GONE);
                         }
                     }
 
-                    //Check if Uniclip can drawoverlay and open settings page on service start
+                    // Uniclip can drawoverlay and open settings page on service start
                     if(sp_open_url){
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if(!Settings.canDrawOverlays(MainActivity.this)){
@@ -402,7 +397,7 @@ public class MainActivity extends Activity {
                     //Animate app title
                     swingAnimate(findViewById(R.id.app_title), 700, 1000);
 
-                    rl_menu_content.setVisibility(View.GONE);
+                    rl_menu_content.setVisibility(GONE);
 
                     b_start_stop.setText("Stop UniClip!");
                     vibrate(50);
@@ -421,14 +416,14 @@ public class MainActivity extends Activity {
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            rl_settings.setVisibility(View.GONE);
+                            rl_settings.setVisibility(GONE);
                             welcome_text.setText("You can close this app. The background service will make " +
                                     "sure clipboards on all your devices stay unified.");
 
                             rl_running.setVisibility(View.VISIBLE);
                             rl_running.startAnimation(fade_in);
                             b_set_access_pin.setEnabled(true);
-                            b_set_access_pin.setText("Validate");
+                            b_set_access_pin.setText(">");
 
                             sync_anim.setVisibility(View.VISIBLE);
                             sync_anim.setAlpha(0.10f);
@@ -460,11 +455,11 @@ public class MainActivity extends Activity {
                     //Animate app title
                     swingAnimate(findViewById(R.id.app_title), 700, 1000);
 
-                    rl_menu_content.setVisibility(View.GONE);
+                    rl_menu_content.setVisibility(GONE);
                     b_go_back_to_main.setVisibility(View.VISIBLE);
 
                     b_start_stop.setText("Stop UniClip!");
-                    b_start_stop.setVisibility(View.GONE);
+                    b_start_stop.setVisibility(GONE);
                     vibrate(50);
 
                     //Animations
@@ -481,14 +476,14 @@ public class MainActivity extends Activity {
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            rl_settings.setVisibility(View.GONE);
+                            rl_settings.setVisibility(GONE);
                             welcome_text.setText("You can close this app. The background service will make " +
                                     "sure clipboards on all your devices stay unified.");
 
                             rl_running.setVisibility(View.VISIBLE);
                             rl_running.startAnimation(fade_in);
                             b_set_access_pin.setEnabled(true);
-                            b_set_access_pin.setText("Validate");
+                            b_set_access_pin.setText(">");
 
                             sync_anim.setVisibility(View.VISIBLE);
                             sync_anim.setAlpha(0.10f);
@@ -530,7 +525,7 @@ public class MainActivity extends Activity {
                     rl_settings.setVisibility(View.VISIBLE);
 
                     rl_running.startAnimation(fade_out);
-                    rl_running.setVisibility(View.GONE);
+                    rl_running.setVisibility(GONE);
 
 
                     //Animate app title
@@ -540,7 +535,7 @@ public class MainActivity extends Activity {
                     welcome_text.setText("UniClip is a multi-device clipboard synchronization " +
                             "application, which makes sharing texts, links, etc easy.");
 
-                    rl_menu_content.setVisibility(View.GONE);
+                    rl_menu_content.setVisibility(GONE);
 
                 }
 
@@ -555,11 +550,11 @@ public class MainActivity extends Activity {
                 getAccessPin();
                 int key = sp.getInt("access_pin", 0);
                 if(key != 0){
-                    b_view_access_pin.setText("Access PIN: " + String.valueOf(key));
+                    b_view_access_pin.setText(String.valueOf(key));
                     (new Handler()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            b_view_access_pin.setText("View Access Pin");
+                            b_view_access_pin.setText("View");
                         }
                     }, 10000);
                 }
@@ -568,6 +563,170 @@ public class MainActivity extends Activity {
                 }
 
 
+            }
+
+        });
+
+        //Running layout buttons
+        ((Button)findViewById(R.id.b_add_devices)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ((RelativeLayout) findViewById(R.id.rl_running_adddevice_menu)).setVisibility(View.VISIBLE);
+                ((TextView) findViewById(R.id.running_adddevice_menu_pin)).setText(String.valueOf(sp.getInt("access_pin", 0)));
+            }
+
+        });
+
+        ((Button)findViewById(R.id.running_adddevice_menu_back)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ((RelativeLayout) findViewById(R.id.rl_running_adddevice_menu)).setVisibility(View.GONE);
+            }
+
+        });
+
+        ((Button)findViewById(R.id.b_user_switch)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ((RelativeLayout) findViewById(R.id.rl_running_user_menu)).setVisibility(View.VISIBLE);
+            }
+
+        });
+
+        ((Button)findViewById(R.id.running_user_menu_back)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ((RelativeLayout) findViewById(R.id.rl_running_user_menu)).setVisibility(View.GONE);
+            }
+
+        });
+
+        // User switch
+        (findViewById(R.id.running_user_switch)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // If email entered is a valid email address
+                if(!((EditText) findViewById(R.id.running_user_menu_new_email)).getText().toString().equals("") &&
+                        validate_email(((EditText) findViewById(R.id.running_user_menu_new_email)).getText().toString())) {
+
+                    final String new_email = ((EditText) findViewById(R.id.running_user_menu_new_email)).getText().toString().toLowerCase();
+                    //Format email address (remove the .)
+                    String user_node = encrypt(encrypt(encrypt(new_email.replaceAll("\\.", ""))));
+
+                    //Firebase
+                    final Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
+
+
+                    //Check if this device is creator
+                    fb.child("creator").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+
+                                if(sp_device_name.equals(snapshot.getValue().toString())){
+                                    ed.putBoolean("creator", true).commit();
+                                }
+                                else{
+                                    ed.putBoolean("creator", false).commit();
+                                }
+
+
+                                ed.putString("creator_device", snapshot.getValue().toString());
+
+                                ((TextView)findViewById(R.id.re_creator_device)).setText(snapshot.getValue().toString());
+
+                                ((TextView) findViewById(R.id.creator_device)).setText(snapshot.getValue().toString());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError error) {
+                        }
+                    });
+
+                    // Check if user exists
+                    fb.child("key").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            //If new user email needs to be verified
+                            if (!snapshot.exists()) {
+                                ed.putString("new_email", new_email).commit();
+
+                                String to = new_email;
+                                String subject = "UniClip account verification";
+                                int verification_code  = new Random().nextInt(99999);
+                                ed.putInt("switch_verification_code", verification_code).commit();
+
+                                String body = "Your UniClip verification code: " + verification_code;
+
+
+                                //Creating SendMail object
+                                Mail sm = new Mail(MainActivity.this, to, subject , body);
+                                sm.execute();
+
+
+
+                                (findViewById(R.id.rl_email_verification)).setVisibility(View.VISIBLE);
+                                (findViewById(R.id.rl_authenticated_running)).setVisibility(View.GONE);
+
+                            }
+                            // If account already created and verified
+                            else{
+                                sp_are_creator = sp.getBoolean("creator", false);
+
+                                fb.child("key").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            ed.putInt("access_pin", Integer.valueOf(snapshot.getValue().toString())).commit();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(FirebaseError error) {
+                                    }
+                                });
+
+                                // If creator
+                                if(sp_are_creator){
+                                    ed.putString("user_email", new_email).commit();
+                                    ((TextView) findViewById(R.id.running_user_email)).setText(new_email);
+
+                                    //Restart Service
+                                    stopService(new Intent(getBaseContext(), UniClipService.class));
+                                    Intent intent = new Intent(MainActivity.this, UniClipService.class);
+                                    intent.putExtra("isAutorun", "false");
+                                    startService(intent);
+
+                                    initialize();
+
+                                    (findViewById(R.id.rl_running_user_menu)).setVisibility(View.GONE);
+
+                                    makeSnack("Account switched to " + sp.getString("user_email", "error"));
+
+                                    (findViewById(R.id.g_access_pin)).setVisibility(View.VISIBLE);
+
+
+                                }
+                                // If not creator
+                                else{
+
+                                    b_set_access_pin.setEnabled(true);
+                                    b_set_access_pin.setText(">");
+
+                                    ed.putString("user_email", new_email).commit();
+
+
+                                    (findViewById(R.id.rl_revalidate)).setVisibility(View.VISIBLE);
+                                    (findViewById(R.id.rl_authenticated_running)).setVisibility(View.GONE);
+                                    (findViewById(R.id.g_access_pin)).setVisibility(View.GONE);
+
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError error) {
+                        }
+                    });
+
+                }
+                (findViewById(R.id.rl_running_user_menu)).setVisibility(View.GONE);
             }
 
         });
@@ -586,7 +745,7 @@ public class MainActivity extends Activity {
 
                 if(!isServiceRunning(UniClipService.class))
                 {
-                    findViewById(R.id.user_device).setVisibility(View.GONE);
+                    findViewById(R.id.user_device).setVisibility(GONE);
                 }
 
                 rl_first_page.setVisibility(View.VISIBLE);
@@ -737,9 +896,6 @@ public class MainActivity extends Activity {
         decode_qr.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
-
-
-
                 if (ActivityCompat.checkSelfPermission(
                         getApplicationContext(), Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -751,8 +907,6 @@ public class MainActivity extends Activity {
                     return;
                 }
                 else{
-
-
                     if(isNetworkAvailable())
                         startActivity(new Intent(MainActivity.this, QRActivity.class));
                     else
@@ -766,12 +920,11 @@ public class MainActivity extends Activity {
         b_set_access_pin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
-
                 if(!isNetworkAvailable()){
                     makeSnack("Network unavailable");
                 }
                 else {
-                    b_set_access_pin.setText("Checking");
+                    b_set_access_pin.setText(">");
                 }
 
                 final String input_pin = input_access_pin.getText().toString();
@@ -789,16 +942,18 @@ public class MainActivity extends Activity {
 
                             //Correct Access Pin
                             if (input_pin.equals(snapshot.getValue().toString())) {
-                                input_access_pin.setVisibility(View.GONE);
-                                b_set_access_pin.setText("Verified");
-                                b_set_access_pin.setEnabled(false);
+                                (findViewById(R.id.rl_validate)).setVisibility(GONE);
+                                (findViewById(R.id.rl_authenticated_running)).setVisibility(View.VISIBLE);
+                                b_set_access_pin.setText(">");
+                                b_set_access_pin.setEnabled(true);
 
                                 b_start_stop.setVisibility(View.VISIBLE);
 
-                                b_go_back_to_main.setVisibility(View.GONE);
+                                b_go_back_to_main.setVisibility(GONE);
 
                                 sync_anim.startAnimation(rotate);
                                 ed.putBoolean("authenticated", true).commit();
+                                ed.putInt("access_pin", Integer.valueOf(snapshot.getValue().toString())).commit();
 
                                 //Restart Service
                                 stopService(new Intent(getBaseContext(), UniClipService.class));
@@ -814,7 +969,7 @@ public class MainActivity extends Activity {
                                 swingAnimate(findViewById(R.id.input_access_pin), 600, 300);
 
                                 ed.putBoolean("authenticated", false).commit();
-                                b_set_access_pin.setText("Validate");
+                                b_set_access_pin.setText(">");
 
                             }
 
@@ -828,6 +983,124 @@ public class MainActivity extends Activity {
 
             }
         });
+
+
+
+        //Revalidate access pin button listener
+        findViewById(R.id.re_b_set_access_pin).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(27);
+
+                if(!isNetworkAvailable()){
+                    makeSnack("Network unavailable");
+                }
+                else {
+                    b_set_access_pin.setText(">");
+                }
+
+                final String input_pin = ((EditText) findViewById(R.id.re_input_access_pin)).getText().toString();
+
+                //Format email address (remove the .)
+                String user_node = encrypt(encrypt(encrypt(sp.getString("user_email", "unknown").replaceAll("\\.", ""))));
+
+                //Firebase
+                Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
+
+                int correct_pin = sp.getInt("access_pin", 0);
+
+                //Correct Access Pin
+                if (input_pin.equals(String.valueOf(correct_pin))){
+
+                    (findViewById(R.id.rl_revalidate)).setVisibility(GONE);
+                    (findViewById(R.id.rl_authenticated_running)).setVisibility(View.VISIBLE);
+
+                    ((TextView) findViewById(R.id.running_user_email)).setText(sp.getString("user_email", "Error"));
+
+                    makeSnack("Account switched to " + sp.getString("user_email", "error"));
+
+                    b_start_stop.setVisibility(View.VISIBLE);
+
+                    b_go_back_to_main.setVisibility(GONE);
+
+                    sync_anim.startAnimation(rotate);
+                    ed.putBoolean("authenticated", true).commit();
+
+                    //Restart Service
+                    stopService(new Intent(getBaseContext(), UniClipService.class));
+                    Intent intent = new Intent(MainActivity.this, UniClipService.class);
+                    intent.putExtra("isAutorun", "false");
+                    startService(intent);
+                }
+                else {
+                    makeToast("Wrong Access Pin. Try Again");
+
+                    //Animate input on wrong password
+                    swingAnimate(findViewById(R.id.re_input_access_pin), 600, 300);
+
+                    ed.putBoolean("authenticated", false).commit();
+
+                }
+
+            }
+        });
+
+
+
+        //Verify email button listener
+        findViewById(R.id.b_verify_email).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vibrate(27);
+
+                if(!isNetworkAvailable()){
+                    makeSnack("Network unavailable");
+                }
+                else {
+                    b_set_access_pin.setText(">");
+                }
+
+                final String input_pin = ((EditText) findViewById(R.id.verify_email_code)).getText().toString();
+                int correct_pin = sp.getInt("switch_verification_code", 0);
+
+                //Correct Verification code
+                if (input_pin.equals(String.valueOf(correct_pin))){
+
+                    ed.putString("user_email", sp.getString("new_email", "unknown")).commit();
+                    ed.putString("new_email", "none").commit();
+
+                    (findViewById(R.id.rl_email_verification)).setVisibility(GONE);
+                    (findViewById(R.id.rl_authenticated_running)).setVisibility(View.VISIBLE);
+
+                    ((TextView) findViewById(R.id.running_user_email)).setText(sp.getString("user_email", "Error"));
+
+                    makeSnack("Account verified: " + sp.getString("user_email", "error"));
+
+                    b_start_stop.setVisibility(View.VISIBLE);
+
+                    b_go_back_to_main.setVisibility(GONE);
+
+                    sync_anim.startAnimation(rotate);
+                    ed.putBoolean("authenticated", true).commit();
+
+                    //Restart Service
+                    stopService(new Intent(getBaseContext(), UniClipService.class));
+                    Intent intent = new Intent(MainActivity.this, UniClipService.class);
+                    intent.putExtra("isAutorun", "false");
+                    startService(intent);
+                }
+                else {
+                    makeToast("Wrong verification code. Try again.");
+
+                    //Animate input on wrong password
+                    swingAnimate(findViewById(R.id.verify_email_code), 600, 300);
+
+                    ed.putBoolean("authenticated", false).commit();
+
+                }
+
+            }
+        });
+
+
 
         //User button listener
         b_user.setOnClickListener(new View.OnClickListener() {
@@ -894,7 +1167,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        //Grant overlay permission
+        //Grant overlay permission button listener
         b_enable_overlay.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 vibrate(27);
@@ -913,7 +1186,7 @@ public class MainActivity extends Activity {
                     else{
                         //Verified
                         RelativeLayout rl_overlay_permission = (RelativeLayout) findViewById(R.id.rl_overlay_permission);
-                        rl_overlay_permission.setVisibility(View.GONE);
+                        rl_overlay_permission.setVisibility(GONE);
                         makeSnack("Permission granted.");
                         b_enable_overlay.setText("Grant Permission");
                     }
@@ -1017,15 +1290,6 @@ public class MainActivity extends Activity {
 
                 );
 
-        //Network monitor
-        rl_noconnection = (RelativeLayout) findViewById(R.id.rl_no_connection);
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 6000);
     }
 
     private Runnable connection_monitor = new Runnable() {
@@ -1087,7 +1351,7 @@ public class MainActivity extends Activity {
             if(!stopRunnables)
                 if(isNetworkAvailable()){
                     status_connection.setText("Connection:\n  Connected to the server.");
-                    b_diagnose.setVisibility(View.GONE);
+                    b_diagnose.setVisibility(GONE);
                 }
                 else {
                     status_connection.setText("Connection:\n  Internet unavailable.");
@@ -1131,7 +1395,7 @@ public class MainActivity extends Activity {
             if(!Settings.canDrawOverlays(MainActivity.this)){
                 rl_overlay_permission.setVisibility(View.VISIBLE);
             }else{
-                rl_overlay_permission.setVisibility(View.GONE);
+                rl_overlay_permission.setVisibility(GONE);
             }
         }
 
@@ -1139,14 +1403,14 @@ public class MainActivity extends Activity {
         sp_are_creator = sp.getBoolean("creator", false);
 
         //Go back button set Gone
-        b_go_back_to_main.setVisibility(View.GONE);
+        b_go_back_to_main.setVisibility(GONE);
 
         //Reset authentication
         ed.putBoolean("authenticated", false).commit();
         sp_authenticated = sp.getBoolean("authenticated", false);
 
         //Get user email
-        if(hasPermission()) {
+        if(hasPermission() && sp_user_email.equals("unknown")) {
             AccountManager accountManager = AccountManager.get(MainActivity.this);
             Account account = getAccount(accountManager);
 
@@ -1165,22 +1429,24 @@ public class MainActivity extends Activity {
             public void run() {
                 sp_are_creator = sp.getBoolean("creator", false);
                 if(!sp_are_creator){
-                    access_pin_desc.setText("In order to start listening to the cloudboard, you need to put in the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
-
-                    b_view_access_pin.setVisibility(View.GONE);
+                    ((RelativeLayout) findViewById(R.id.g_access_pin)).setVisibility(GONE);
 
                     sync_anim.clearAnimation();
                     b_set_access_pin.setVisibility(View.VISIBLE);
+                    ((RelativeLayout)findViewById(R.id.rl_validate)).setVisibility(View.VISIBLE);
+                    ((RelativeLayout)findViewById(R.id.rl_authenticated_running)).setVisibility(View.GONE);
                     input_access_pin.setVisibility(View.VISIBLE);
                 }
                 else {
                     //Reset Access Pin Button text
-                    b_view_access_pin.setText("View Access Pin");
+                    b_view_access_pin.setText("View");
                     b_view_access_pin.setVisibility(View.VISIBLE);
 
                     sync_anim.startAnimation(rotate);
-                    b_set_access_pin.setVisibility(View.INVISIBLE); //Let this be invisible
-                    input_access_pin.setVisibility(View.GONE);
+                    b_set_access_pin.setVisibility(View.VISIBLE); //Let this be invisible
+                    ((RelativeLayout)findViewById(R.id.rl_validate)).setVisibility(View.GONE);
+                    ((RelativeLayout)findViewById(R.id.rl_authenticated_running)).setVisibility(View.VISIBLE);
+                    input_access_pin.setVisibility(View.VISIBLE);
                 }
             }
         }, 600);
@@ -1202,6 +1468,8 @@ public class MainActivity extends Activity {
                         ed.putBoolean("creator", true).commit();
                     }
                     else ed.putBoolean("creator", false).commit();
+
+                    ((TextView) findViewById(R.id.creator_device)).setText(snapshot.getValue().toString());
                 }
             }
 
@@ -1420,6 +1688,8 @@ public class MainActivity extends Activity {
     //Initialize application
     private void initialize() {
 
+
+
         //Showcase UI
         mainShowcaseInitiate();
 
@@ -1440,6 +1710,9 @@ public class MainActivity extends Activity {
         sp_authenticated = sp.getBoolean("authenticated", false);
         sp_unread = sp.getInt("unread", 0);
 
+        //Set running scree info
+        ((TextView) findViewById(R.id.running_user_email)).setText(sp_user_email);
+        ((TextView) findViewById(R.id.running_add_device)).setText(sp_device_name);
 
 
         //Intro Screen
@@ -1448,13 +1721,19 @@ public class MainActivity extends Activity {
             finish();
         }
 
+        //Login
+//        if(sp_user_email.equals("unknown")){
+//            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+//            finish();
+//        }
+
         //Overlay permission
         RelativeLayout rl_overlay_permission = (RelativeLayout) findViewById(R.id.rl_overlay_permission);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!Settings.canDrawOverlays(MainActivity.this)){
                 rl_overlay_permission.setVisibility(View.VISIBLE);
             }else{
-                rl_overlay_permission.setVisibility(View.GONE);
+                rl_overlay_permission.setVisibility(GONE);
             }
         }
 
@@ -1489,7 +1768,7 @@ public class MainActivity extends Activity {
         }
 
         //Get user email
-        if(hasPermission()) {
+        if(hasPermission() && sp_user_email.equals("unknown")) {
             AccountManager accountManager = AccountManager.get(MainActivity.this);
             Account account = getAccount(accountManager);
 
@@ -1536,6 +1815,9 @@ public class MainActivity extends Activity {
                         ed.putBoolean("creator", true).commit();
                     }
                     else ed.putBoolean("creator", false).commit();
+
+
+                    ((TextView) findViewById(R.id.creator_device)).setText(snapshot.getValue().toString());
                 }
             }
 
@@ -1558,7 +1840,7 @@ public class MainActivity extends Activity {
 
             b_start_stop.setText("Stop UniClip!");
 
-            rl_settings.setVisibility(View.GONE);
+            rl_settings.setVisibility(GONE);
             rl_running.setVisibility(View.VISIBLE);
             sync_anim.setAlpha(0.1f);
 
@@ -1587,10 +1869,14 @@ public class MainActivity extends Activity {
             else {
                 if (sp_authenticated) {
                     b_set_access_pin.setVisibility(View.VISIBLE);
-                    b_set_access_pin.setText("Verified");
-                    b_view_access_pin.setVisibility(View.GONE);
-                    b_set_access_pin.setEnabled(false);
-                    input_access_pin.setVisibility(View.GONE);
+                    b_set_access_pin.setText(">");
+
+                    ((RelativeLayout) findViewById(R.id.g_access_pin)).setVisibility(GONE);
+
+                    b_set_access_pin.setEnabled(true);
+                    ((RelativeLayout)findViewById(R.id.rl_validate)).setVisibility(GONE);
+                    ((RelativeLayout)findViewById(R.id.rl_authenticated_running)).setVisibility(View.VISIBLE);
+                    input_access_pin.setVisibility(View.VISIBLE);
 
                     if (isNetworkAvailable()) {
                         status_service.setText("Service:\n  Running. Listening to the cloudboard.");
@@ -1602,11 +1888,13 @@ public class MainActivity extends Activity {
                     }
                 }
                 else if (!sp_authenticated) {
-                    access_pin_desc.setText("In order to start listening to the cloudboard, you need to input the Access Pin. You can find Access Pin in the Menu of the device that created the cloudboard.");
-                    b_view_access_pin.setVisibility(View.GONE);
+
+                    ((RelativeLayout) findViewById(R.id.g_access_pin)).setVisibility(GONE);
 
                     sync_anim.clearAnimation();
                     b_set_access_pin.setVisibility(View.VISIBLE);
+                    ((RelativeLayout)findViewById(R.id.rl_validate)).setVisibility(View.VISIBLE);
+                    ((RelativeLayout)findViewById(R.id.rl_authenticated_running)).setVisibility(View.GONE);
                     input_access_pin.setVisibility(View.VISIBLE);
 
                     //Waiting for authentication
@@ -1628,7 +1916,7 @@ public class MainActivity extends Activity {
         else {
             b_start_stop.setText("Start UniClip!");
             rl_settings.setVisibility(View.VISIBLE);
-            rl_running.setVisibility(View.GONE);
+            rl_running.setVisibility(GONE);
             sync_anim.setAlpha(0.00f);
 
             welcome_text.setText("UniClip is a multi-device clipboard synchronization " +
@@ -1824,6 +2112,8 @@ public class MainActivity extends Activity {
                         else{
                             ed.putBoolean("creator", false).commit();
                         }
+
+                        ((TextView) findViewById(R.id.creator_device)).setText(snapshot.getValue().toString());
                     }
                 }
 
@@ -2143,6 +2433,7 @@ public class MainActivity extends Activity {
     //Diagnose Method
     private void diagnose(){
         ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        TextView diagnosis = (TextView) findViewById(R.id.No_conn_diagnosis);
 
         //3G check
         boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
@@ -2152,13 +2443,13 @@ public class MainActivity extends Activity {
                 .isConnectedOrConnecting();
 
         if (!is3g && !isWifi){
-            makeToast("Both Wifi and Mobile data are off.");
+            diagnosis.setText("Both Wifi and Mobile data are off.");
         }
         else if (is3g && !isWifi){
-            makeToast("Mobile data is on, Wifi is off. Check if you are in network range.");
+            diagnosis.setText("Mobile data is on, Wifi is off. \nCheck if you are in network range.");
         }
         else if (!is3g && isWifi){
-            makeToast("There seems to be a problem with Wifi. Try mobile data instead.");
+            diagnosis.setText("There seems to be a problem with Wifi. \nTry mobile data instead.");
         }
     }
 
@@ -2235,6 +2526,12 @@ public class MainActivity extends Activity {
 
         }
         return String.valueOf(temp);
+    }
+
+    public boolean validate_email(String email){
+        Pattern ptr = Pattern.compile("(?:(?:\\r\\n)?[ \\t])*(?:(?:(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*\\<(?:(?:\\r\\n)?[ \\t])*(?:@(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*(?:,@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*)*:(?:(?:\\r\\n)?[ \\t])*)?(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*\\>(?:(?:\\r\\n)?[ \\t])*)|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*:(?:(?:\\r\\n)?[ \\t])*(?:(?:(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*\\<(?:(?:\\r\\n)?[ \\t])*(?:@(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*(?:,@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*)*:(?:(?:\\r\\n)?[ \\t])*)?(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*\\>(?:(?:\\r\\n)?[ \\t])*)(?:,\\s*(?:(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*|(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)*\\<(?:(?:\\r\\n)?[ \\t])*(?:@(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*(?:,@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*)*:(?:(?:\\r\\n)?[ \\t])*)?(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\"(?:[^\\\"\\r\\\\]|\\\\.|(?:(?:\\r\\n)?[ \\t]))*\"(?:(?:\\r\\n)?[ \\t])*))*@(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*)(?:\\.(?:(?:\\r\\n)?[ \\t])*(?:[^()<>@,;:\\\\\".\\[\\] \\000-\\031]+(?:(?:(?:\\r\\n)?[ \\t])+|\\Z|(?=[\\[\"()<>@,;:\\\\\".\\[\\]]))|\\[([^\\[\\]\\r\\\\]|\\\\.)*\\](?:(?:\\r\\n)?[ \\t])*))*\\>(?:(?:\\r\\n)?[ \\t])*))*)?;\\s*)");
+        return ptr.matcher(email).matches();
+
     }
 }
 

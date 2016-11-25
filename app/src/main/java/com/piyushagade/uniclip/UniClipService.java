@@ -49,9 +49,11 @@ import java.util.regex.Pattern;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+
 public class UniClipService extends Service {
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
+    private static final String TAG = "Debug";
     private Firebase fb, fb_ota;
     private ClipboardManager myClipboard;
     private float sensitivity;
@@ -81,7 +83,7 @@ public class UniClipService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) throws NullPointerException {
         if(!destroyed) {
             // Get Data from Shared Preferences
             Context ctx = getApplicationContext();
@@ -133,6 +135,7 @@ public class UniClipService extends Service {
             fb_ota = new Firebase("https://uniclipold.firebaseio.com/ota/");
 
 
+            Log.d(TAG, user_node);
 
             //Listen for OTA notifications
             if(false)
@@ -160,7 +163,12 @@ public class UniClipService extends Service {
                             //Set 4 digit access key
                             usernode_created_now = true;
                             int key = (int) new Random().nextInt(9999);
+                            if (key < 1000) key = key * 10 + new Random().nextInt(99);
+                            else if (key < 100) key = key * 100 + new Random().nextInt(9);
+
                             fb.child("key").setValue(String.valueOf(key));
+
+                            Log.d(TAG, "User account created now.");
 
                             //Set this device as creator
                             fb.child("creator").setValue(sp_device_name);
@@ -187,9 +195,11 @@ public class UniClipService extends Service {
 
                         if(sp_device_name.equals(snapshot.getValue().toString())){
                             ed.putBoolean("creator", true).commit();
+                            Log.d(TAG, "Device is creator");
                         }
                         else{
                             ed.putBoolean("creator", false).commit();
+                            Log.d(TAG, "Device is not crerator");
                         }
                     }
                 }
@@ -236,6 +246,7 @@ public class UniClipService extends Service {
                                 if (!decrypt(decrypt(decrypt(String.valueOf(snapshot.getValue())))).equals(getCBData()) &&
                                         !snapshot.getValue().toString().equals("")) {
 
+                                    Log.d(TAG, "New clip arrived.");
 
                                     //Listening to save data to clipboard
                                     shareOff = true;
@@ -265,7 +276,14 @@ public class UniClipService extends Service {
                 public void onPrimaryClipChanged() {
                     //Set data to firebase
                     if(!getCBData().equals("") && sp_authenticated)
-                        fb.child("data").setValue(encrypt(encrypt(encrypt(getCBData()))));
+                        try{
+                            fb.child("data").setValue(encrypt(encrypt(encrypt(getCBData()))));
+                        }catch (NullPointerException npe){
+                            //
+                        }
+
+
+                    Log.d(TAG, "Local clipboard changed.");
 
                     //Send notification
                     if(false)   // Share to friends disabled
@@ -280,28 +298,31 @@ public class UniClipService extends Service {
             });
 
             //Listen for new desktops to be reauthorized
-            fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    Log.d("Reauth", "Requested.");
+            try {
+                fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        Log.d("Reauth", "Requested.");
 
-                    //If reauthorize node doesnt prexist
-                    if(snapshot.getValue() == null)  fb.child("reauthorization").setValue("0");
-                    else
-                    if(snapshot.getValue().toString().equals("1")) {
-                        //Display a notification asking for reauthorization
-                        displayReauthorizationNotification();
+                        //If reauthorize node doesnt prexist
+                        if (snapshot.getValue() == null) fb.child("reauthorization").setValue("0");
+                        else if (snapshot.getValue().toString().equals("1")) {
+                            //Display a notification asking for reauthorization
+                            displayReauthorizationNotification();
 
-                        //Vibrate
-                        vibrate(140);
+                            //Vibrate
+                            vibrate(140);
+                        }
                     }
-                }
 
 
-                @Override
-                public void onCancelled(FirebaseError error) {
-                }
-            });
+                    @Override
+                    public void onCancelled(FirebaseError error) {
+                    }
+                });
+            }catch (NullPointerException npe){
+                //
+            }
         }
 
 
@@ -638,18 +659,22 @@ public class UniClipService extends Service {
         notificationManager.notify(1, myNotification);
 
         //Listen for reauthorization state reset and cancel notification on authorization
-        fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.getValue() != null && snapshot.getValue().equals("0")) {
-                    notificationManager.cancel(1);
+        try {
+            fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null && snapshot.getValue().equals("0")) {
+                        notificationManager.cancel(1);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(FirebaseError error) {
-            }
-        });
+                @Override
+                public void onCancelled(FirebaseError error) {
+                }
+            });
+        }catch (NullPointerException npe){
+            //
+        }
 
     }
 
@@ -682,11 +707,6 @@ public class UniClipService extends Service {
         notificationManager.notify(1, myNotification);
 
     }
-
-
-
-
-
 
 
 
@@ -873,8 +893,11 @@ public class UniClipService extends Service {
         ShakeDetector.destroy();
         destroyed = true;
 
+        Log.d(TAG, "Service destroyed for " + sp_user_email);
+
         //Deregister Device
         if(fb != null) fb.child("devices").child(sp_device_name).setValue("0");
+        fb = null;
     }
 
     //Remove Shake listener after a time delay
