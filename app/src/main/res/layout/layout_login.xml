@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EFFFFFFF"
+    android:padding="16sp"
+    android:id="@+id/rl_login">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_title"
+        android:textSize="26sp"
+        android:textColor="@color/colorAccent"
+        android:layout_marginTop="4sp"
+        android:text="Login / Register"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20sp"
+        android:layout_below="@id/permission_title"
+        android:id="@+id/fragment_desc_sv"
+        android:padding="10sp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="6sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/rl_login_section">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="16sp"
+                android:text="To continue, please enter an email ID to be associated with this mobile device."
+                android:id="@+id/fragment_desc_1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_below="@id/fragment_desc_1"
+                android:layout_marginTop="20sp"
+                android:text="If no account exists corresponding to the email ID you entered, a new account will be created."
+                android:id="@+id/fragment_desc_2" />
+
+
+            <TextView
+                android:text="Email address:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/email_title"
+                android:layout_marginTop="30sp"
+                android:textColor="@color/colorAccent"
+                android:layout_below="@id/fragment_desc_2"
+                android:textSize="12sp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_centerHorizontal="true"
+                android:height="40sp"
+                android:padding="5sp"
+                android:gravity="center"
+                android:id="@+id/login_email"
+                android:textSize="14sp"
+                android:text=""
+                android:layout_below="@id/email_title"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6sp"
+                android:layout_below="@id/login_email"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20sp"
+                android:background="@color/colorAccent"
+                android:text="Login"
+                android:textColor="#AAFFFFFF"
+                android:id="@+id/b_login" />
+
+            </RelativeLayout>
+
+            <!-- Email verification -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rl_login_email_verification"
+                android:layout_below="@id/rl_login_section"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="We are creating a new account for you. Please enter the verification code that you received in your email inbox."
+                    android:textSize="16sp"
+                    android:layout_marginTop="16sp"
+                    android:padding="6sp"
+                    android:id="@+id/verify_email_desc"/>
+
+
+                <TextView
+                    android:text="Verification code:"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/verify_email_title"
+                    android:layout_marginTop="30sp"
+                    android:textColor="@color/colorAccent"
+                    android:layout_below="@id/verify_email_desc"
+                    android:textSize="12sp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <EditText
+                    android:layout_width="150sp"
+                    android:layout_height="40sp"
+                    android:hint="Code"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    android:inputType="number"
+                    android:layout_below="@id/verify_email_title"
+                    android:id="@+id/verify_email_code"
+                    android:layout_marginLeft="6sp"
+                    android:textColorHint="#AAFFFFFF"
+                    android:textColor="@color/colorAccent"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="18sp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/b_verify_email"
+                    android:textColor="#CCFFFFFF"
+                    android:padding="6sp"
+                    android:enabled="true"
+                    android:alpha=".94"
+                    android:text="Verify"
+                    android:layout_marginBottom="2sp"
+                    android:textSize="14sp"
+                    android:background="@color/colorAccent"
+                    android:layout_below="@id/verify_email_code"/>
+
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/b_verify_email"
+                    android:layout_alignBottom="@id/b_verify_email"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/b_verify_email_resend"
+                    android:textColor="#CCFFFFFF"
+                    android:enabled="true"
+                    android:alpha=".94"
+                    android:padding="6sp"
+                    android:layout_marginRight="6sp"
+                    android:text="Resend"
+                    android:layout_marginBottom="2sp"
+                    android:textSize="14sp"
+                    android:background="@color/colorAccent"/>
+
+                <RelativeLayout
+                    android:layout_width="400sp"
+                    android:layout_height="1sp"
+                    android:id="@+id/verify_hl6"
+                    android:background="#66FFFFFF"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="12dp"
+                    android:layout_below="@+id/b_verify_email_resend"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>

@@ -19,15 +19,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
 
-    <TextView
-        android:id="@+id/exampleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -64,15 +56,5 @@
 
 
     </RelativeLayout>
-    <!--
-<ImageView
-    android:id="@+id/red_line_image"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/exampleTextView"
-    android:src="@drawable/icon_dotview" />
-
-    -->
 
 </RelativeLayout>

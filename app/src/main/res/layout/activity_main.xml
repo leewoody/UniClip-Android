@@ -73,8 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <include layout="@layout/running_layout"/>
-            <include layout="@layout/settings_layout"/>
+            <include layout="@layout/layout_home"/>
 
 
         </RelativeLayout>
@@ -82,8 +81,7 @@
 
 
 
-    <include layout="@layout/rl_top_layout"/>
-    <include layout="@layout/rl_top_menu_on_layout"/>
+    <include layout="@layout/layout_top_bar"/>
 
     <RelativeLayout
         android:layout_width="400sp"
@@ -97,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start UniClip!"
-            android:id="@+id/b_start_stop"
+            android:id="@+id/b_start"
             android:textColor="#CCFFFFFF"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
@@ -140,18 +138,10 @@
             android:alpha="0.2"/>
 
 
-        <include layout="@layout/user_menu"/>
-
-        <include layout="@layout/info_menu"/>
-
-        <include layout="@layout/history_menu"/>
-
-        <include layout="@layout/help_menu"/>
-
-        <include layout="@layout/first_page_menu"/>
-
 
     </RelativeLayout>
 
-    <include layout="@layout/no_connection"/>
+    <include layout="@layout/layout_feedback"/>
+    <include layout="@layout/layout_settings"/>
+
 </RelativeLayout>

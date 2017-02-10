@@ -4,7 +4,7 @@
     <!-- Strings related to Settings -->
 
 
-    <string name="app_version">2.0</string>
+    <string name="app_version">2.5</string>       <!--Also change the version in gradle-->
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
@@ -38,8 +38,8 @@
 
     <string name="action_settings">Settings</string>
 
-    <!-- Button text -->
-    <string name="btn_logout_from_google">Logout from Google</string>
-    <string name="btn_revoke_access">Revoke Access</string>
+    <string name="title_activity_tutorial">Tutorial</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

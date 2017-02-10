@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_settings"
+    android:visibility="gone">
+
+    <!--Settings-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_running_settings_menu_sv">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12sp"
+            android:id="@+id/rl_running_settings_menu_content"
+            android:padding="12sp"
+            android:background="#EEFFFFFF">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Settings"
+                android:textSize="24sp"
+                android:textColor="@color/colorAccent"
+                android:id="@+id/running_settings_heading"/>
+
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Autostart on boot"
+                android:id="@+id/cb_autostart"
+                android:textSize="14sp"
+                android:layout_below="@id/running_settings_heading"
+                android:paddingLeft="16sp"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:button="@null"
+                android:layout_marginTop="12dp"/>
+
+            <!-- RL on data arrive-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cb_autostart"
+                android:id="@+id/rl_on_data_arrive"
+                android:layout_marginTop="12sp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="When new clipboard data arrives:"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/rl_on_data_arrive_title"/>
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Notifications"
+                    android:id="@+id/cb_notification"
+                    android:textSize="14sp"
+                    android:paddingLeft="16sp"
+                    android:layout_marginTop="18sp"
+                    android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                    android:layout_below="@id/rl_on_data_arrive_title"
+                    android:button="@null"/>
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Handle special clips?"
+                    android:id="@+id/cb_open_url"
+                    android:textSize="14sp"
+                    android:paddingLeft="16sp"
+                    android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:layout_alignTop="@+id/cb_notification"
+                    android:layout_marginTop="46dp"/>
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vibrations"
+                    android:id="@+id/cb_vibrate"
+                    android:textSize="14sp"
+                    android:paddingLeft="16sp"
+                    android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:layout_alignTop="@+id/cb_open_url"
+                    android:layout_marginTop="46dp"/>
+            </RelativeLayout>
+
+            <!-- RL Get-->
+            <RelativeLayout
+                android:layout_width="400sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_on_data_arrive"
+                android:layout_marginTop="24sp"
+                android:paddingBottom="12sp"
+                android:id="@+id/rl_get"
+                android:paddingTop="12sp"
+                android:paddingRight="14sp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number of shakes:"
+                    android:paddingLeft="16sp"
+                    android:layout_marginTop="18sp"
+                    android:layout_below="@+id/rl_get_title"
+                    android:id="@+id/get_title"/>
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/sb_get_shakes"
+                    android:max="5"
+                    android:layout_below="@id/get_title"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="6sp"
+                    android:layout_toStartOf="@+id/get_sensitivity_indicator"
+                    android:layout_toLeftOf="@+id/get_sensitivity_indicator" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shake sensitiviy:"
+                    android:layout_below="@id/sb_get_shakes"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/get_sensitivity_title"
+                    android:layout_marginTop="22sp"/>
+
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/sb_get_sensitivity"
+                    android:layout_below="@id/get_sensitivity_title"
+                    android:max="4"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="6sp"
+                    android:layout_toStartOf="@+id/get_sensitivity_indicator"
+                    android:layout_toLeftOf="@+id/get_sensitivity_indicator" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/colorAccent"
+                    android:id="@+id/get_sensitivity_indicator"
+                    android:layout_below="@id/get_sensitivity_title"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="14sp"/>
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/colorAccent"
+                    android:id="@+id/get_shakes_indicator"
+                    android:layout_below="@id/get_title"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="14sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Accept incoming data by shaking:"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/rl_get_title"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+
+                <!-- Get Help-->
+                <ImageView
+                    android:layout_width="19dp"
+                    android:layout_height="23dp"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/b_help_get"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="0sp"
+                    android:layout_toRightOf="@id/rl_get_title"
+                    android:layout_marginLeft="20sp"
+                    android:src="@drawable/help_shake" />
+
+            </RelativeLayout>
+
+
+            <!-- RL Share-->
+            <RelativeLayout
+                android:visibility="gone"
+                android:layout_width="400sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_get"
+                android:layout_marginTop="24sp"
+                android:paddingBottom="12sp"
+                android:id="@+id/rl_share"
+                android:paddingTop="12sp"
+                android:paddingRight="14sp"
+                android:background="#11FFFFFF">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Share data by shaking:"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/rl_share_title"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number of shakes:"
+                    android:textColor="#88FFFFFF"
+                    android:paddingLeft="16sp"
+                    android:layout_marginTop="18sp"
+                    android:layout_below="@+id/rl_share_title"
+                    android:id="@+id/share_title"/>
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/sb_share_shakes"
+                    android:max="5"
+                    android:layout_below="@id/share_title"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="6sp"
+                    android:layout_toStartOf="@+id/share_sensitivity_indicator"
+                    android:layout_toLeftOf="@+id/share_sensitivity_indicator" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shake sensitiviy:"
+                    android:textColor="#AAFFFFFF"
+                    android:layout_below="@id/sb_share_shakes"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/share_sensitivity_title"
+                    android:layout_marginTop="22sp"/>
+
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/sb_share_sensitivity"
+                    android:layout_below="@id/share_sensitivity_title"
+                    android:max="5"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="6sp"
+                    android:layout_toStartOf="@+id/share_sensitivity_indicator"
+                    android:layout_toLeftOf="@+id/share_sensitivity_indicator" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#88FFFFFF"
+                    android:id="@+id/share_sensitivity_indicator"
+                    android:layout_below="@id/share_sensitivity_title"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="14sp"/>
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#88FFFFFF"
+                    android:id="@+id/share_shakes_indicator"
+                    android:layout_below="@id/share_title"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="14sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage friends:"
+                    android:textColor="#AAFFFFFF"
+                    android:layout_below="@id/sb_share_sensitivity"
+                    android:paddingLeft="16sp"
+                    android:id="@+id/share_friends_title"
+                    android:layout_marginTop="22sp"/>
+
+                <Button
+                    android:layout_width="120sp"
+                    android:layout_height="34sp"
+                    android:layout_marginTop="10sp"
+                    android:background="@color/colorAccent"
+                    android:text="Manage"
+                    android:id="@+id/b_manage_friends"
+                    android:layout_marginLeft="16sp"
+                    android:textColor="#AAFFFFFF"
+                    android:layout_below="@+id/share_friends_title"/>
+
+
+            </RelativeLayout>
+
+            <!--Theme-->
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Light theme"
+                android:id="@+id/cb_theme"
+                android:textSize="14sp"
+                android:paddingLeft="16sp"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:button="@null"
+                android:layout_below="@+id/rl_share"
+                android:layout_marginTop="30dp"
+                android:visibility="gone"/>
+
+            <!--Lockscreen-->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cb_theme"
+                android:id="@+id/rl_cb_lockscreen">
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ask for PIN on app start?"
+                    android:id="@+id/cb_lockscreen"
+                    android:textSize="14sp"
+                    android:paddingLeft="16sp"
+                    android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:layout_marginTop="30dp"/>
+                <TextView
+                    android:id="@+id/cb_lockscreen_pin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cb_lockscreen"
+                    android:layout_alignLeft="@id/cb_lockscreen"
+                    android:layout_alignStart="@id/cb_lockscreen"
+                    android:layout_marginLeft="30sp"
+                    android:text="Remember, PIN is: "
+                    android:textColor="@color/colorAccent"
+                    android:textSize="13sp"/>
+            </RelativeLayout>
+
+
+            <!-- Share Help-->
+            <ImageView
+                android:visibility="gone"
+                android:layout_width="22dp"
+                android:layout_height="26dp"
+                android:id="@+id/b_help_share"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/rl_share"
+                android:layout_marginTop="6sp"
+                android:layout_marginRight="6sp"
+                android:src="@drawable/help_shake"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true" />
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40sp"
+                android:layout_marginTop="20sp"
+                android:background="@color/colorAccent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:text="Back"
+                android:textColor="#BBFFFFFF"
+                android:paddingLeft="10sp"
+                android:id="@+id/settings_back"
+                android:paddingRight="10sp"
+                android:layout_below="@id/rl_cb_lockscreen"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_running_settings_menu_mask"
+        android:layout_below="@id/rl_running_settings_menu_sv"
+        android:background="#88000000">
+
+    </RelativeLayout>
+
+</RelativeLayout>

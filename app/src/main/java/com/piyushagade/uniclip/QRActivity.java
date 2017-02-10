@@ -17,15 +17,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
-import com.firebase.client.Firebase;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeReadListener {
+
+    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     private TextView myTextView;
     private QRCodeReaderView mydecoderview;
 
-    private Firebase fb, fb_desktops;
+    private DatabaseReference fb, fb_desktops;
     private String sp_user_email;
     SharedPreferences sp;
     private SharedPreferences.Editor ed;
@@ -41,7 +48,6 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
 
         setContentView(R.layout.activity_decoder);
 
-        Firebase.setAndroidContext(this);
 
 
         //Hint
@@ -57,7 +63,7 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
         user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
         //Firebase
-        fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
+        fb = mRootRef.child("cloudboard").child(user_node);
 
         user_email = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
@@ -67,11 +73,6 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
         //DecoderView
         mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
-
-        myTextView = (TextView) findViewById(R.id.exampleTextView);
-
-        myTextView.setText("");
-
 
         //OnCLick Listeners
         //Close Button listener
@@ -110,7 +111,7 @@ public class QRActivity extends Activity implements QRCodeReaderView.OnQRCodeRea
                     fb.child("reauthorization").setValue("0");
 
                     //Firebase Object
-                    fb_desktops = new Firebase("https://uniclipold.firebaseio.com/desktops/");
+                    DatabaseReference fb_desktops = mRootRef.child("desktops");
 
 
 

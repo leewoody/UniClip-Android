@@ -29,14 +29,20 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.ArrayList;
 
 public class ManageFriendsActivity extends Activity{
+
+
+    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
     private ImageView iv_logo, iv_slogan, b_menu;
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
@@ -51,7 +57,7 @@ public class ManageFriendsActivity extends Activity{
     private Button b_friends_manage_add, b_friends_manage_delete;
     private EditText et_add_friend_email;
     private LinearLayout ll_get_friends_feed, ll_add_friend;
-    private Firebase fb;
+    private DatabaseReference fb;
     private boolean userDoesntExists;
     private TextView friends_feed_title;
 
@@ -64,7 +70,6 @@ public class ManageFriendsActivity extends Activity{
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_manage);
-        Firebase.setAndroidContext(this);
 
         //Get SharedPreferences
         SharedPreferences sp = getSharedPreferences(PREF_FILE, 0);
@@ -72,7 +77,7 @@ public class ManageFriendsActivity extends Activity{
 
 
         //Firebase
-        fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/");
+        final DatabaseReference fb = mRootRef.child("cloudboard");
 
         //Get intent data
         intent = getIntent();
@@ -171,7 +176,7 @@ public class ManageFriendsActivity extends Activity{
                         }
 
                         @Override
-                        public void onCancelled(FirebaseError error) {
+                        public void onCancelled(DatabaseError error) {
                         }
                     });
 

@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,11 +37,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+//import com.firebase.client.DataSnapshot;
+//import com.firebase.client.Firebase;
+//import com.firebase.client.FirebaseError;
+//import com.firebase.client.ValueEventListener;
 import com.github.tbouron.shakedetector.library.ShakeDetector;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -51,10 +58,13 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class UniClipService extends Service {
+
+    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
-    private static final String TAG = "Debug";
-    private Firebase fb, fb_ota;
+    private static final String TAG = "service_debug";
+    private DatabaseReference fb, fb_ota;
     private ClipboardManager myClipboard;
     private float sensitivity;
     private boolean dataAccepted;
@@ -88,7 +98,6 @@ public class UniClipService extends Service {
             // Get Data from Shared Preferences
             Context ctx = getApplicationContext();
             SharedPreferences pref = getSharedPreferences(PREF_FILE, 0);
-            Firebase.setAndroidContext(this);
 
             //Read SharedPreferences
             sp = getSharedPreferences(PREF_FILE, 0);
@@ -98,7 +107,7 @@ public class UniClipService extends Service {
             sp_notification = sp.getBoolean("notification", true);
             sp_vibrate = sp.getBoolean("vibrate", true);
             sp_get_sensitivity = sp.getInt("get_sensitivity", 2);
-            sp_get_shakes = sp.getInt("get_shakes", 2);
+            sp_get_shakes = sp.getInt("get_shakes", 0);
             sp_unread = sp.getInt("unread", 0);
             sp_share_sensitivity = sp.getInt("share_sensitivity", 2);
             sp_share_shakes = sp.getInt("share_shakes", 2);
@@ -110,6 +119,7 @@ public class UniClipService extends Service {
 
             //Update Shortcut Badger
             updateBadger();
+
 
 
             //ArrayList for storing History
@@ -131,29 +141,62 @@ public class UniClipService extends Service {
             String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
 
             //Firebase
-            fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/" + user_node);
-            fb_ota = new Firebase("https://uniclipold.firebaseio.com/ota/");
+            fb = mRootRef.child("cloudboard").child(user_node);
+            DatabaseReference fb_ota = mRootRef.child("ota");
 
-
-            Log.d(TAG, user_node);
 
             //Listen for OTA notifications
-            if(false)
-                fb_ota.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        if (snapshot.getValue() != null) {
-                            l = 0;
-                            displayOTANotification(snapshot.getValue().toString());
+            fb_ota.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        try {
+                            if (snapshot.getValue().toString().split("%")[1] != null)
+                                ed.putString("ota_id", snapshot.getValue().toString().split("%")[1]).commit();
+
+                            if (snapshot.getValue().toString().split("%")[1].length() == 6 && !snapshot.getValue().toString().split("%")[0].equals("empty")
+                                    && !sp.getString("ota_id", "0").equals(snapshot.getValue().toString().split("%")[1])) {
+
+                                final String notification_text = snapshot.getValue().toString().split("%")[0];
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        displayOTANotification(notification_text);
+                                    }
+                                }, 3000*60);
+                            }
+                        }catch (ArrayIndexOutOfBoundsException aioob){
+                            //Do nothing
                         }
                     }
+                }
 
-                    @Override
-                    public void onCancelled(FirebaseError error) {
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
+
+
+            //Monitor if user is using a desktop client
+            fb.child("used_desktop_client").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        ed.putBoolean("used_desktop_client", Boolean.valueOf(snapshot.getValue().toString())).commit();
                     }
-                });
 
-            //Check if user node exists
+                    if(RunningActivity.desktop_version_required > RunningActivity.desktop_version_in_use ){
+                        displayOTANotification("Please update your desktop client. This android version is most compatible with version " +
+                        String.valueOf(RunningActivity.desktop_version_required) + " desktop client.");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
+
+            //Check if user node exists / Listen for PIN changes / Listen for account deletion
             if (!usernode_created_now)
                 fb.child("key").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -168,11 +211,27 @@ public class UniClipService extends Service {
 
                             fb.child("key").setValue(String.valueOf(key));
 
+                            // Notify user about new user creation by showing a UI change in activity_running
                             Log.d(TAG, "User account created now.");
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(UniClipService.class.getName());
+                                    intent.putExtra("new_account_created", true);
+                                    LocalBroadcastManager.getInstance(UniClipService.this).sendBroadcast(intent);
+                                }
+                            }, 400);
+
 
                             //Set this device as creator
                             fb.child("creator").setValue(sp_device_name);
                             sp_are_creator = true;
+
+                            //Set other data
+                            fb.child("link").setValue("empty_link");
+                            fb.child("used_desktop_client").setValue("false");
 
                             //Persist the key
                             ed.putInt("access_pin", key).commit();
@@ -183,7 +242,7 @@ public class UniClipService extends Service {
                     }
 
                     @Override
-                    public void onCancelled(FirebaseError error) {
+                    public void onCancelled(DatabaseError error) {
                     }
                 });
 
@@ -199,13 +258,13 @@ public class UniClipService extends Service {
                         }
                         else{
                             ed.putBoolean("creator", false).commit();
-                            Log.d(TAG, "Device is not crerator");
+                            Log.d(TAG, "Device is not creator");
                         }
                     }
                 }
 
                 @Override
-                public void onCancelled(FirebaseError error) {
+                public void onCancelled(DatabaseError error) {
                 }
             });
 
@@ -224,7 +283,7 @@ public class UniClipService extends Service {
             myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
             //Listen for changes in cloudboard
-            if (!destroyed)
+            if (!destroyed && !sp.getString("user_email", "unknown").equals("deleted_user"))
                 fb.child("data").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -266,7 +325,7 @@ public class UniClipService extends Service {
                     }
 
                     @Override
-                    public void onCancelled(FirebaseError error) {
+                    public void onCancelled(DatabaseError error) {
                     }
                 });
 
@@ -302,10 +361,15 @@ public class UniClipService extends Service {
                 fb.child("reauthorization").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
-                        Log.d("Reauth", "Requested.");
 
                         //If reauthorize node doesnt prexist
-                        if (snapshot.getValue() == null) fb.child("reauthorization").setValue("0");
+                        if (snapshot.getValue() == null) try {
+                            fb.child("reauthorization").setValue("0");
+                        }catch (NullPointerException npe){
+                            // makeToast("Your account has been terminated. Contact developer!");
+                            //Stop service if account was deleted.
+                            stopSelf();
+                        }
                         else if (snapshot.getValue().toString().equals("1")) {
                             //Display a notification asking for reauthorization
                             displayReauthorizationNotification();
@@ -317,7 +381,7 @@ public class UniClipService extends Service {
 
 
                     @Override
-                    public void onCancelled(FirebaseError error) {
+                    public void onCancelled(DatabaseError error) {
                     }
                 });
             }catch (NullPointerException npe){
@@ -356,9 +420,13 @@ public class UniClipService extends Service {
                 parameters.x = 0;
                 parameters.y = 0;
 
-                floatingView = li.inflate(R.layout.floating_layout, null);
+                floatingView = li.inflate(R.layout.layout_floating_window, null);
 
-                wm.addView(floatingView, parameters);
+                try{
+                    wm.addView(floatingView, parameters);
+                }catch (WindowManager.BadTokenException wmbte){
+                    // Do nothing
+                }
 
                 Button action = (Button) floatingView.findViewById(R.id.float_action);
                 TextView float_data = (TextView) floatingView.findViewById(R.id.float_data);
@@ -467,10 +535,10 @@ public class UniClipService extends Service {
                 //If shake was for getting data into clipboard
                 if (shareOff && snapshot != null) {
                     //If shakes required to copy data into clipboard
-                    if (sp_get_shakes != 0 && !destroyed) {
+                    if (sp.getInt("get_shakes", 0) != 0 && !destroyed) {
 
                         //Set parameters
-                        ShakeDetector.updateConfiguration((sp_get_sensitivity) / 2, sp_get_shakes);
+                        ShakeDetector.updateConfiguration((sp.getInt("get_sensitivity", 2)) / 2, sp.getInt("get_shakes", 0));
 
                         //Set data accepted as true
                         dataAccepted = true;
@@ -495,7 +563,7 @@ public class UniClipService extends Service {
                 else if (!shareOff && snapshot == null){
 
                     //Set parameters
-                    ShakeDetector.updateConfiguration((sp_share_sensitivity) / 2, sp_share_shakes);
+                    ShakeDetector.updateConfiguration((sp.getInt("share_sensitivity", 2)) / 2, sp.getInt("share_shakes", 2));
 
                     //Format email address (remove the .)
                     String user_node = encrypt(encrypt(encrypt(sp_user_email.replaceAll("\\.", ""))));
@@ -521,7 +589,7 @@ public class UniClipService extends Service {
 
 
         //If shakes not required to copy data into clipboard
-        if (sp_get_shakes == 0 && !destroyed && shareOff && snapshot != null) {
+        if (sp.getInt("get_shakes", 0) == 0 && !destroyed && shareOff && snapshot != null) {
             //Set data accepted as true
             dataAccepted = true;
 
@@ -544,12 +612,12 @@ public class UniClipService extends Service {
 
     //Display Notification
     protected void displayNotification(){
-        if(sp_notification && shareOff) {
+        if(sp.getBoolean("notification", true) && shareOff) {
             Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(""));
             PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
             String notification_text = "";
-            if(sp_get_shakes != 0) notification_text = "Shake your device " + sp_get_shakes + " times to copy the incoming data to your clipboard.";
+            if(sp.getInt("get_shakes", 0) != 0) notification_text = "Shake your device " + sp.getInt("get_shakes", 0) + " times to copy the incoming data to your clipboard.";
             else notification_text = "Clipboard updated.";
 
             Notification myNotification = new Notification.Builder(this)
@@ -576,12 +644,12 @@ public class UniClipService extends Service {
                 }
             }, 10000);
         }
-        else if(sp_notification && !shareOff) {
+        else if(sp.getBoolean("notification", true) && !shareOff) {
             Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(""));
             PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
             String notification_text = "";
-            if(sp_share_shakes != 0) notification_text = "Shake your device " + sp_share_shakes + " times to open share Clipboard dialog.";
+            if(sp.getInt("share_shakes", 2) != 0) notification_text = "Shake your device " + sp.getInt("share_shakes", 2) + " times to open share Clipboard dialog.";
 
 
             Notification myNotification = new Notification.Builder(this)
@@ -669,7 +737,7 @@ public class UniClipService extends Service {
                 }
 
                 @Override
-                public void onCancelled(FirebaseError error) {
+                public void onCancelled(DatabaseError error) {
                 }
             });
         }catch (NullPointerException npe){
@@ -691,9 +759,9 @@ public class UniClipService extends Service {
         String notification_text = text;
 
         Notification myNotification = new Notification.Builder(this)
-                .setContentTitle("UniClip!")
+                .setContentTitle("UniClip notice!")
                 .setContentText(notification_text)
-                .setTicker("A notification from UniClip's developers!")
+                .setTicker("A notification from developer!")
                 .setStyle(new Notification.BigTextStyle().bigText(notification_text))
                 .setLights(Color.WHITE, 200, 100)
                 .setWhen(System.currentTimeMillis())
@@ -766,7 +834,7 @@ public class UniClipService extends Service {
             }
 
             @Override
-            public void onCancelled(FirebaseError error) {
+            public void onCancelled(DatabaseError error) {
             }
         });
 
@@ -889,14 +957,13 @@ public class UniClipService extends Service {
     //On Destroy
     @Override
     public void onDestroy() {
+        stopSelf();
         super.onDestroy();
         ShakeDetector.destroy();
         destroyed = true;
 
-        Log.d(TAG, "Service destroyed for " + sp_user_email);
-
         //Deregister Device
-        if(fb != null) fb.child("devices").child(sp_device_name).setValue("0");
+        if(fb != null && !sp.getString("user_email", "unknown").equals("deleted_user")) fb.child("devices").child(sp_device_name).setValue("0");
         fb = null;
     }
 
@@ -940,7 +1007,9 @@ public class UniClipService extends Service {
 
     //Vibrate device method
     private void vibrate(int time){
-        if(sp_vibrate&&!destroyed)((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
+        if(sp.getBoolean("vibrate", true) && !destroyed)((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(time);
     }
+
+
 
 }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/UniClip.iml" filepath="$PROJECT_DIR$/UniClip.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UniClip_New_Backend.iml" filepath="$PROJECT_DIR$/UniClip_New_Backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

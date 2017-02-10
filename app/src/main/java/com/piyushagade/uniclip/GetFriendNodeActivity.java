@@ -33,12 +33,16 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.firebase.client.Firebase;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class GetFriendNodeActivity extends Activity{
+
+    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
     private ImageView iv_logo, iv_slogan, b_menu;
     private static final String PREF_FILE = "com.piyushagade.uniclip.preferences";
@@ -60,7 +64,6 @@ public class GetFriendNodeActivity extends Activity{
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_get_friends);
-        Firebase.setAndroidContext(this);
 
         //Get SharedPreferences
         SharedPreferences sp = getSharedPreferences(PREF_FILE, 0);
@@ -72,7 +75,7 @@ public class GetFriendNodeActivity extends Activity{
 
 
         //Firebase
-        final Firebase fb = new Firebase("https://uniclipold.firebaseio.com/cloudboard/");
+        final DatabaseReference fb = mRootRef.child("cloudboard");
 
         //UI Components
         iv_logo = (ImageView) findViewById(R.id.app_logo);

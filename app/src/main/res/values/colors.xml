@@ -6,7 +6,6 @@
     <color name="colorNavBar">#009688</color>
 
 
-
     <color name="intro1">#ffc107</color>
     <color name="introDark1">#ff8f00</color>
     <color name="intro2">#7dd544</color>
@@ -19,5 +18,7 @@
     <color name="introDark5">#b08e3d</color>
     <color name="intro6">#a98ad2</color>
     <color name="introDark6">#5b3c7f</color>
+
+    <color name="black_overlay">#66000000</color>
 
 </resources>

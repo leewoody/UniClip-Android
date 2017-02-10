@@ -6,7 +6,7 @@
     android:id="@+id/rl_main">
 
 
-    <include layout="@layout/rl_top_layout"
+    <include layout="@layout/layout_top_bar"
         android:id="@+id/include_top"/>
 
     <RelativeLayout

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:id="@+id/rl_floating"
+    android:paddingLeft="10sp"
+    android:paddingRight="10sp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="100sp"
+    android:layout_marginTop="20sp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_margin="10sp"
+        android:background="@drawable/floating_background_layout"
+        android:layout_height="80sp">
+
+        <TextView
+            android:text="data"
+            android:paddingLeft="10sp"
+            android:paddingRight="10sp"
+            android:layout_width="match_parent"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/float_data"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/float_action"
+            android:textSize="13sp"
+            android:layout_toStartOf="@+id/float_action"
+            android:layout_height="18sp"
+            android:layout_marginLeft="6sp"/>
+
+        <TextView
+            android:text="Clip received:"
+            android:layout_marginTop="4sp"
+            android:paddingLeft="10sp"
+            android:paddingRight="10sp"
+            android:layout_width="match_parent"
+            android:textColor="#66FFFFFF"
+            android:id="@+id/heading"
+            android:textSize="10sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_height="14sp" />
+
+        <Button
+            android:text="Open"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:id="@+id/float_action"
+            android:layout_margin="10sp"
+            android:layout_width="80sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+</RelativeLayout>

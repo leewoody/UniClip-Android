@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "753305641615",
+    "firebase_url": "https://uniclip-6004c.firebaseio.com",
+    "project_id": "uniclip-6004c",
+    "storage_bucket": "uniclip-6004c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753305641615:android:3573377441d8606d",
+        "android_client_info": {
+          "package_name": "com.piyushagade.uniclip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "753305641615-nds578eosvj0s6phgnp5t4te82uodm5v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.piyushagade.uniclip",
+            "certificate_hash": "6C58208B2B3D750E146EE20FB1E40C951727460D"
+          }
+        },
+        {
+          "client_id": "753305641615-h6hoaibu9irlc65frrdc43gve5g6cbgd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBucmLvMkL_2AASmlRj6OmJY1rSmGy9nW8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "753305641615-h6hoaibu9irlc65frrdc43gve5g6cbgd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

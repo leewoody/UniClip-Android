@@ -23,7 +23,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
+//import com.firebase.client.Firebase;
 
 public class ActivityPermission extends Activity {
 
@@ -47,9 +47,6 @@ public class ActivityPermission extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-
-        Firebase.setAndroidContext(this);
 
 
         setContentView(R.layout.activity_permission);

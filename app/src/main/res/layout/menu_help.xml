@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_help"
+    android:paddingLeft="30sp"
+    android:paddingRight="30sp"
+    android:visibility="gone"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help"
+        android:textSize="30sp"
+        android:id="@+id/help_title"
+        android:layout_marginTop="20sp"
+        android:textColor="@color/colorAccent"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/help_title"
+        android:layout_marginTop="20sp"
+        android:fadeScrollbars="false"
+        android:layout_marginBottom="12sp"
+        android:scrollbarSize="4sp"
+        android:scrollbarStyle="outsideOverlay"
+        android:paddingRight="16sp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cloudboard: "
+                android:textSize="18sp"
+                android:id="@+id/help_cloudboard_title"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cloudboard is your clipboard on the cloud. Whatever you copy or share, first is sent to your cloudboard, before sharing it with other devices."
+                android:textSize="16sp"
+                android:id="@+id/help_cloudboard"
+                android:layout_marginTop="8sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/help_cloudboard_title"
+                android:textColor="#AAFFFFFF"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="2sp"
+                android:background="#33FFFFFF"
+                android:layout_below="@id/help_cloudboard"
+                android:layout_marginTop="8sp"
+                android:id="@+id/hl3"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sharing Clipboard"
+                android:id="@+id/help_sharing_title"
+                android:textSize="18sp"
+                android:layout_marginTop="18sp"
+                android:layout_below="@id/hl3"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1. With your other mobile devices:"
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_1_title"
+                android:layout_marginTop="8sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/help_sharing_title"
+                android:textColor="#AAFFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UniClip! automatically syncs clipboards of all your devices running it. Before all your devices are 'unicliped' (i.e. their clipoboards sync with each other's), you need to add them to your cloudboard. To do this, all you need to do is start Uniclip service in other devices and input the Access PIN, and thats it! \n\nJust to explain how clipboards sync, consider you own two shiny mobiles, A and B. If UniClip is running on both devices, if you copy something on device A, the clip will arrive at device B. But the clipboard of B will not update automatically if the setting 'Number of shakes' is not set to 0. For instance, if it is set to 2, device B will give you a 5 second window to shake the device 2 times to copy the clip to B's clipboard. \n\nUniClip requires internet access to sync clipboards. However, if temporarily unavailable, it will keep an eye out of internet availability."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_1"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_1_title"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="The 'Number of shakes' mentioned, and its sensitivity can be changed in the settings area which is visible when the UniClip service is not running."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_starstar1"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_1"
+                android:textColor="#88FFFFFF"/>
+
+
+            <!-- Section 2 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2. Adding a mobile device:"
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_2_title"
+                android:layout_marginTop="12sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/help_sharing_starstar1"
+                android:textColor="#AAFFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="As mentioned in section 1, when you want your other devices to listen to changes in clipboard, they need to be verified. So, each user is assigned a 4-digit Access PIN, which is only available in the mobile device that you own that first ran UniClip. Ps.: Keep the PIN a secret."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_2"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_2_title"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="**: The number of shakes mentioned, and its sensitivity can be changed. See main screen for settings."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_starstar2"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_2"
+                android:textColor="#88FFFFFF"/>
+
+
+
+
+            <!-- Section 3 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2. Adding a desktop:"
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_3_title"
+                android:layout_marginTop="12sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/help_sharing_starstar2"
+                android:textColor="#AAFFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Adding a desktop is a little bit different. To allow a desktop to sync its clipboard with other devices, first, you need UniClip desktop client. Download it by following the link provided below on your desktop. \n\nhttp://piyushagade.xyz/uniclip\n\nNow that you have a desktop client, you now need to authenticate the desktop. To do that open UniClip desktop client and mobile app as well. A QR code will appear on your desktop which you need to scan on your mobile's UniClip app. And done!\n\nSee 'Keyboard shortcuts' section on desktop app to use it more efficiently."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_3"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_3_title"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All options regarding desktop client can be accessed on the desktop client itself."
+                android:textSize="16sp"
+                android:id="@+id/help_sharing_starstar3"
+                android:layout_marginTop="4sp"
+                android:layout_marginLeft="12sp"
+                android:layout_below="@+id/help_sharing_3"
+                android:textColor="#88FFFFFF"/>
+
+
+
+
+
+
+            <!-- Manage Friends -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="2sp"
+                android:background="#33FFFFFF"
+                android:id="@+id/hl4"
+                android:layout_below="@id/help_sharing_starstar3"
+                android:layout_marginTop="8sp"/>
+
+
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage friends:"
+                android:textSize="18sp"
+                android:id="@+id/help_manage_title"
+                android:layout_marginTop="18sp"
+                android:layout_below="@id/hl4"
+                android:textColor="#88FFFFFF"/>
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To manage your friends list, click on 'Manage' button on the main page or below. You can add/remove your friends (already on UniClip) to your list."
+                android:textSize="16sp"
+                android:id="@+id/help_manage"
+                android:layout_marginTop="8sp"
+                android:layout_marginLeft="8sp"
+                android:layout_below="@+id/help_manage_title"
+                android:textColor="#AAFFFFFF"/>
+
+            <Button
+                android:visibility="gone"
+                android:layout_width="120sp"
+                android:layout_height="34sp"
+                android:layout_marginTop="10sp"
+                android:background="@color/colorAccent"
+                android:text="Manage"
+                android:id="@+id/b_help_manage_friends"
+                android:layout_marginLeft="8sp"
+                android:textColor="#AAFFFFFF"
+                android:layout_below="@+id/help_manage"/>
+
+
+
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

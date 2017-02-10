@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_tut_5"
+    android:visibility="gone">
+
+    <!--Tutorial 5 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_tut_5_sv">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#EEFFFFFF"
+            android:padding="6sp"
+            android:id="@+id/rl_tut_content_5"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Overlay permission"
+                android:textSize="24sp"
+                android:textColor="@color/colorAccent"
+                android:id="@+id/tut_5_heading"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enable UniClip to draw over other apps."
+                android:textSize="13sp"
+                android:textColor="#AA000000"
+                android:gravity="center"
+                android:layout_marginTop="14sp"
+                android:padding="6sp"
+                android:id="@+id/tut_5_1"
+                android:layout_below="@id/tut_5_heading"/>
+
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10sp"
+                android:src="@drawable/tut_5_1"
+                android:layout_below="@id/tut_5_1"
+                android:id="@+id/tut_5_2"/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0sp"
+                android:text="This is required for 'Handle special clips' feature. This feature opens a small non-intrusive overlay no matter which app is open, so that you can open links or call phone numbers if you tried syncing links and phone numbers.\n\n\n\n"
+                android:textSize="13sp"
+                android:textColor="#AA000000"
+                android:gravity="center"
+                android:padding="6sp"
+                android:id="@+id/tut_5"
+                android:layout_below="@id/tut_5_2"/>
+
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_tut_5_sv"
+        android:id="@+id/rl_tut_mask_5"
+        android:background="#88000000">
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5/8"
+        android:layout_alignParentRight="true"
+        android:textSize="10sp"
+        android:layout_margin="14sp"
+        android:textColor="#66000000"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_margin="10sp"
+        android:background="@color/colorAccent"
+        android:layout_alignParentRight="true"
+        android:text="Next"
+        android:textColor="#BBFFFFFF"
+        android:paddingLeft="10sp"
+        android:paddingRight="10sp"
+        android:id="@+id/go_n_to_tut_6"
+        android:layout_alignParentBottom="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_margin="10sp"
+        android:background="@color/colorAccent"
+        android:layout_alignParentLeft="true"
+        android:text="Prev"
+        android:textColor="#BBFFFFFF"
+        android:paddingLeft="10sp"
+        android:id="@+id/go_p_to_tut_4"
+        android:paddingRight="10sp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

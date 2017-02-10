@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_home"
+    android:visibility="visible">
+
+    <!--Settings-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sv_home">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <pl.bclogic.pulsator4droid.library.PulsatorLayout
+                android:id="@+id/pulsator"
+                android:layout_width="240sp"
+                android:layout_height="240sp"
+                app:pulse_count="3"
+                app:pulse_duration="22000"
+                app:pulse_repeat="0"
+                app:pulse_color="#FF4081"
+                app:pulse_startFromScratch="false"
+                app:pulse_interpolator="Linear"
+                android:layout_centerHorizontal="true">
+            </pl.bclogic.pulsator4droid.library.PulsatorLayout>
+
+
+
+            <ImageView
+                android:layout_width="180sp"
+                android:layout_height="180sp"
+                android:src="@drawable/home_icon"
+                android:layout_alignLeft="@id/pulsator"
+                android:layout_alignRight="@id/pulsator"
+                android:layout_alignTop="@id/pulsator"
+                android:layout_alignBottom="@id/pulsator"
+                android:id="@+id/home_icon"/>
+
+
+            <RelativeLayout
+                android:layout_width="360sp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/rl_clouds"
+                android:layout_alignTop="@id/home_icon">
+
+                <ImageView
+                    android:layout_width="80sp"
+                    android:layout_height="80sp"
+                    android:src="@drawable/cloud1"
+                    android:id="@+id/cloud1"/>
+
+
+
+                <ImageView
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:src="@drawable/cloud2"
+                    android:layout_marginLeft="80sp"
+                    android:layout_marginTop="10sp"
+
+                    android:id="@+id/cloud2"/>
+
+
+
+                <ImageView
+                    android:layout_width="60sp"
+                    android:layout_height="60sp"
+                    android:src="@drawable/cloud3"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10sp"
+                    android:layout_marginTop="50sp"
+                    android:id="@+id/cloud3"/>
+
+
+
+
+                <ImageView
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/cloud3"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="80sp"
+                    android:layout_marginTop="10sp"
+                    android:id="@+id/cloud4"/>
+
+
+
+                <ImageView
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/cloud1"
+                    android:layout_marginLeft="60sp"
+                    android:layout_marginTop="90sp"
+                    android:id="@+id/cloud5"/>
+            </RelativeLayout>
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fadeScrollbars="false"
+                android:scrollbarSize="4sp"
+                android:id="@+id/home_hsv"
+                android:scrollbarStyle="outsideOverlay"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/pulsator">
+
+                <LinearLayout
+                    android:layout_width="400sp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20sp"
+                    android:padding="10sp"
+                    android:layout_centerHorizontal="true">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:background="#44FFFFFF"
+                        android:padding="6sp"
+                        android:layout_margin="6px"
+                        android:id="@+id/rl_home_settings">
+                        <ImageView
+                            android:layout_width="80sp"
+                            android:layout_height="80sp"
+                            android:src="@drawable/settings"
+                            android:id="@+id/home_settings_icon"
+                            android:layout_centerHorizontal="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/home_settings_icon"
+                            android:text="Configure"
+                            android:layout_centerHorizontal="true"/>
+                    </RelativeLayout>
+
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:background="#44FFFFFF"
+                        android:padding="6sp"
+                        android:layout_margin="6px"
+                        android:id="@+id/rl_home_website">
+                        <ImageView
+                            android:layout_width="80sp"
+                            android:layout_height="80sp"
+                            android:src="@drawable/website"
+                            android:id="@+id/home_website_icon"
+                            android:layout_centerHorizontal="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/home_website_icon"
+                            android:text="Website"
+                            android:layout_centerHorizontal="true"/>
+                    </RelativeLayout>
+
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:background="#44FFFFFF"
+                        android:padding="6sp"
+                        android:layout_margin="6px"
+                        android:id="@+id/rl_home_tutorial">
+                        <ImageView
+                            android:layout_width="80sp"
+                            android:layout_height="80sp"
+                            android:src="@drawable/demo"
+                            android:id="@+id/home_demo_icon"
+                            android:layout_centerHorizontal="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/home_demo_icon"
+                            android:text="Tutorial"
+                            android:layout_centerHorizontal="true"/>
+                    </RelativeLayout>
+
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:background="#44FFFFFF"
+                        android:padding="6sp"
+                        android:layout_margin="6px"
+                        android:id="@+id/rl_home_privacy">
+                        <ImageView
+                            android:layout_width="80sp"
+                            android:layout_height="80sp"
+                            android:src="@drawable/privacy"
+                            android:id="@+id/home_privacy_icon"
+                            android:layout_centerHorizontal="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/home_privacy_icon"
+                            android:text="Privacy Policy"
+                            android:layout_centerHorizontal="true"/>
+                    </RelativeLayout>
+
+
+
+                    <!--<RelativeLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="50"-->
+                    <!--android:background="#44FFFFFF"-->
+                    <!--android:padding="6sp"-->
+                    <!--android:layout_margin="6px"-->
+                    <!--android:id="@+id/rl_home_help">-->
+                    <!--<ImageView-->
+                    <!--android:layout_width="80sp"-->
+                    <!--android:layout_height="80sp"-->
+                    <!--android:src="@drawable/help"-->
+                    <!--android:id="@+id/home_help_icon"-->
+                    <!--android:layout_centerHorizontal="true"/>-->
+                    <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_below="@id/home_help_icon"-->
+                    <!--android:text="Help"-->
+                    <!--android:layout_centerHorizontal="true"/>-->
+                    <!--</RelativeLayout>-->
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:background="#44FFFFFF"
+                        android:padding="6sp"
+                        android:layout_margin="6px"
+                        android:id="@+id/rl_home_ratings">
+                        <ImageView
+                            android:layout_width="80sp"
+                            android:layout_height="80sp"
+                            android:src="@drawable/rating"
+                            android:id="@+id/home_ratings_icon"
+                            android:layout_centerHorizontal="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/home_ratings_icon"
+                            android:text="Rate UniClip"
+                            android:layout_centerHorizontal="true"/>
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:background="#44FFFFFF"
+                        android:padding="6sp"
+                        android:layout_margin="6px"
+                        android:id="@+id/rl_home_feedback">
+                        <ImageView
+                            android:layout_width="80sp"
+                            android:layout_height="80sp"
+                            android:src="@drawable/feedback"
+                            android:id="@+id/home_feedback_icon"
+                            android:layout_centerHorizontal="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/home_feedback_icon"
+                            android:text="Feedback"
+                            android:layout_centerHorizontal="true"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:background="#44FFFFFF"
+                        android:padding="6sp"
+                        android:layout_margin="6px"
+                        android:id="@+id/rl_home_share">
+                        <ImageView
+                            android:layout_width="80sp"
+                            android:layout_height="80sp"
+                            android:src="@drawable/share"
+                            android:id="@+id/home_share_icon"
+                            android:layout_centerHorizontal="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/home_share_icon"
+                            android:text="Tell a friend"
+                            android:layout_centerHorizontal="true"/>
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Donation -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rl_what_is_uniclip"
+                android:layout_marginTop="16sp"
+                android:padding="10sp"
+                android:background="#44EEEEEE"
+                android:layout_below="@id/home_hsv">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/home_about"
+                    android:text="What is UniClip?"
+                    android:textSize="22sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+
+                <com.bluejamesbond.text.DocumentView
+                    xmlns:ext="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/home_about"
+                    ext:documentView_antialias="true"
+                    ext:documentView_cacheConfig="auto_quality"
+                    ext:documentView_hyphen="-"
+                    ext:documentView_insetPadding="6sp"
+                    ext:documentView_insetPaddingBottom="6sp"
+                    ext:documentView_insetPaddingLeft="6sp"
+                    ext:documentView_insetPaddingRight="6sp"
+                    ext:documentView_insetPaddingTop="6sp"
+                    ext:documentView_reverse="false"
+                    ext:documentView_text="In simple words, UniClip is a clipboard synchronization tool. It allows you to copy text from one device to another in a blink of an eye. That's all it does, simple and to the point."
+                    ext:documentView_textAlignment="justified"
+                    ext:documentView_textColor="#BBFFFFFF"
+                    ext:documentView_textFormat="plain"
+                    ext:documentView_textSize="16sp"
+                    ext:documentView_wordSpacingMultiplier="0.6"
+                    ext:documentView_lineHeightMultiplier="1.0" />
+            </RelativeLayout>
+
+
+            <!-- Donation -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rl_donate"
+                android:layout_marginTop="16sp"
+                android:padding="10sp"
+                android:background="#44EEEEEE"
+                android:layout_below="@id/rl_what_is_uniclip">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:text="Loved UniClip!?"
+                    android:textSize="22sp"
+                    android:id="@+id/donate_title"/>
+
+                <com.bluejamesbond.text.DocumentView
+                    xmlns:ext="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/donate_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/donate_title"
+                    android:layout_marginTop="12sp"
+                    ext:documentView_antialias="true"
+                    ext:documentView_cacheConfig="auto_quality"
+                    ext:documentView_hyphen="-"
+                    ext:documentView_insetPadding="6sp"
+                    ext:documentView_insetPaddingBottom="6sp"
+                    ext:documentView_insetPaddingLeft="6sp"
+                    ext:documentView_insetPaddingRight="6sp"
+                    ext:documentView_insetPaddingTop="6sp"
+                    ext:documentView_reverse="false"
+                    ext:documentView_text="If you liked ad-free-forever-and-ever UniClip, please consider helping the developer create more awesome stuff."
+                    ext:documentView_textAlignment="justified"
+                    ext:documentView_textColor="#BBFFFFFF"
+                    ext:documentView_textFormat="plain"
+                    ext:documentView_textSize="16sp"
+                    ext:documentView_wordSpacingMultiplier="0.6"
+                    ext:documentView_lineHeightMultiplier="1.0" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="40sp"
+                    android:id="@+id/b_donate"
+                    android:paddingLeft="12sp"
+                    android:paddingRight="12sp"
+                    android:textColor="#CCFFFFFF"
+                    android:alpha=".94"
+                    android:text="Donate using PayPal"
+                    android:layout_marginTop="10sp"
+                    android:layout_below="@id/donate_desc"
+                    android:background="@color/colorAccent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

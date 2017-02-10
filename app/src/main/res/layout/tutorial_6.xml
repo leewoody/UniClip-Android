@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_tut_6"
+    android:visibility="gone">
+
+    <!--Tutorial 6 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_tut_6_sv">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#EEFFFFFF"
+            android:padding="6sp"
+            android:id="@+id/rl_tut_content_6"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Configure UniClip"
+                android:textSize="24sp"
+                android:textColor="@color/colorAccent"
+                android:id="@+id/tut_6_heading"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click on 'Settings' icon to open UniClip settings."
+                android:textSize="13sp"
+                android:textColor="#AA000000"
+                android:gravity="center"
+                android:layout_marginTop="14sp"
+                android:padding="6sp"
+                android:id="@+id/tut_6_1"
+                android:layout_below="@id/tut_6_heading"/>
+
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10sp"
+                android:src="@drawable/tut_6_1"
+                android:layout_below="@id/tut_6_1"
+                android:id="@+id/tut_6_2"/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0sp"
+                android:text="Most of the options here are self-explanatory. However, few needs to be explained.\n\nWhen a new clip arrives at your device, you can configure your device to do one of the two things, first, either accept the clip and copy it to the clipboard without your interaction (for this, set 'Nuber of shakes' to 0), or you can set 'Number of shakes' to any nunber 1 to 5, which will give you control over when to accept the clip. To accept the incoming clip, shake your device a few times (as set) in a 5 second window after the clip arrives at your device, this window is marked by vibrations at the start and end of it.\n\n However, if you miss the window, you can click on 'History' to copy the clip.\n\n\n\n"
+                android:textSize="13sp"
+                android:textColor="#AA000000"
+                android:gravity="center"
+                android:padding="6sp"
+                android:id="@+id/tut_6"
+                android:layout_below="@id/tut_6_2"/>
+
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_tut_6_sv"
+        android:id="@+id/rl_tut_mask_6"
+        android:background="#88000000">
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="6/8"
+        android:layout_alignParentRight="true"
+        android:textSize="10sp"
+        android:layout_margin="14sp"
+        android:textColor="#66000000"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_margin="10sp"
+        android:background="@color/colorAccent"
+        android:layout_alignParentRight="true"
+        android:text="Next"
+        android:textColor="#BBFFFFFF"
+        android:paddingLeft="10sp"
+        android:paddingRight="10sp"
+        android:id="@+id/go_n_to_tut_7"
+        android:layout_alignParentBottom="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_margin="10sp"
+        android:background="@color/colorAccent"
+        android:layout_alignParentLeft="true"
+        android:text="Prev"
+        android:textColor="#BBFFFFFF"
+        android:paddingLeft="10sp"
+        android:id="@+id/go_p_to_tut_5"
+        android:paddingRight="10sp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:id="@+id/rl_main">
+
+
+
+    <ImageView
+        android:layout_width="400sp"
+        android:layout_height="400sp"
+        android:id="@+id/clip_icon"
+        android:alpha="0.5"
+        android:src="@drawable/clipboard_icon_off"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.2"
+        android:id="@+id/sync_anim"
+        android:visibility="invisible"
+        android:src="@drawable/sync_anim"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100sp"
+        android:layout_marginRight="100sp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:layout_width="400sp"
+        android:layout_height="wrap_content"
+        android:textColor="#CCFFFFFF"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20sp"
+        android:padding="6sp"
+        android:layout_below="@+id/rl_top"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:text="UniClip! is running in the background. You can now close this window or look around for more options."
+        android:id="@+id/welcome_text"/>
+
+    <RelativeLayout
+        android:layout_width="400sp"
+        android:layout_height="1sp"
+        android:id="@+id/hl1"
+        android:padding="6sp"
+        android:background="#88FFFFFF"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:layout_below="@+id/welcome_text"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_start_stop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10sp"
+        android:fadeScrollbars="false"
+        android:scrollbarSize="4sp"
+        android:scrollbarStyle="outsideOverlay"
+        android:padding="20sp"
+        android:layout_below="@id/hl1"
+        android:paddingLeft="30sp"
+        android:paddingRight="16sp"
+        android:id="@+id/sv_content">
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/layout_running"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+
+    <include layout="@layout/layout_top_bar"/>
+
+
+    <RelativeLayout
+        android:layout_width="400sp"
+        android:layout_height="60sp"
+        android:id="@+id/rl_start_stop"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true">
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stop UniClip!"
+            android:id="@+id/b_stop"
+            android:textColor="#CCFFFFFF"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/card_background_layout"/>
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Go Back"
+            android:id="@+id/b_go_back_to_main"
+            android:textColor="#CCFFFFFF"
+            android:visibility="invisible"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/card_background_layout"/>
+
+
+    </RelativeLayout>
+
+
+    <!--Menu Content-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_menu_content"
+        android:layout_below="@+id/rl_menu_on"
+        android:background="@color/colorPrimary"
+        android:alpha="0.92"
+        android:visibility="gone">
+
+        <!--Menu background-->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/splash_bottom"
+            android:alpha="0.2"/>
+
+
+
+    </RelativeLayout>
+
+    <include layout="@layout/layout_feedback"/>
+    <include layout="@layout/layout_add_devices"/>
+    <include layout="@layout/layout_manage_user"/>
+    <include layout="@layout/layout_manage_pin"/>
+    <include layout="@layout/layout_settings"/>
+
+    <include layout="@layout/layout_no_connection"/>
+
+    <include layout="@layout/layout_pin_locked"/>
+</RelativeLayout>

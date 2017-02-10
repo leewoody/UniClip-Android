@@ -54,7 +54,6 @@ public class FragmentPermission extends Fragment {
                 }
 
 
-
                 ((TextView) root.findViewById(R.id.when_done)).setVisibility(View.VISIBLE);
             }
         });

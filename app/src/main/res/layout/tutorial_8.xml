@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_tut_8"
+    android:visibility="gone">
+
+    <!--Tutorial 8 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_tut_8_sv">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#EEFFFFFF"
+            android:padding="6sp"
+            android:id="@+id/rl_tut_content_8"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Adding a device"
+                android:textSize="24sp"
+                android:textColor="@color/colorAccent"
+                android:id="@+id/tut_8_heading"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You can add a mobile or a desktop/laptop using this feature."
+                android:textSize="13sp"
+                android:textColor="#AA000000"
+                android:gravity="center"
+                android:layout_marginTop="14sp"
+                android:padding="6sp"
+                android:id="@+id/tut_8_1"
+                android:layout_below="@id/tut_8_heading"/>
+
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10sp"
+                android:src="@drawable/tut_8_1"
+                android:layout_below="@id/tut_8_1"
+                android:id="@+id/tut_8_2"/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0sp"
+                android:text="Adding a mobile requires 'Access PIN' and adding a desktop requires a camera-equipped mobile. \n\nTo add a desktop, open UniClip desktop client, and click on the icon as shown in above image. Scan the QR code, and you are set.\n\n\n\n"
+                android:textSize="13sp"
+                android:textColor="#AA000000"
+                android:gravity="center"
+                android:padding="6sp"
+                android:id="@+id/tut_8"
+                android:layout_below="@id/tut_8_2"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_tut_8_sv"
+        android:id="@+id/rl_tut_mask_8"
+        android:background="#88000000">
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8/8"
+        android:layout_alignParentRight="true"
+        android:textSize="10sp"
+        android:layout_margin="14sp"
+        android:textColor="#66000000"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_margin="10sp"
+        android:background="@color/colorAccent"
+        android:layout_alignParentRight="true"
+        android:text="Finish"
+        android:textColor="#BBFFFFFF"
+        android:paddingLeft="10sp"
+        android:paddingRight="10sp"
+        android:id="@+id/finish_tut"
+        android:layout_alignParentBottom="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_margin="10sp"
+        android:background="@color/colorAccent"
+        android:layout_alignParentLeft="true"
+        android:text="Prev"
+        android:textColor="#BBFFFFFF"
+        android:paddingLeft="10sp"
+        android:id="@+id/go_p_to_tut_7"
+        android:paddingRight="10sp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

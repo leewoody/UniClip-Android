@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#AAFFFFFF"
+    tools:context="com.piyushagade.uniclip.TutorialActivity">
+
+    <include layout="@layout/menu_top_bar"
+        android:id="@+id/rl_menu_top_bar"
+        android:visibility="gone"/>
+
+
+    <ImageView
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginLeft="24sp"
+        android:src="@drawable/back"
+        android:id="@+id/menu_back"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Menu."
+        android:layout_toRightOf="@id/menu_back"
+        android:textSize="40sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginLeft="10sp"
+        android:layout_marginBottom="10sp"
+        android:id="@+id/menu_title"
+        android:textColor="@color/colorAccent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/menu_title">
+
+        <include layout="@layout/menu_first_page"/>
+        <include layout="@layout/menu_help"/>
+        <include layout="@layout/menu_history"/>
+        <include layout="@layout/menu_developer"/>
+        <include layout="@layout/menu_user"/>
+    </RelativeLayout>
+</RelativeLayout>

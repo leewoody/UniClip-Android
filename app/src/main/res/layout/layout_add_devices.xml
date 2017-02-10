@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_running_adddevice_menu"
+    android:visibility="gone">
+
+    <!-- add device -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#EEFFFFFF"
+        android:padding="10sp"
+        android:id="@+id/rl_running_adddevice_menu_content"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add a mobile"
+            android:textSize="24sp"
+            android:layout_marginTop="14sp"
+            android:layout_marginLeft="6sp"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/running_adddevice_menu_subheading_1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="To add a mobile device insert the Access Pin shown below in the UniClip app of your other mobile device."
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="#AA000000"
+            android:layout_marginTop="6sp"
+            android:id="@+id/running_adddevice_menu_subdesc_1"
+            android:layout_below="@id/running_adddevice_menu_subheading_1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:text="1111"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="6sp"
+            android:id="@+id/running_adddevice_menu_pin"
+            android:layout_below="@id/running_adddevice_menu_subdesc_1"/>
+
+
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add a desktop"
+            android:layout_marginTop="22sp"
+            android:textSize="24sp"
+            android:layout_marginLeft="6sp"
+            android:textColor="@color/colorAccent"
+            android:layout_below="@id/running_adddevice_menu_pin"
+            android:id="@+id/running_adddevice_menu_subheading_2"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Adding a desktop is a little different. First, open UniClip client on your desktop/laptop, and scan the QR code generated using the button provided below."
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="#AA000000"
+            android:layout_marginTop="6sp"
+            android:id="@+id/running_adddevice_menu_subdesc_2"
+            android:layout_below="@id/running_adddevice_menu_subheading_2"/>
+
+        <ImageView
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:src="@drawable/qr"
+            android:id="@+id/decode_qr"
+            android:layout_below="@id/running_adddevice_menu_subdesc_2"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="16sp"/>
+
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="34sp"
+            android:layout_marginTop="18sp"
+            android:background="@color/colorAccent"
+            android:layout_alignParentLeft="true"
+            android:text="Cancel"
+            android:textColor="#BBFFFFFF"
+            android:paddingLeft="10sp"
+            android:layout_margin="6sp"
+            android:id="@+id/running_adddevice_menu_back"
+            android:paddingRight="10sp"
+            android:layout_below="@id/decode_qr"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_running_adddevice_menu_content"
+        android:id="@+id/rl_running_adddevice_menu_mask"
+        android:background="#88000000">
+
+    </RelativeLayout>
+
+</RelativeLayout>

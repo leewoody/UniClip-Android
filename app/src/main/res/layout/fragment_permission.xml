@@ -1,53 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:fitsSystemWindows="false"
     android:layout_centerVertical="true"
     android:gravity="center"
     android:padding="@dimen/baseline">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:id="@+id/fragment_title"
-        android:textSize="26sp"
-        android:layout_marginTop="24sp"
-        android:text="You got Marshmellow?"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+        android:layout_centerVertical="true">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="Android M requires users to explicitly grant permission to applications.\n\nUniClip requires your email address to work flawlessly. So, click the button below to grant 'Contacts' permission to UniClip in the 'App Permissions' in the next screen."
-        android:id="@+id/fragment_desc"
-        android:layout_marginTop="40sp"
-        android:layout_below="@id/fragment_title" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:id="@+id/fragment_permission__title"
+            android:textSize="26sp"
+            android:textColor="#FEFFFFFF"
+            android:layout_marginTop="24sp"
+            android:text="You got Marshmellow?"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
-    <Button
-        android:id="@+id/b_grant_permission"
-        android:layout_width="200sp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50sp"
-        android:layout_below="@id/fragment_desc"
-        android:text="Grant permission."/>
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/fragment_permission_sv"
+            android:layout_below="@id/fragment_permission__title">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="When done, click on the 'tick' button to proceed."
-        android:visibility="invisible"
-        android:id="@+id/when_done"
-        android:layout_marginTop="40sp"
-        android:layout_below="@id/b_grant_permission" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="18sp"
+                    android:text="Android M (and up) requires users to explicitly grant permission to applications.\n\nUniClip requires your email address to work flawlessly. Click the button below to grant 'Contacts' permission to UniClip in the 'Permissions' tab in the next screen."
+                    android:id="@+id/fragment_desc_1"/>
 
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_below="@id/fragment_desc_1"
+                    android:layout_marginTop="20sp"
+                    android:text="Granting 'Contacts' permission allows us to use your device's Google account to be used as your 'default' UniClip account. You can always switch to a different UniClip account later."
+                    android:id="@+id/fragment_desc_2" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_below="@id/fragment_desc_2"
+                    android:layout_marginTop="20sp"
+                    android:textStyle="bold"
+                    android:text="Your phone contacts won't be extracted and used in any way.\n"
+                    android:id="@+id/fragment_desc_3" />
+
+                <Button
+                    android:id="@+id/b_grant_permission"
+                    android:layout_width="200sp"
+                    android:background="@color/colorAccent"
+                    android:textColor="#FEFFFFFF"
+                    android:layout_height="44sp"
+                    android:layout_centerHorizontal="true"
+                    android:text="Grant permission."
+                    android:layout_marginTop="18sp"
+                    android:layout_below="@id/fragment_desc_3"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="When done, click on the 'tick' button to proceed."
+                    android:visibility="invisible"
+                    android:id="@+id/when_done"
+                    android:layout_marginTop="40sp"
+                    android:layout_below="@id/b_grant_permission" />
+
+            </RelativeLayout>
+
+        </ScrollView>
+    </RelativeLayout>
 
 </RelativeLayout>
