@@ -13,19 +13,19 @@ The app is available on Google Play:
 	<img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60" />
 </a>
 
-UniClip for Windows desktop
+Windows Client
 ----
 
 <a href="http://piyushagade.xyz/uniclip/download/uniclip_setup.exe">
 	Click here to download
 </a> UniClip for windows.
 
-UniClip for Linux desktop
+Linux Client
 ----
 
 <a href="http://piyushagade.xyz/uniclip/download/uniclip-linux-x64.tar.gz">
 	Click here to download
-</a> UniClip for windows.
+</a> UniClip for Linux.
 
 Screenshots
 -----------
