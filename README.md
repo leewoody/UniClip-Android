@@ -16,14 +16,14 @@ The app is available on Google Play:
 UniClip for Windows desktop
 ----
 
-<a href="https://github.com/piyushagade/web/blob/gh-pages/uniclip/download/uniclip_setup.exe?raw=true">
+<a href="http://piyushagade.xyz/uniclip/download/uniclip_setup.exe">
 	Click here to download
 </a> UniClip for windows.
 
 UniClip for Linux desktop
 ----
 
-<a href="https://github.com/piyushagade/web/blob/gh-pages/uniclip/download/uniclip-linux-x64?raw=true">
+<a href="http://piyushagade.xyz/uniclip/download/uniclip-linux-x64.tar.gz">
 	Click here to download
 </a> UniClip for windows.
 
