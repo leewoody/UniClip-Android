@@ -20,6 +20,13 @@ UniClip for Windows desktop
 	Click here to download
 </a> UniClip for windows.
 
+UniClip for Linux desktop
+----
+
+<a href="https://github.com/piyushagade/web/blob/gh-pages/uniclip/download/uniclip-linux-x64?raw=true">
+	Click here to download
+</a> UniClip for windows.
+
 Screenshots
 -----------
 
