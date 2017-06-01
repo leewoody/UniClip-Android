@@ -16,7 +16,7 @@ The app is available on Google Play:
 UniClip for Windows desktop
 ----
 
-<a href="https://github.com/piyushagade/UniClip-Desktop/raw/master/output/windows/UniClip_Setup.exe">
+<a href="https://github.com/piyushagade/web/blob/gh-pages/uniclip/download/uniclip_setup.exe?raw=true">
 	Click here to download
 </a> UniClip for windows.
 
