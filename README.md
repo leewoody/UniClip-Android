@@ -15,7 +15,7 @@ The app is available on Google Play:
 
 Download Desktop Clients
 ----
-Visit <a href="http://piyushagade.xyz/uniclip">http://piyushagade.xyz/uniclip</a>'s 'Download' section and select your OS.
+Visit <a href="http://piyushagade.xyz/uniclip" target="_new">http://piyushagade.xyz/uniclip</a>'s 'Download' section and select your OS.
 
 Screenshots
 -----------
