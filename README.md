@@ -13,19 +13,9 @@ The app is available on Google Play:
 	<img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60" />
 </a>
 
-Windows Client
+Download Desktop Clients
 ----
-
-<a href="http://piyushagade.xyz/uniclip/download/uniclip_setup.exe">
-	Click here to download
-</a> UniClip for windows.
-
-Linux Client
-----
-
-<a href="http://piyushagade.xyz/uniclip/download/uniclip-linux-x64.tar.gz">
-	Click here to download
-</a> UniClip for Linux.
+Visit <a href="http://piyushagade.xyz/uniclip">http://piyushagade.xyz/uniclip</a>'s 'Download' section and select your OS.
 
 Screenshots
 -----------
