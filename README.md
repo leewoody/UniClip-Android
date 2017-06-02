@@ -58,6 +58,9 @@ Changes
 * **Version 1.1:**
     * Added Notification, Vibrate control
     * Added Light/Dark theme
+* **Version 2^:**
+    * Open links from your mobile directly on PC instantaneously.
+    * Automatically sync clipboards without using keyboard shortcuts
 
 Open source libraries
 -------
